@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.*;
-import java.util.Arrays;
 
 @RestController
 public class DatabaseService {
@@ -54,9 +53,7 @@ public class DatabaseService {
             preparedStatement.setString(2, jsonObject.getString("sex_preferences"));
             preparedStatement.setString(3, jsonObject.getString("biography"));
             preparedStatement.setString(5, jsonObject.getString("login"));
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(jsonObject.getString("password").getBytes(StandardCharsets.UTF_8));
-            preparedStatement.setString(4, Arrays.toString(hash));
+            preparedStatement.setString(4, jsonObject.getString("password"));
             preparedStatement.execute();
             return true;
         } catch (Exception ex) {
@@ -86,6 +83,39 @@ public class DatabaseService {
                 userProfile.put("sex", rs.getInt(2));
                 userProfile.put("sex_preferences", rs.getInt(3));
                 userProfile.put("biography", rs.getString(4));
+                userProfile.put("password", rs.getString(6));
+                userProfile.put("login", rs.getString(5));
+            }
+            return userProfile.toString();
+        } catch (Exception ex) {
+            return "err:" + ex.getMessage();
+        }
+    }
+
+    /**
+     * Вернет профиль юзера по login
+     * @param inputData login
+     * @return JSON UserProfile
+     */
+    @RequestMapping(method = RequestMethod.POST,
+            value = "/getUserProfileForLogin",
+            consumes = "application/json",
+            produces = "application/json")
+    @ResponseBody
+    public String getUserProfileForLogin(InputStream inputData) {
+        try {
+            JSONObject jsonObject = new JSONObject(ReadHelper.readJSON(inputData));
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from my_db.t_user_profile where login=?");
+            preparedStatement.setString(1, jsonObject.getString("login"));
+            ResultSet rs = preparedStatement.executeQuery();
+            JSONObject userProfile = new JSONObject();
+            if (rs.next()) {
+                userProfile.put("sex", rs.getInt(2));
+                userProfile.put("sex_preferences", rs.getInt(3));
+                userProfile.put("biography", rs.getString(4));
+                userProfile.put("password", rs.getString(5));
+                userProfile.put("login", rs.getString(6));
             }
             return userProfile.toString();
         } catch (Exception ex) {
@@ -112,7 +142,7 @@ public class DatabaseService {
             if (rs.next()) {
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = digest.digest(jsonObject.getString("password").getBytes(StandardCharsets.UTF_8));
-                return rs.getString(1).equals(Arrays.toString(hash));
+                return rs.getString(1).equals(new String(hash));
             } else {
                 return false;
             }
