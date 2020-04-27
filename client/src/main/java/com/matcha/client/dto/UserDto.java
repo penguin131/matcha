@@ -1,49 +1,10 @@
 package com.matcha.client.dto;
 
-public class UserDto {
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String login;
-    private String password;
+import com.matcha.client.form.RegisterForm;
 
-    public String getEmail() {
-        return email;
-    }
+/**
+ * в нем может быть больше данных чем в RegisterForm
+ */
+public class UserDto extends RegisterForm {
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

@@ -6,7 +6,6 @@ import com.matcha.dto.UserProfileDto;
 import com.matcha.helper.ReadHelper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -45,14 +44,16 @@ public class DatabaseService {
     @ResponseBody
     public Boolean createUserProfile(InputStream inputData) {
         try {
-            UserProfileDto userProfileDto = mapper.readValue(ReadHelper.readJSON(inputData), UserProfileDto.class);
+            String data = ReadHelper.readJSON(inputData);
+            UserProfileDto userProfileDto = mapper.readValue(data, UserProfileDto.class);
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into my_db.t_user_profile (sex, sex_preferences, biography, password, login) VALUE (?, ?, ?, ?, ?)");
+                    "insert into my_db.t_user_profile (sex, sex_preferences, biography, password, login, email) VALUE (?, ?, ?, ?, ?, ?)");
             preparedStatement.setInt(1, userProfileDto.getSex());
             preparedStatement.setInt(2, userProfileDto.getSexPreferences());
             preparedStatement.setString(3, userProfileDto.getBiography());
             preparedStatement.setString(5, userProfileDto.getLogin());
             preparedStatement.setString(4, userProfileDto.getPassword());
+            preparedStatement.setString(6, userProfileDto.getEmail());
             preparedStatement.execute();
             return true;
         } catch (Exception ex) {
@@ -74,7 +75,7 @@ public class DatabaseService {
         UserProfileDto userProfile = new UserProfileDto();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select sex, sex_preferences, biography, password, login from my_db.t_user_profile where login=?");
+                    "select sex, sex_preferences, biography, password, login, email from my_db.t_user_profile where login=?");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -83,6 +84,7 @@ public class DatabaseService {
                 userProfile.setBiography(rs.getString(3));
                 userProfile.setPassword(rs.getString(4));
                 userProfile.setLogin(rs.getString(5));
+                userProfile.setEmail(rs.getString(6));
             }
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1,13 +1,14 @@
 package com.matcha.client.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matcha.client.dto.UserDto;
+import com.matcha.client.form.RegisterForm;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -16,6 +17,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,14 +42,15 @@ public class UserService {
         return new User(login, userProfile.getString("password"), grantedAuths);
     }
 
-    //todo проверку существования почты
-    public static boolean registerNewUserAccount(UserDto accountDto) throws IOException {
-//        accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+    public static boolean registerNewUserAccount(RegisterForm registerForm) throws IOException {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        registerForm.setPassword(encoder.encode(registerForm.getPassword()));
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost("http://localhost:8080/addUserProfile");
+        HttpPost request = new HttpPost("http://localhost:8080/createUserProfile");
+        request.addHeader("content-type", "application/json");
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(accountDto);
-        StringEntity params = new StringEntity(json);
+        String json = mapper.writeValueAsString(registerForm);
+        StringEntity params = new StringEntity(json, ContentType.APPLICATION_JSON);
         request.setEntity(params);
         HttpResponse response = httpClient.execute(request);
         return true;

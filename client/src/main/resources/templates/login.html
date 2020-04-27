@@ -10,6 +10,7 @@
 
         body {
             background: url("https://i.ytimg.com/vi/oIJxwOtHc3A/maxresdefault.jpg");
+            /*background: url("templates/pictures/razdevalnya.jpg");*/
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -165,7 +166,7 @@
         <a href="#">Forgot your password?</a>
         <div><input type="submit" value="Sign In" class="button"/></div>
         <div id="sign_on">
-            <a onclick="swapMode()">Don't have an account? Register bro!</a>
+            <a th:href="@{/register}">Don't have an account? Register bro!</a>
         </div>
         <div th:if="${param.error}" style="color: #FF4B2B">
             Invalid username and password.
@@ -175,30 +176,5 @@
         </div>
     </form>
 </div>
-<div class="container" id="register" hidden="true">
-    <form th:action="@{/register}" method="post">
-        <h1>Hello, &#9794;Boy&#9794;!</h1>
-        <h1>Register!</h1>
-        <div><input type="text" name="username" placeholder="Name"/></div>
-        <div><input type="password" name="password" placeholder="Password"/></div>
-        <div><input type="email" name="email" placeholder="Email"/></div>
-        <div><input type="submit" value="Register!" class="button"/></div>
-        <div id="sign_in">
-            <a onclick="swapMode()">Back</a>
-        </div>
-    </form>
-</div>
-<script>
-    function swapMode() {
-        const old = document.getElementById("login").hidden;
-        if (old === false) {
-            document.getElementById("login").hidden = true;
-            document.getElementById("register").hidden = false;
-        } else {
-            document.getElementById("login").hidden = false;
-            document.getElementById("register").hidden = true;
-        }
-    }
-</script>
 </body>
 </html>

@@ -13,6 +13,7 @@ public class UserProfileDto {
     private String biography;
     private String password;
     private String login;
+    private String email;
 
     public int getUserProfileId() {
         return userProfileId;
@@ -73,5 +74,13 @@ public class UserProfileDto {
     @Override
     public int hashCode() {
         return this.userProfileId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
