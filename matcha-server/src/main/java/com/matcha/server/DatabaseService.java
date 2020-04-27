@@ -1,19 +1,16 @@
 package com.matcha.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matcha.dto.UserProfileDto;
 import com.matcha.helper.ReadHelper;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.sql.*;
 
 @RestController
@@ -23,6 +20,7 @@ public class DatabaseService {
     @Resource
     private DataSource dataSource;
     private Connection connection;
+    private ObjectMapper mapper;
 
     @PostConstruct
     private void init() throws ClassNotFoundException, SQLException {
@@ -33,6 +31,7 @@ public class DatabaseService {
                 dSource.getUsername(),
                 dSource.getPassword()
         );
+        mapper = new ObjectMapper();
     }
 
     /**
@@ -44,111 +43,51 @@ public class DatabaseService {
                     value = "/createUserProfile",
                     consumes = "application/json")
     @ResponseBody
-    public Boolean addUserProfile(InputStream inputData) {
+    public Boolean createUserProfile(InputStream inputData) {
         try {
-            JSONObject jsonObject = new JSONObject(ReadHelper.readJSON(inputData));
+            UserProfileDto userProfileDto = mapper.readValue(ReadHelper.readJSON(inputData), UserProfileDto.class);
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into my_db.t_user_profile (sex, sex_preferences, biography, password, login) VALUE (?, ?, ?, ?, ?)");
-            preparedStatement.setString(1, jsonObject.getString("sex"));
-            preparedStatement.setString(2, jsonObject.getString("sex_preferences"));
-            preparedStatement.setString(3, jsonObject.getString("biography"));
-            preparedStatement.setString(5, jsonObject.getString("login"));
-            preparedStatement.setString(4, jsonObject.getString("password"));
+            preparedStatement.setInt(1, userProfileDto.getSex());
+            preparedStatement.setInt(2, userProfileDto.getSexPreferences());
+            preparedStatement.setString(3, userProfileDto.getBiography());
+            preparedStatement.setString(5, userProfileDto.getLogin());
+            preparedStatement.setString(4, userProfileDto.getPassword());
             preparedStatement.execute();
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Вернет профиль юзера по ID
-     * @param inputData user_profile_id
+     * Вернет первый профиль юзера по login
+     * @param login login in PathVariable
      * @return JSON UserProfile
      */
     @RequestMapping(method = RequestMethod.GET,
-            value = "/getUserProfileForId",
-            consumes = "application/json",
-            produces = "application/json")
-    @ResponseBody
-    public String getUserProfileForId(InputStream inputData) {
-        try {
-            JSONObject jsonObject = new JSONObject(ReadHelper.readJSON(inputData));
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from my_db.t_user_profile where user_profile_id=?");
-            preparedStatement.setString(1, jsonObject.getString("user_profile_id"));
-            ResultSet rs = preparedStatement.executeQuery();
-            JSONObject userProfile = new JSONObject();
-            if (rs.next()) {
-                userProfile.put("sex", rs.getInt(2));
-                userProfile.put("sex_preferences", rs.getInt(3));
-                userProfile.put("biography", rs.getString(4));
-                userProfile.put("password", rs.getString(6));
-                userProfile.put("login", rs.getString(5));
-            }
-            return userProfile.toString();
-        } catch (Exception ex) {
-            return "err:" + ex.getMessage();
-        }
-    }
-
-    /**
-     * Вернет профиль юзера по login
-     * @param inputData login
-     * @return JSON UserProfile
-     */
-    @RequestMapping(method = RequestMethod.POST,
             value = "/getUserProfileForLogin",
-            consumes = "application/json",
             produces = "application/json")
     @ResponseBody
-    public String getUserProfileForLogin(InputStream inputData) {
+    public String getUserProfileForLogin(@RequestParam("login") String login) throws JsonProcessingException {
+        UserProfileDto userProfile = new UserProfileDto();
         try {
-            JSONObject jsonObject = new JSONObject(ReadHelper.readJSON(inputData));
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from my_db.t_user_profile where login=?");
-            preparedStatement.setString(1, jsonObject.getString("login"));
-            ResultSet rs = preparedStatement.executeQuery();
-            JSONObject userProfile = new JSONObject();
-            if (rs.next()) {
-                userProfile.put("sex", rs.getInt(2));
-                userProfile.put("sex_preferences", rs.getInt(3));
-                userProfile.put("biography", rs.getString(4));
-                userProfile.put("password", rs.getString(5));
-                userProfile.put("login", rs.getString(6));
-            }
-            return userProfile.toString();
-        } catch (Exception ex) {
-            return "err:" + ex.getMessage();
-        }
-    }
-
-    /**
-     * Проверит, правильный ли пароль у юзера
-     * @param inputData login, password in JSON
-     * @return true/false
-     */
-    @RequestMapping(method = RequestMethod.GET,
-            value = "/checkUserPassword",
-            consumes = "application/json")
-    @ResponseBody
-    public Boolean checkUserPassword(InputStream inputData) {
-        try {
-            JSONObject jsonObject = new JSONObject(ReadHelper.readJSON(inputData));
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select password from my_db.t_user_profile where login=?");
-            preparedStatement.setString(1, jsonObject.getString("login"));
+                    "select sex, sex_preferences, biography, password, login from my_db.t_user_profile where login=?");
+            preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                byte[] hash = digest.digest(jsonObject.getString("password").getBytes(StandardCharsets.UTF_8));
-                return rs.getString(1).equals(new String(hash));
-            } else {
-                return false;
+                userProfile.setSex(rs.getInt(1));
+                userProfile.setSexPreferences(rs.getInt(2));
+                userProfile.setBiography(rs.getString(3));
+                userProfile.setPassword(rs.getString(4));
+                userProfile.setLogin(rs.getString(5));
             }
         } catch (Exception ex) {
-            return false;
+            ex.printStackTrace();
+            return null;
         }
+        return mapper.writeValueAsString(userProfile);
     }
-
 }

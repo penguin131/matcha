@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class UserDetailsServiceImp implements UserDetailsService {
 
@@ -16,7 +17,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         User user = null;
         try {
             user = UserService.getUserProfileForLogin(username);
-        } catch (IOException | JSONException e) {
+        } catch (IOException | JSONException | URISyntaxException e) {
             e.printStackTrace();
         }
 
