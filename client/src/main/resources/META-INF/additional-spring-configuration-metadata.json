@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "matcha-server.port",
+      "type": "java.lang.String",
+      "description": "Порт для подключения к бэку"
+  }
+] }

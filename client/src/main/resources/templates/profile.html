@@ -97,7 +97,7 @@
             overflow: hidden;
             width: 468px;
             max-width: 100%;
-            min-height: 580px;
+            min-height: 480px;
         }
 
         @keyframes show {
@@ -160,19 +160,14 @@
 <body>
 <div class="container" id="login">
     <div class="x-mark" onclick="toMainPage()"></div>
-    <form th:action="@{/register}" th:object="${registerForm}" method="post">
-        <h1>Hello, &#9794;Boy&#9794;!</h1>
-        <h1>Registration page</h1>
+    <form th:action="@{/profile}" th:object="${userForm}" method="post">
+        <h1>Fill you profile please!</h1>
         <div><input type="text" name="firstName" placeholder="First name" th:field="*{firstName}"/></div>
         <div><input type="text" name="lastName" placeholder="Last name" th:field="*{lastName}"/></div>
-        <div><input type="text" name="login" placeholder="Login" th:field="*{login}"/></div>
-        <div><input type="password" name="password" placeholder="Password" th:field="*{password}"/></div>
-        <div><input type="text" name="email" placeholder="Email" th:field="*{email}"/></div>
-        <div><input type="text" name="sex" placeholder="Sex" th:field="*{sex}"/></div>
+        <div><input type="email" name="email" placeholder="Email" th:field="*{email}"/></div>
+        <div><input type="text" name="sexPreferences" placeholder="Sex Preferences" th:field="*{sexPreferences}"/></div>
+        <div><input type="text" name="biography" placeholder="Biography" th:field="*{biography}"/></div>
         <div><input type="submit" value="Save" class="button"/></div>
-        <ul th:if="${#fields.hasErrors()}">
-            <li th:each="err : ${#fields.errors()}" th:text="${err}" style="color: brown; text-align: left">Input is incorrect!</li>
-        </ul>
     </form>
 </div>
 </body>

@@ -1,12 +1,9 @@
 package com.matcha.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserProfileDto {
 
-    @JsonIgnoreProperties
-    private int userProfileId;//уникальный
     private int sex;
     @JsonProperty("sex_preferences")
     private int sexPreferences;
@@ -14,14 +11,11 @@ public class UserProfileDto {
     private String password;
     private String login;
     private String email;
-
-    public int getUserProfileId() {
-        return userProfileId;
-    }
-
-    public void setUserProfileId(int userProfileId) {
-        this.userProfileId = userProfileId;
-    }
+    private int confirmed;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
 
     public int getSex() {
         return sex;
@@ -63,19 +57,6 @@ public class UserProfileDto {
         this.login = login;
     }
 
-    @Override
-    public boolean equals(Object another) {
-        if (!super.equals(another)) {
-            return false;
-        }
-        return this.userProfileId == ((UserProfileDto)another).userProfileId;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.userProfileId;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -83,4 +64,50 @@ public class UserProfileDto {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public int getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(int confirmed) {
+        this.confirmed = confirmed;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public UserProfileDto(String firstName,
+                          String lastName,
+                          String login,
+                          String password,
+                          int sex,
+                          int sexPreferences,
+                          String biography,
+                          String email,
+                          int confirmed) {
+        this.setSex(sex);
+        this.setSexPreferences(sexPreferences);
+        this.setBiography(biography);
+        this.setPassword(password);
+        this.setLogin(login);
+        this.setEmail(email);
+        this.setConfirmed(confirmed);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+    }
+
+    public UserProfileDto() { }
 }

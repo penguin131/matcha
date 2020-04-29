@@ -6,17 +6,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+@Component
 public class UserDetailsServiceImp implements UserDetailsService {
+    private UserService service = new UserService();
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = null;
         try {
-            user = UserService.getUserProfileForLogin(username);
+            user = service.getUserProfileForLogin(username);
         } catch (IOException | JSONException | URISyntaxException e) {
             e.printStackTrace();
         }
