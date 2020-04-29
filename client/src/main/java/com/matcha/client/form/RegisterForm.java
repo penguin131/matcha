@@ -4,16 +4,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.matcha.client.validation.LoginExists;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 
 public class RegisterForm {
+    @NotEmpty(message = "Login must be not empty!")
     @LoginExists
     private String login;
+    @NotEmpty(message = "Password must be not empty!")
     private String password;
+    @NotEmpty(message = "Email must be not empty!")
     @Email
     private String email;
+    @NotEmpty(message = "Sex must be not empty!")
     private String sex;
+    @NotEmpty(message = "First name must be not empty!")
     @JsonProperty("first_name")
     private String firstName;
+    @NotEmpty(message = "Last name must be not empty!")
     @JsonProperty("last_name")
     private String lastName;
 

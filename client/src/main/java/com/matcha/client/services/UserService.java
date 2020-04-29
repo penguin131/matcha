@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ public class UserService {
     private static final String serverPort = "8080";
     private static final String serverAddress = "localhost";
 
+    //todo переписать весь этот класс, ОЧЕНЬ кривой
     public User getUserProfileForLogin(String login) throws IOException, JSONException, URISyntaxException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         URIBuilder builder = new URIBuilder(String.format("http://%s:%s/getUserProfileForLogin", serverAddress, serverPort));
@@ -47,6 +49,9 @@ public class UserService {
         JSONObject userProfile = new JSONObject(EntityUtils.toString(responseEntity));
         Set<GrantedAuthority> grantedAuth = new HashSet<>();
         grantedAuth.add(new SimpleGrantedAuthority("USER"));
+        if (StringUtils.isEmpty(login) || userProfile.getString("password") == null) {
+            return null;
+        }
         return new User(login, userProfile.getString("password"), grantedAuth);
     }
 
