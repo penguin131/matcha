@@ -1,6 +1,8 @@
 package com.matcha.client.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matcha.client.config.AppConfig;
 import com.matcha.client.form.RegisterForm;
 import com.matcha.client.form.UserForm;
 import org.apache.http.HttpEntity;
@@ -23,8 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,13 +32,35 @@ import java.util.Set;
 @Component
 public class UserService {
 
-    private static final String serverPort = "8080";
-    private static final String serverAddress = "localhost";
+    //todo попробовать избавиться от шаблонного кода исполнения запроса в конце с помощью средств спринга(а это возможно?)
+    private HttpPost prepareJsonPostRequest(String url, Object form) {
+        HttpPost request = new HttpPost(String.format(
+                "http://%s:%s/%s",
+                AppConfig.getServerAddress(),
+                AppConfig.getServerPort(),
+                url));
+        request.addHeader("content-type", "application/json");
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+        try {
+            json = mapper.writeValueAsString(form);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+            //todo log
+            return null;
+        }
+        StringEntity params = new StringEntity(json, ContentType.APPLICATION_JSON);
+        request.setEntity(params);
+        return request;
+    }
 
-    //todo переписать весь этот класс, ОЧЕНЬ кривой
+    //return User который из SpringSecurity. По хорошему нужно отделить его.
     public User getUserProfileForLogin(String login) throws IOException, JSONException, URISyntaxException {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        URIBuilder builder = new URIBuilder(String.format("http://%s:%s/getUserProfileForLogin", serverAddress, serverPort));
+        URIBuilder builder = new URIBuilder(String.format(
+                "http://%s:%s/getUserProfileForLogin",
+                AppConfig.getServerAddress(),
+                AppConfig.getServerPort()));
         builder.setParameter("login", login);
         HttpGet request = new HttpGet(builder.build());
         HttpResponse response = httpClient.execute(request);
@@ -55,29 +77,31 @@ public class UserService {
         return new User(login, userProfile.getString("password"), grantedAuth);
     }
 
-    public boolean registerNewUserAccount(RegisterForm registerForm) throws IOException {
+    public boolean registerNewUserAccount(RegisterForm registerForm) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         registerForm.setPassword(encoder.encode(registerForm.getPassword()));
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(String.format("http://%s:%s/createUserProfile", serverAddress, serverPort));
-        request.addHeader("content-type", "application/json");
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(registerForm);
-        StringEntity params = new StringEntity(json, ContentType.APPLICATION_JSON);
-        request.setEntity(params);
-        HttpResponse response = httpClient.execute(request);
-        return response.getStatusLine().getStatusCode() == 200;
+        HttpPost request = prepareJsonPostRequest("createUserProfile", registerForm);
+        try {
+            HttpResponse response = httpClient.execute(request);
+            //todo log
+            return response.getStatusLine().getStatusCode() == 200;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
-    public boolean updateUserAccount(UserForm userForm) throws IOException {
+    public boolean updateUserAccount(UserForm userForm) {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(String.format("http://%s:%s/updateUserProfile", serverAddress, serverPort));
-        request.addHeader("content-type", "application/json");
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(userForm);
-        StringEntity params = new StringEntity(json, ContentType.APPLICATION_JSON);
-        request.setEntity(params);
-        HttpResponse response = httpClient.execute(request);
-        return response.getStatusLine().getStatusCode() == 200;
+        HttpPost request = prepareJsonPostRequest("updateUserProfile", userForm);
+        try {
+            HttpResponse response = httpClient.execute(request);
+            return response.getStatusLine().getStatusCode() == 200;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            //todo log
+            return false;
+        }
     }
 }

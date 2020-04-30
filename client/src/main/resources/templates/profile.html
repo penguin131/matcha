@@ -97,7 +97,7 @@
             overflow: hidden;
             width: 468px;
             max-width: 100%;
-            min-height: 480px;
+            min-height: 780px;
         }
 
         @keyframes show {
@@ -168,6 +168,12 @@
         <div><input type="text" name="sexPreferences" placeholder="Sex Preferences" th:field="*{sexPreferences}"/></div>
         <div><input type="text" name="biography" placeholder="Biography" th:field="*{biography}"/></div>
         <div><input type="submit" value="Save" class="button"/></div>
+        <div>For advanced search you need to confirm the email. Click the button for this.</div>
+
+    </form>
+    <form th:action="@{/profile}" th:object="${userForm}" method="post">
+        <div>For advanced search you need to confirm the email. Click the button for this.</div>
+        <div><input type="submit" value="Confirm" class="button"/></div>
     </form>
 </div>
 </body>

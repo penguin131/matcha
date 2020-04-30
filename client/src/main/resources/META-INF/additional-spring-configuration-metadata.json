@@ -1,8 +1,13 @@
 {
   "properties": [
     {
-      "name": "matcha-server.port",
+      "name": "matcha.server.address",
       "type": "java.lang.String",
-      "description": "Порт для подключения к бэку"
-  }
-] }
+      "description": "Description for matcha.server.address."
+    },
+    {
+      "name": "matcha.server.port",
+      "type": "java.lang.String",
+      "description": "Description for matcha.server.port."
+    }
+  ] }
