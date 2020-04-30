@@ -3,6 +3,7 @@ package com.matcha.client.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matcha.client.config.AppConfig;
+import com.matcha.client.dto.UserProfileDto;
 import com.matcha.client.form.RegisterForm;
 import com.matcha.client.form.UserForm;
 import org.apache.http.HttpEntity;
@@ -15,19 +16,12 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class UserService {
@@ -54,8 +48,7 @@ public class UserService {
         return request;
     }
 
-    //return User который из SpringSecurity. По хорошему нужно отделить его.
-    public User getUserProfileForLogin(String login) throws IOException, JSONException, URISyntaxException {
+    public UserProfileDto getUserProfileForLogin(@NotNull String login) throws IOException, URISyntaxException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         URIBuilder builder = new URIBuilder(String.format(
                 "http://%s:%s/getUserProfileForLogin",
@@ -65,19 +58,14 @@ public class UserService {
         HttpGet request = new HttpGet(builder.build());
         HttpResponse response = httpClient.execute(request);
         HttpEntity responseEntity = response.getEntity();
-        if(responseEntity.getContentLength() == 0) {
+        if (responseEntity.getContentLength() == 0) {
             return null;
         }
-        JSONObject userProfile = new JSONObject(EntityUtils.toString(responseEntity));
-        Set<GrantedAuthority> grantedAuth = new HashSet<>();
-        grantedAuth.add(new SimpleGrantedAuthority("USER"));
-        if (StringUtils.isEmpty(login) || userProfile.getString("password") == null) {
-            return null;
-        }
-        return new User(login, userProfile.getString("password"), grantedAuth);
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(EntityUtils.toString(responseEntity), UserProfileDto.class);
     }
 
-    public boolean registerNewUserAccount(RegisterForm registerForm) {
+    public boolean registerNewUserAccount(@NotNull RegisterForm registerForm) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         registerForm.setPassword(encoder.encode(registerForm.getPassword()));
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -92,7 +80,7 @@ public class UserService {
         }
     }
 
-    public boolean updateUserAccount(UserForm userForm) {
+    public boolean updateUserAccount(@NotNull UserForm userForm) {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = prepareJsonPostRequest("updateUserProfile", userForm);
         try {

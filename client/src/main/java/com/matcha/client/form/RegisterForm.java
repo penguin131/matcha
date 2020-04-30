@@ -2,7 +2,6 @@ package com.matcha.client.form;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.matcha.client.validation.LoginExists;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
@@ -70,5 +69,23 @@ public class RegisterForm {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public RegisterForm(String login,
+                        String password,
+                        String email,
+                        String sex,
+                        String firstName,
+                        String lastName) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.sex = sex;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public RegisterForm() {
+
     }
 }

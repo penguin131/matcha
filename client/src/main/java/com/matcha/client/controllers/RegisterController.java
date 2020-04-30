@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
 public class RegisterController {
@@ -21,16 +20,16 @@ public class RegisterController {
     @RequestMapping(method = RequestMethod.GET, value = "/register")
     public String registerGet(Model model) {
         model.addAttribute("registerForm", new RegisterForm());
+
         return "register";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/register")
     public String registerPost(@Valid @ModelAttribute("registerForm") RegisterForm registerForm,
-                               BindingResult result) throws IOException {
-        if (result.hasErrors()) {
+                               BindingResult result) {
+        if (result.hasErrors() || !service.registerNewUserAccount(registerForm)) {
             return "register";
         }
-        service.registerNewUserAccount(registerForm);
         return "login";
     }
 

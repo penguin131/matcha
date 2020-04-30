@@ -162,19 +162,18 @@
     <div class="x-mark" onclick="toMainPage()"></div>
     <form th:action="@{/profile}" th:object="${userForm}" method="post">
         <h1>Fill you profile please!</h1>
-        <div><input type="text" name="firstName" placeholder="First name" th:field="*{firstName}"/></div>
-        <div><input type="text" name="lastName" placeholder="Last name" th:field="*{lastName}"/></div>
-        <div><input type="email" name="email" placeholder="Email" th:field="*{email}"/></div>
         <div><input type="text" name="sexPreferences" placeholder="Sex Preferences" th:field="*{sexPreferences}"/></div>
         <div><input type="text" name="biography" placeholder="Biography" th:field="*{biography}"/></div>
         <div><input type="submit" value="Save" class="button"/></div>
         <div>For advanced search you need to confirm the email. Click the button for this.</div>
-
+        <ul th:if="${#fields.hasErrors()}">
+            <li th:each="err : ${#fields.errors()}" th:text="${err}" style="color: brown; text-align: left">Input is incorrect!</li>
+        </ul>
     </form>
-    <form th:action="@{/profile}" th:object="${userForm}" method="post">
-        <div>For advanced search you need to confirm the email. Click the button for this.</div>
-        <div><input type="submit" value="Confirm" class="button"/></div>
-    </form>
+<!--    <form th:action="@{/profile}" th:object="${userForm}" method="post">-->
+<!--        <div>For advanced search you need to confirm the email. Click the button for this.</div>-->
+<!--        <div><input type="submit" value="Confirm" class="button"/></div>-->
+<!--    </form>-->
 </div>
 </body>
 </html>

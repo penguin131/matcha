@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * в нем может быть больше данных чем в RegisterForm
  */
-public class UserForm extends RegisterForm {
+public class UserForm {
+    private String login;
     private int confirmed;
     @JsonProperty("sex_preferences")
     private int sexPreferences;
@@ -33,5 +34,27 @@ public class UserForm extends RegisterForm {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public UserForm(String login,
+                    int confirmed,
+                    int sexPreferences,
+                    String biography) {
+        this.login = login;
+        this.confirmed = confirmed;
+        this.sexPreferences = sexPreferences;
+        this.biography = biography;
+    }
+
+    public UserForm() {
+
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }
