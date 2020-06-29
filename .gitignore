@@ -2,6 +2,7 @@
 
 # dependencies
 client/client/node_modules
+client/client/build
 /.pnp
 .pnp.js
 
