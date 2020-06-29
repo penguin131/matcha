@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class RestServiceController {
 
-    @Autowired
     private JavaMailSender javaMailSender;
 
     @RequestMapping(value = "/test")
@@ -26,5 +25,10 @@ public class RestServiceController {
         javaMailSender.send(msg);
 
         return "ss";
+    }
+
+    @Autowired
+    public RestServiceController(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
     }
 }

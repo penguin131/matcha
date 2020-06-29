@@ -167,21 +167,19 @@ public class DatabaseService {
     /**
      * Добавляет связь двух пользователей. Так как это просто чатики, подтверждать дружбу не нужно.
      * @param user1, user2 - ID двух пользователей, которые связываются друг с другом.
-     * @param isFriend: 0-в черном списке.
      * @return статус
      */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/createRelation")
     @ResponseBody
     public Boolean createRelation(@RequestParam("user_1") int user1,
-                                  @RequestParam("user_2") int user2,
-                                  @RequestParam("is_friend") int isFriend) {
+                                  @RequestParam("user_2") int user2) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into my_db.t_relations user_1, user_2, is_friend values ?, ?, ?");
             preparedStatement.setInt(1, user1);
             preparedStatement.setInt(2, user2);
-            preparedStatement.setInt(3, isFriend);
+            preparedStatement.setBoolean(3, false);
             preparedStatement.execute();
             return true;
         } catch (Exception ex) {

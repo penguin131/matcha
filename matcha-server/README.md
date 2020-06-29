@@ -23,4 +23,13 @@ Services:<br>
 15) чатик
 16) Уведомления о входящих сообщениях и лайках и если кто-то просмотрел твой аккаунт
 
-todo - сначала чатик с сохранением истории
+todo - сначала чатик с сохранением истории<br>
+API: https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#/<br>
+пароль от базюки HBj41TFQ123<br>
+Database install:<br>
+sudo apt update<br>
+sudo apt install mysql-server<br>
+sudo mysql_secure_installation<br>
+mysql -u root<br>
+For remote connection: https://stackoverflow.com/questions/19101243/error-1130-hy000-host-is-not-allowed-to-connect-to-this-mysql-server<br>
+
