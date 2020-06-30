@@ -32,4 +32,8 @@ sudo apt install mysql-server<br>
 sudo mysql_secure_installation<br>
 mysql -u root<br>
 For remote connection: https://stackoverflow.com/questions/19101243/error-1130-hy000-host-is-not-allowed-to-connect-to-this-mysql-server<br>
+java install:<br>
 
+Короче, приложуха с раздельным фронтом и бэком. Фронт на реакте.
+Я хочу сделать авторизацию и аутентификаю через сервер. 
+Как вообще тогда будут бегать запросы? Чет я общей схемы не могу словить
