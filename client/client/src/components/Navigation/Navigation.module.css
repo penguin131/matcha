@@ -1,0 +1,5 @@
+.navContainer {
+    flex: 0 0 170px;
+    display: flex;
+    justify-content: center;
+}

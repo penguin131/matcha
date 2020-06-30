@@ -1,0 +1,12 @@
+.mainContainer {
+    display: flex;
+   
+    flex: 1 1 0%;
+    justify-content: center;
+}
+
+@media (max-width: 700px) {
+    .mainContainer {
+        flex-direction: column;
+    }
+}
