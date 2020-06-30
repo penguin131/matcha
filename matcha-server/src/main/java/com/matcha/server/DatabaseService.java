@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matcha.dto.UserProfileDto;
 import com.matcha.helper.ReadHelper;
+import com.matcha.helper.UserProfileValidator;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
@@ -72,30 +73,24 @@ public class DatabaseService {
     /**
      * Добавление нового пользовательского профиля
      * @param inputData - JSON представление информации о новом пользовательском профиле
-     * @return status
      */
     @RequestMapping(method = RequestMethod.POST,
                     value = "/createUserProfile",
                     consumes = "application/json")
     @ResponseBody
-    public Boolean createUserProfile(InputStream inputData) {
-        try {
-            String data = ReadHelper.readJSON(inputData);
-            UserProfileDto userProfileDto = mapper.readValue(data, UserProfileDto.class);
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into my_db.t_user_profile (first_name, last_name, login, password, email, sex, confirmed) VALUE (?, ?, ?, ?, ?, ?, 0)");
-            preparedStatement.setString(1, userProfileDto.getFirstName());
-            preparedStatement.setString(2, userProfileDto.getLastName());
-            preparedStatement.setString(3, userProfileDto.getLogin());
-            preparedStatement.setString(4, userProfileDto.getPassword());
-            preparedStatement.setString(5, userProfileDto.getEmail());
-            preparedStatement.setInt(6, userProfileDto.getSex());
-            preparedStatement.execute();
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+    public void createUserProfile(InputStream inputData) throws Exception {
+        String data = ReadHelper.readJSON(inputData);
+        UserProfileDto userProfileDto = mapper.readValue(data, UserProfileDto.class);
+        new UserProfileValidator(connection).validateUserProfile(userProfileDto);
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "insert into my_db.t_user_profile (first_name, last_name, login, password, email, sex, confirmed) VALUE (?, ?, ?, ?, ?, ?, 0)");
+        preparedStatement.setString(1, userProfileDto.getFirstName());
+        preparedStatement.setString(2, userProfileDto.getLastName());
+        preparedStatement.setString(3, userProfileDto.getLogin());
+        preparedStatement.setString(4, userProfileDto.getPassword());
+        preparedStatement.setString(5, userProfileDto.getEmail());
+        preparedStatement.setInt(6, userProfileDto.getSex());
+        preparedStatement.execute();
     }
 
     /**
@@ -138,54 +133,41 @@ public class DatabaseService {
     /**
      * Обновляет пользовательский профиль
      * @param inputData JSON с новыми данными
-     * @return статус
      */
     @RequestMapping(method = RequestMethod.POST,
                     value = "/updateUserProfile",
                     consumes = "application/json")
     @ResponseBody
-    public Boolean updateUserProfile(InputStream inputData) {
-        try {
-            String data = ReadHelper.readJSON(inputData);
-            UserProfileDto userProfileDto = mapper.readValue(data, UserProfileDto.class);
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update my_db.t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=?, email=? where login=?");
-            preparedStatement.setString(1, userProfileDto.getFirstName());
-            preparedStatement.setString(2, userProfileDto.getLastName());
-            preparedStatement.setInt(3, userProfileDto.getSexPreferences());
-            preparedStatement.setString(4, userProfileDto.getBiography());
-            preparedStatement.setString(5, userProfileDto.getEmail());
-            preparedStatement.setString(6, userProfileDto.getLogin());
-            preparedStatement.execute();
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+    public void updateUserProfile(InputStream inputData) throws Exception {
+        String data = ReadHelper.readJSON(inputData);
+        UserProfileDto userProfileDto = mapper.readValue(data, UserProfileDto.class);
+        new UserProfileValidator(connection).validateUserProfile(userProfileDto);
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "update my_db.t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=?, email=? where login=?");
+        preparedStatement.setString(1, userProfileDto.getFirstName());
+        preparedStatement.setString(2, userProfileDto.getLastName());
+        preparedStatement.setInt(3, userProfileDto.getSexPreferences());
+        preparedStatement.setString(4, userProfileDto.getBiography());
+        preparedStatement.setString(5, userProfileDto.getEmail());
+        preparedStatement.setString(6, userProfileDto.getLogin());
+        preparedStatement.execute();
     }
 
     /**
      * Добавляет связь двух пользователей. Так как это просто чатики, подтверждать дружбу не нужно.
      * @param user1, user2 - ID двух пользователей, которые связываются друг с другом.
-     * @return статус
      */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/createRelation")
     @ResponseBody
-    public Boolean createRelation(@RequestParam("user_1") int user1,
-                                  @RequestParam("user_2") int user2) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into my_db.t_relations user_1, user_2, is_friend values ?, ?, ?");
-            preparedStatement.setInt(1, user1);
-            preparedStatement.setInt(2, user2);
-            preparedStatement.setBoolean(3, false);
-            preparedStatement.execute();
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+    public void createRelation(@RequestParam("user_1") int user1,
+                                  @RequestParam("user_2") int user2) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "insert into my_db.t_relations user_1, user_2, is_friend values ?, ?, ?");
+        preparedStatement.setInt(1, user1);
+        preparedStatement.setInt(2, user2);
+        preparedStatement.setBoolean(3, false);
+        preparedStatement.execute();
     }
 
     /**
@@ -196,18 +178,12 @@ public class DatabaseService {
     @RequestMapping(method = RequestMethod.GET,
             value = "/dropRelation")
     @ResponseBody
-    public Boolean dropRelation(@RequestParam("user_1") int user1,
-                                @RequestParam("user_2") int user2) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "delete from my_db.t_relations where user_1=? and user_2=?");
-            preparedStatement.setInt(1, user1);
-            preparedStatement.setInt(2, user2);
-            preparedStatement.execute();
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+    public void dropRelation(@RequestParam("user_1") int user1,
+                                @RequestParam("user_2") int user2) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "delete from my_db.t_relations where user_1=? and user_2=?");
+        preparedStatement.setInt(1, user1);
+        preparedStatement.setInt(2, user2);
+        preparedStatement.execute();
     }
 }

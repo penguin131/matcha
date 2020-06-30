@@ -2,15 +2,23 @@ package com.matcha.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserProfileDto {
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
+public class UserProfileDto {
+    @NotNull
     private int sex;
     @JsonProperty("sex_preferences")
     private int sexPreferences;
     private String biography;
+    @NotNull
     private String password;
+    @NotNull
     private String login;
+    @Email
     private String email;
+    @Null
     private int confirmed;
     @JsonProperty("first_name")
     private String firstName;
