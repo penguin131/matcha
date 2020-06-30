@@ -1,11 +1,16 @@
 package com.services;
 
-import static spark.Spark.*;
+import spark.servlet.SparkApplication;
 
-public class DatabaseService {
+import static spark.Spark.get;
 
+public class DatabaseService implements SparkApplication {
     public static void main(String[] args) {
-        port(8888);
+        new DatabaseService().init();
+    }
+
+    @Override
+    public void init() {
         get("/hello", (req, res) -> "Hello World");
     }
 }
