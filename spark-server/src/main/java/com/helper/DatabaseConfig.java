@@ -5,7 +5,7 @@ import java.util.Properties;
 public class DatabaseConfig {
     public static DatabaseProperties getDatabaseProperties() throws ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://84.38.183.163:5432/postgres";
+        String url = "jdbc:postgresql://84.38.183.163:5432/postgres?sslmode=disable";
         Properties props = new Properties();
         props.setProperty("user","sammy");
         props.setProperty("password","123");

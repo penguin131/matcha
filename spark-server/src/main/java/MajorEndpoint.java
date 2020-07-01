@@ -21,7 +21,7 @@ public class MajorEndpoint implements SparkApplication {
 			List<UserProfileDto> userProfileList = new ArrayList<>();
 			Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
 			PreparedStatement preparedStatement = connection.prepareStatement(
-					"select * from my_db.t_user_profile");
+					"select * from \"spark-db\".t_user_profile");
 			ResultSet rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				UserProfileDto userProfile = new UserProfileDto(
@@ -33,13 +33,13 @@ public class MajorEndpoint implements SparkApplication {
 						rs.getInt("sex_preferences"),
 						rs.getString("biography"),
 						rs.getString("email"),
-						rs.getInt("confirmed"));
+						rs.getBoolean("confirmed"));
 				userProfileList.add(userProfile);
-				ObjectMapper mapper = new ObjectMapper();
-				String reslt = mapper.writeValueAsString(userProfileList);
-
-				get("/hello", (req, res) -> reslt);
 			}
+			ObjectMapper mapper = new ObjectMapper();
+			String reslt = mapper.writeValueAsString(userProfileList);
+
+			get("/hello", (req, res) -> reslt);
 
 		} catch (Exception e) {
 			get("/hello", (req, res) -> e.getMessage());

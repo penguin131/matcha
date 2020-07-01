@@ -3,18 +3,18 @@ package com.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserProfileDto {
-    private int sex;
-    @JsonProperty("sex_preferences")
-    private int sexPreferences;
-    private String biography;
-    private String password;
     private String login;
+    private String password;
     private String email;
-    private int confirmed;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")
     private String lastName;
+    private Boolean confirmed;
+    private String biography;
+    private int sex;
+    @JsonProperty("sex_preferences")
+    private int sexPreferences;
 
     public int getSex() {
         return sex;
@@ -64,11 +64,11 @@ public class UserProfileDto {
         this.email = email;
     }
 
-    public int getConfirmed() {
+    public Boolean getConfirmed() {
         return confirmed;
     }
 
-    public void setConfirmed(int confirmed) {
+    public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
 
@@ -96,7 +96,7 @@ public class UserProfileDto {
                           int sexPreferences,
                           String biography,
                           String email,
-                          int confirmed) {
+                          Boolean confirmed) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
