@@ -1,18 +1,19 @@
 import React from 'react';
-import css from './App.module.css';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
-import Header from './components/Header/Header'
 import Main from './components/Main/Main'
-import Footer from './components/Footer/Footer'
+import LoginPage from './components/LoginPage/LoginPage'
+import { Route, BrowserRouter, Switch} from 'react-router-dom'
 
 function App() {
   return (
     <ErrorBoundary>
-      <div className={css.appContainer}>
-        <Header/>
-        <Main/>
-        <Footer/>
-      </div>
+      <BrowserRouter>
+      <Switch>
+      <Route path='/login' component={LoginPage}/>
+        <Route path='/' component={Main}/>
+      </Switch>
+        
+      </BrowserRouter>
     </ErrorBoundary>
   )
 }
