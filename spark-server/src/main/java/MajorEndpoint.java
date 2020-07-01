@@ -42,7 +42,8 @@ public class MajorEndpoint implements SparkApplication {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			get("/hello", (req, res) -> e.getMessage());
 		}
+
 	}
 }
