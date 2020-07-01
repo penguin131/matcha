@@ -1,11 +1,17 @@
 Service for working with the base
+API: https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#
 
-Seploy guide:
+Deploy guide:
+1. Clone this repository to your local machine
+2. Run mvn package
+3. Copy the generated `spark-server.war` to the Tomcat `webapps` folder and run `startup.sh`:
+    3.1 sudo systemctl stop tomcat
+    3.2 cp ~/matcha/spark-server/target/sparkjava-hello-world-1.0.war /opt/tomcat/webapps/spark-server.war
+    3.3 sudo sh /opt/tomcat/bin/startup.sh
+    3.4 sudo systemctl start tomcat
 
+Postgres Database:
+User sammy, password 123
+Enter to psql command line: sudo -u sammy psql
+Remote connection: psql -h 84.38.183.163 -d sammy -U sammy
 
-
-2. Clone this repository to your local machine
-3. Run mvn package
-4. Copy the generated `sparkjava-hello-world-1.0.war` to the Tomcat `webapps` folder
-5. Start Tomcat by running `bin\startup.bat` (or `bin\startaup.sh` for Linux)
-5. Tomcat will automatically deploy the war
