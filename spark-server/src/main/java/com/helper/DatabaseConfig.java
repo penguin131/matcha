@@ -3,7 +3,8 @@ package com.helper;
 import java.util.Properties;
 
 public class DatabaseConfig {
-    public static DatabaseProperties getDatabaseProperties() {
+    public static DatabaseProperties getDatabaseProperties() throws ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
         String url = "jdbc:postgresql://84.38.183.163:5432/postgres";
         Properties props = new Properties();
         props.setProperty("user","sammy");

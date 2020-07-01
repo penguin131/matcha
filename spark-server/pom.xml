@@ -9,7 +9,16 @@
 	<version>1.0</version>
 	<packaging>war</packaging>
 
+	<properties>
+		<tomee.version>1.7.1</tomee.version>
+	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.14</version>
+		</dependency>
 		<dependency>
 			<groupId>com.sparkjava</groupId>
 			<artifactId>spark-core</artifactId>
@@ -65,6 +74,24 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.openejb.maven</groupId>
+				<artifactId>tomee-maven-plugin</artifactId>
+				<version>${tomee.version}</version>
+				<configuration>
+					<context>tomeeapp</context>
+					<tomeeVersion>${tomee.version}</tomeeVersion>
+					<tomeeClassifier>plus</tomeeClassifier>
+					<args>-Xmx512m -XX:PermSize=256m</args>
+					<libs>
+						<lib>remove:javaee-api</lib>
+						<lib>unzip:org.apache.openejb:javaee-api:6.0-5:zip</lib>
+						<lib>remove:geronimo-jcdi_1.0_spec-1.0</lib>
+						<lib>javax.enterprise:cdi-api:1.1</lib>
+					</libs>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

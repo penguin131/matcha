@@ -16,8 +16,8 @@ public class MajorEndpoint implements SparkApplication {
 
 	@Override
 	public void init() {
-		DatabaseConfig.DatabaseProperties props = DatabaseConfig.getDatabaseProperties();
 		try {
+			DatabaseConfig.DatabaseProperties props = DatabaseConfig.getDatabaseProperties();
 			List<UserProfileDto> userProfileList = new ArrayList<>();
 			Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
 			PreparedStatement preparedStatement = connection.prepareStatement(
