@@ -37,3 +37,7 @@ java install:<br>
 Короче, приложуха с раздельным фронтом и бэком. Фронт на реакте.
 Я хочу сделать авторизацию и аутентификаю через сервер. 
 Как вообще тогда будут бегать запросы? Чет я общей схемы не могу словить
+/var/www/spark-server
+JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
+cp ~/matcha/spark-server/target/spark-server-1.0-SNAPSHOT.war /opt/tomcat/webapps/spark-server-1.0-SNAPSHOT.war
+sudo sh /opt/tomcat/bin/startup.sh
