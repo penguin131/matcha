@@ -10,8 +10,7 @@ Deploy guide:
     3.3 sudo sh /opt/tomcat/bin/startup.sh
     3.4 sudo systemctl start tomcat
 
-Postgres Database:
-User sammy, password 123
-Enter to psql command line: sudo -u sammy psql
-Remote connection: psql -h 84.38.183.163 -d sammy -U sammy
-
+Postgres Database:<br>
+User sammy, password 123<br>
+Enter to psql command line: sudo -u sammy psql<br>
+Remote connection: psql -h 84.38.183.163 -d sammy -U sammy<br>
