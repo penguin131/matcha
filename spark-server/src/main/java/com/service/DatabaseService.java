@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseService {
-    private static DatabaseConfig.DatabaseProperties props;
+    private static DatabaseConfig.DatabaseProperties props = null;
 
     static {
         try {

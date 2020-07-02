@@ -21,7 +21,7 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getAllUsers());
 			} catch (Exception ex) {
-				return ex.getMessage();
+				return ex.getMessage() == null ? "Error" : ex.getMessage();
 			}
 		});
 
