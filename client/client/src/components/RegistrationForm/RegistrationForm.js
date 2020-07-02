@@ -1,12 +1,8 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
-import css from './RegistrationForm.module.css'
-
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+import css from './RegistrationForm.module.less'
 
 const onSubmit = async values => {
-  await sleep(300)
   window.alert(JSON.stringify(values, 0, 2))
 }
 
@@ -15,41 +11,52 @@ const RegistrationForm = () => {
     <div className={css.registrationFormContainer}>
       <Form
         onSubmit={onSubmit}
-        initialValues={{ stooge: 'larry', employed: false }}
+        validate={values => {
+          const errors = {}
+          if (!values.username) {
+            errors.username = 'Required'
+          }
+          if (!values.password) {
+            errors.password = 'Required'
+          }
+          if (!values.confirm) {
+            errors.confirm = 'Required'
+          } else if (values.confirm !== values.password) {
+            errors.confirm = 'Must match'
+          }
+          return errors
+        }}
         render={({ handleSubmit, form, submitting, pristine, values }) => (
-          <form onSubmit={handleSubmit}>
-          <div>
-              <label>First Name</label>
-              <Field
-              name="firstName"
-              component="input"
-              type="text"
-              placeholder="First Name"
-              />
-          </div>
-          <div>
-              <label>Last Name</label>
-              <Field
-              name="lastName"
-              component="input"
-              type="text"
-              placeholder="Last Name"
-              />
-          </div>
-          <div>
-              <label>Email</label>
-              <Field
-              name="email"
-              component="input"
-              type="text"
-              placeholder="Email"
-              />
-          </div>
-          <div className="buttons">
+          <form onSubmit={handleSubmit} className={css.finalForm}>
+            <Field name="username">
+              {({ input, meta }) => (
+                <div className={css.fieldString}>
+                  <input {...input} type="text" placeholder="Username" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </div>
+              )}
+            </Field>
+            <Field name="password">
+              {({ input, meta }) => (
+                <div className={css.fieldString}>
+                  <input {...input} type="password" placeholder="Password" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </div>
+              )}
+            </Field>
+            <Field name="confirm">
+              {({ input, meta }) => (
+                <div className={css.fieldString}>
+                  <input {...input} type="password" placeholder="Confirm" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </div>
+              )}
+            </Field>
+            <div className="buttons">
               <button type="submit" disabled={submitting || pristine}>
               Submit
               </button>
-          </div>
+            </div>
           </form>
         )}
       />
