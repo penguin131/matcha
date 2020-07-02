@@ -6,7 +6,7 @@ Deploy guide:
 2. Run mvn package
 3. Copy the generated `spark-server.war` to the Tomcat `webapps` folder and run `startup.sh`:
     3.1 sudo systemctl stop tomcat
-    3.2 cp ~/matcha/spark-server/target/sparkjava-hello-world-1.0.war /opt/tomcat/webapps/spark-server.war
+    3.2 cp ~/matcha/spark-server/target/spark-server-1.0.war /opt/tomcat/webapps/spark-server-1.0.war
     3.3 sudo sh /opt/tomcat/bin/startup.sh
     3.4 sudo systemctl start tomcat
 

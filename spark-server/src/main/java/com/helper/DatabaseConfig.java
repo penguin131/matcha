@@ -7,7 +7,7 @@ import java.util.Properties;
 public class DatabaseConfig {
     public static DatabaseProperties getDatabaseProperties() throws Exception {
         try {
-            InputStream input = new FileInputStream("../sparkjava-hello-world-1.0/WEB-INF/classes/application.properties");
+            InputStream input = new FileInputStream("../spark-server-1.0/WEB-INF/classes/application.properties");
             Properties props = new Properties();
             props.load(input);
             Class.forName(props.getProperty("driver"));
