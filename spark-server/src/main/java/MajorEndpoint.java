@@ -1,13 +1,11 @@
+import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.DatabaseConfig;
+import com.service.DatabaseService;
 import spark.servlet.SparkApplication;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class MajorEndpoint implements SparkApplication {
 	public static void main(String[] args) {
@@ -16,34 +14,43 @@ public class MajorEndpoint implements SparkApplication {
 
 	@Override
 	public void init() {
-		try {
-			DatabaseConfig.DatabaseProperties props = DatabaseConfig.getDatabaseProperties();
-			List<UserProfileDto> userProfileList = new ArrayList<>();
-			Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
-			PreparedStatement preparedStatement = connection.prepareStatement(
-					"select * from \"spark-db\".t_user_profile");
-			ResultSet rs = preparedStatement.executeQuery();
-			while (rs.next()) {
-				UserProfileDto userProfile = new UserProfileDto(
-						rs.getString("first_name"),
-						rs.getString("last_name"),
-						rs.getString("login"),
-						rs.getString("password"),
-						rs.getInt("sex"),
-						rs.getInt("sex_preferences"),
-						rs.getString("biography"),
-						rs.getString("email"),
-						rs.getBoolean("confirmed"));
-				userProfileList.add(userProfile);
+		ObjectMapper mapper = new ObjectMapper();
+		get("/hello", (req, res) -> "Hello world!");
+
+		get("/getAllUsers", (req, res) -> {
+			try {
+				return mapper.writeValueAsString(DatabaseService.getAllUsers());
+			} catch (Exception ex) {
+				return ex.getMessage();
 			}
-			ObjectMapper mapper = new ObjectMapper();
-			String reslt = mapper.writeValueAsString(userProfileList);
+		});
 
-			get("/hello", (req, res) -> reslt);
+		post("/createUserProfile", (req, res) -> {
+			try {
+				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
+				DatabaseService.createUserProfile(user);
+			} catch (Exception ex) {
+				return ex.getMessage();
+			}
+			return "";
+		});
 
-		} catch (Exception e) {
-			get("/hello", (req, res) -> e.getMessage());
-		}
+		get("/getUserProfileForLogin/:login", (req, res) -> {
+			try {
+				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
+			} catch (Exception ex) {
+				return ex.getMessage();
+			}
+		});
 
+		post("/updateUserProfile", (req, res) -> {
+			try {
+				UserProfileDto user = mapper.readValue(req.body(), UserProfileDto.class);
+				DatabaseService.updateUserProfile(user);
+			} catch (Exception ex) {
+				return ex.getMessage();
+			}
+			return "";
+		});
 	}
 }

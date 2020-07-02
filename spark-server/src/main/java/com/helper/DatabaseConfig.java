@@ -1,16 +1,21 @@
 package com.helper;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class DatabaseConfig {
-    public static DatabaseProperties getDatabaseProperties() throws ClassNotFoundException {
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://84.38.183.163:5432/postgres?sslmode=disable";
-        Properties props = new Properties();
-        props.setProperty("user","sammy");
-        props.setProperty("password","123");
-        props.setProperty("ssl","true");
-        return new DatabaseProperties(props, url);
+    public static DatabaseProperties getDatabaseProperties() throws Exception {
+        try {
+            InputStream input = new FileInputStream("../classes/application.properties");
+            Properties props = new Properties();
+            props.load(input);
+            Class.forName(props.getProperty("driver"));
+            String url = props.getProperty("url");
+            return new DatabaseProperties(props, url);
+        } catch (Exception ex) {
+            throw new Exception("Error receiving database connection info.");
+        }
     }
 
     public static class DatabaseProperties {
