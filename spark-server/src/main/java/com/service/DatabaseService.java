@@ -52,6 +52,10 @@ public class DatabaseService {
      * Добавление нового пользовательского профиля
      */
     public static void createUserProfile(BaseUserProfileDto userProfileDto) throws Exception {
+        if (getUserProfileForLogin(userProfileDto.getLogin()) != null)
+            throw new Exception("Login already exists!");
+        if (checkEmailExist(userProfileDto.getEmail()))
+            throw new Exception("Email is already in use");
         Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed) " +
@@ -59,8 +63,17 @@ public class DatabaseService {
         preparedStatement.setString(1, userProfileDto.getLogin());
         preparedStatement.setString(2, userProfileDto.getPassword());
         preparedStatement.setString(3, userProfileDto.getEmail());
-        preparedStatement.setInt(3, userProfileDto.getSex());
+        preparedStatement.setInt(4, userProfileDto.getSex());
         preparedStatement.execute();
+    }
+
+    private static boolean checkEmailExist(String email) throws Exception {
+        Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select * from \"spark-db\".t_user_profile where email=?");
+        preparedStatement.setString(1, email);
+        ResultSet rs = preparedStatement.executeQuery();
+        return rs.next();
     }
 
     /**

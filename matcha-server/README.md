@@ -41,3 +41,6 @@ java install:<br>
 JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/bin/java"
 cp ~/matcha/spark-server/target/spark-server-1.0-SNAPSHOT.war /opt/tomcat/webapps/spark-server-1.0-SNAPSHOT.war
 sudo sh /opt/tomcat/bin/startup.sh
+
+{"login" : "user1", "password" : "$2y$12$C3dOkX2XQegqXQ.hoBiDSu6/cRoRGs4kV9QLV.BmxZD.OQUMZiVGq", "email":"kkk2k","sex" : 1 }
+
