@@ -1,16 +1,14 @@
 import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.Password;
 import com.helper.ValidateHelper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
 import spark.servlet.SparkApplication;
 
-import java.security.SecureRandom;
-
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.before;
 
 public class MajorEndpoint implements SparkApplication {
 
@@ -74,7 +72,9 @@ public class MajorEndpoint implements SparkApplication {
 				return null;
 			}
 		});
-		post("/validateToken", (req, res) -> "Hello world!");
+		before((request, response) -> {
+			//todo decode jwt and check his time, recreate the token if necessary
+		});
 	}
 
 	private static String processException(Exception ex) {
