@@ -8,10 +8,7 @@ import java.util.Properties;
 public class DatabaseConfig {
     public static DatabaseProperties getDatabaseProperties() throws Exception {
         try {
-            File conf = new File("spark-server-1.0/WEB-INF/classes/application.properties");
-            if (!conf.exists()) {
-                conf = new File("../spark-server-1.0/WEB-INF/classes/application.properties");
-            }
+            File conf = Config.getConfig();
             InputStream input = new FileInputStream(conf);
             Properties props = new Properties();
             props.load(input);

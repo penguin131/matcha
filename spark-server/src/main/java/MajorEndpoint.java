@@ -1,14 +1,19 @@
 import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helper.Password;
 import com.helper.ValidateHelper;
+import com.security.JWTHelper;
 import com.service.DatabaseService;
 import spark.servlet.SparkApplication;
+
+import java.security.SecureRandom;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class MajorEndpoint implements SparkApplication {
+
 	public static void main(String[] args) {
 		new MajorEndpoint().init();
 	}
@@ -55,6 +60,21 @@ public class MajorEndpoint implements SparkApplication {
 			}
 			return "";
 		});
+
+		/**
+		 * Security
+		 */
+		post("/getToken", (req, res) -> {
+			String login = req.queryParams("login");
+			String password = req.queryParams("password");
+			if (DatabaseService.checkPassword(login, password)) {
+				return JWTHelper.createJWT("1", login, "1234567890", 1000);
+			} else {
+				res.status(403);
+				return null;
+			}
+		});
+		post("/validateToken", (req, res) -> "Hello world!");
 	}
 
 	private static String processException(Exception ex) {

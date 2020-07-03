@@ -3,11 +3,9 @@ package com.service;
 import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.helper.DatabaseConfig;
+import com.helper.Password;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +55,7 @@ public class DatabaseService {
         if (checkEmailExist(userProfileDto.getEmail()))
             throw new Exception("Email is already in use");
         Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed) " +
                         "VALUES (?, ?, ?, ?, false)");
@@ -111,13 +110,20 @@ public class DatabaseService {
     public static void updateUserProfile(UserProfileDto userProfileDto) throws Exception {
         Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=?, email=? where login=?");
+                "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
         preparedStatement.setString(1, userProfileDto.getFirstName());
         preparedStatement.setString(2, userProfileDto.getLastName());
         preparedStatement.setInt(3, userProfileDto.getSexPreferences());
         preparedStatement.setString(4, userProfileDto.getBiography());
-        preparedStatement.setString(5, userProfileDto.getEmail());
-        preparedStatement.setString(6, userProfileDto.getLogin());
+        preparedStatement.setString(5, userProfileDto.getLogin());
         preparedStatement.execute();
+    }
+
+    /**
+     * Проверка совпадения пароля и логина
+     */
+    public static boolean checkPassword(String login, String password) throws Exception {
+        UserProfileDto user = getUserProfileForLogin(login);
+        return user != null && Password.check(password, user.getPassword());
     }
 }
