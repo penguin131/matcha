@@ -5,6 +5,7 @@ import com.helper.ValidateHelper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
+import spark.Response;
 import spark.servlet.SparkApplication;
 
 import static spark.Spark.*;
@@ -25,6 +26,7 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getAllUsers());
 			} catch (Exception ex) {
+				res.status(500);
 				return processException(ex);
 			}
 		});
@@ -35,11 +37,9 @@ public class MajorEndpoint implements SparkApplication {
 				ValidateHelper.validateBaseUserProfile(user);
 				DatabaseService.createUserProfile(user);
 			} catch (Exception ex) {
+				res.status(500);
 				return processException(ex);
 			}
-			res.header("Access-Control-Allow-Origin","*");
-			res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
-			res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 			return "";
 		});
 
@@ -47,6 +47,7 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
 			} catch (Exception ex) {
+				res.status(500);
 				return processException(ex);
 			}
 		});
@@ -57,6 +58,7 @@ public class MajorEndpoint implements SparkApplication {
 				ValidateHelper.validateBaseUserProfile(user);
 				DatabaseService.updateUserProfile(user);
 			} catch (Exception ex) {
+				res.status(500);
 				return processException(ex);
 			}
 			return "";
@@ -82,6 +84,7 @@ public class MajorEndpoint implements SparkApplication {
 
 		before("/protected/*", (request, response) -> {
 			try {
+				addHeaders(response);
 				String JWTToken = request.headers("Authorization");
 				Claims claims = JWTHelper.decodeJWT(JWTToken);
 				long currentTime = System.currentTimeMillis();
@@ -92,6 +95,12 @@ public class MajorEndpoint implements SparkApplication {
 				halt(403, "403 Forbidden");
 			}
 		});
+	}
+
+	private static void	addHeaders(Response res) {
+		res.header("Access-Control-Allow-Origin","*");
+		res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
+		res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	}
 
 	private static String processException(Exception ex) {
