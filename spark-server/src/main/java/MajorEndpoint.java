@@ -83,6 +83,7 @@ public class MajorEndpoint implements SparkApplication {
 	}
 
 	private static String processException(Exception ex) {
-		return ex.getMessage() == null ? "Error" : ex.getMessage();
+//		return ex.getMessage() == null ? "Error" : ex.getMessage();
+		return ex.getMessage() == null ? "Error. Current directory: " + System.getProperty("user.dir") : ex.getMessage();
 	}
 }
