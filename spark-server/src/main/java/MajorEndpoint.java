@@ -11,7 +11,7 @@ import static spark.Spark.*;
 
 public class MajorEndpoint implements SparkApplication {
 
-	private static long TTL = 1;
+	private static long TTL = 10000000;
 	public static void main(String[] args) {
 		new MajorEndpoint().init();
 	}
@@ -19,9 +19,9 @@ public class MajorEndpoint implements SparkApplication {
 	@Override
 	public void init() {
 		ObjectMapper mapper = new ObjectMapper();
-		get("/hello", (req, res) -> "Hello world!");
+		get("/protected/hello", (req, res) -> "Hello world!");
 
-		get("/getAllUsers", (req, res) -> {
+		get("/protected/getAllUsers", (req, res) -> {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getAllUsers());
 			} catch (Exception ex) {
@@ -29,7 +29,7 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-		post("/createUserProfile", (req, res) -> {
+		post("/protected/createUserProfile", (req, res) -> {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
@@ -40,7 +40,7 @@ public class MajorEndpoint implements SparkApplication {
 			return "";
 		});
 
-		get("/getUserProfileForLogin/:login", (req, res) -> {
+		get("/protected/getUserProfileForLogin/:login", (req, res) -> {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
 			} catch (Exception ex) {
@@ -48,7 +48,7 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-		post("/updateUserProfile", (req, res) -> {
+		post("/protected/updateUserProfile", (req, res) -> {
 			try {
 				UserProfileDto user = mapper.readValue(req.body(), UserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
@@ -77,11 +77,15 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-		before((request, response) -> {
-			String JWTToken = request.headers("Authorization");
-			Claims claims = JWTHelper.decodeJWT(JWTToken);
-			long currentTime = System.currentTimeMillis();
-			if (currentTime > claims.getExpiration().getTime()) {
+		before("/protected/*", (request, response) -> {
+			try {
+				String JWTToken = request.headers("Authorization");
+				Claims claims = JWTHelper.decodeJWT(JWTToken);
+				long currentTime = System.currentTimeMillis();
+				if (currentTime > claims.getExpiration().getTime()) {
+					halt(403, "403 Forbidden");
+				}
+			} catch (Exception ex) {
 				halt(403, "403 Forbidden");
 			}
 		});
