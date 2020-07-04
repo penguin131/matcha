@@ -33,6 +33,15 @@ public class JWTHelper {
         }
     }
 
+    /**
+     *
+     * @param id - user
+     * Optional parameters:
+     * @param issuer - application name
+     * @param subject - application subject
+     * @param ttlMillis time to live
+     * @return token hash
+     */
     public static String createJWT(String id, String issuer, String subject, long ttlMillis) {
 
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;

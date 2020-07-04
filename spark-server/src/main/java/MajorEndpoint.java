@@ -4,14 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.ValidateHelper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
+import io.jsonwebtoken.Claims;
 import spark.servlet.SparkApplication;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.before;
+import static spark.Spark.*;
 
 public class MajorEndpoint implements SparkApplication {
 
+	private static long TTL = 1;
 	public static void main(String[] args) {
 		new MajorEndpoint().init();
 	}
@@ -67,7 +67,7 @@ public class MajorEndpoint implements SparkApplication {
 			String password = req.queryParams("password");
 			try {
 				if (DatabaseService.checkPassword(login, password)) {
-					return JWTHelper.createJWT("1", login, "1234567890", 1000);
+					return JWTHelper.createJWT(login, "securityService", "security", TTL);
 				} else {
 					res.status(403);
 					return "403 Forbidden";
@@ -77,9 +77,14 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-//		before((request, response) -> {
-//			//todo decode jwt and check his time, recreate the token if necessary
-//		});
+		before((request, response) -> {
+			String JWTToken = request.headers("Authorization");
+			Claims claims = JWTHelper.decodeJWT(JWTToken);
+			long currentTime = System.currentTimeMillis();
+			if (currentTime > claims.getExpiration().getTime()) {
+				halt(403, "403 Forbidden");
+			}
+		});
 	}
 
 	private static String processException(Exception ex) {
