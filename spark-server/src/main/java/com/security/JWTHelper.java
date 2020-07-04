@@ -17,7 +17,6 @@ import io.jsonwebtoken.Claims;
  * Работа с JWT
  * Структура:
  * Заголовок, полезная нагрузка, подпись
- *
  */
 public class JWTHelper {
 
@@ -59,9 +58,8 @@ public class JWTHelper {
     }
 
     public static Claims decodeJWT(String jwt) {
-        Claims claims = Jwts.parser()
+        return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(jwt).getBody();
-        return claims;
     }
 }

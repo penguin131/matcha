@@ -65,16 +65,21 @@ public class MajorEndpoint implements SparkApplication {
 		post("/getToken", (req, res) -> {
 			String login = req.queryParams("login");
 			String password = req.queryParams("password");
-			if (DatabaseService.checkPassword(login, password)) {
-				return JWTHelper.createJWT("1", login, "1234567890", 1000);
-			} else {
-				res.status(403);
-				return null;
+			try {
+				if (DatabaseService.checkPassword(login, password)) {
+					return JWTHelper.createJWT("1", login, "1234567890", 1000);
+				} else {
+					res.status(403);
+					return "403 Forbidden";
+				}
+			} catch (Exception ex) {
+				return processException(ex);
 			}
 		});
-		before((request, response) -> {
-			//todo decode jwt and check his time, recreate the token if necessary
-		});
+
+//		before((request, response) -> {
+//			//todo decode jwt and check his time, recreate the token if necessary
+//		});
 	}
 
 	private static String processException(Exception ex) {

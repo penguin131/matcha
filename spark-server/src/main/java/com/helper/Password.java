@@ -1,10 +1,11 @@
 package com.helper;
 
+import org.apache.commons.codec.binary.Base64;
+
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
-import org.apache.commons.codec.binary.Base64;
 
 public class Password {
     private static final int iterations = 20*1000;
@@ -16,6 +17,7 @@ public class Password {
         return Base64.encodeBase64String(salt) + "$" + hash(password, salt);
     }
 
+    //password в изначальном виде, stored хешированный
     public static boolean check(String password, String stored) throws Exception{
         String[] saltAndHash = stored.split("\\$");
         if (saltAndHash.length != 2) {

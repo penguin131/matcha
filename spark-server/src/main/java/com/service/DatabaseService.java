@@ -24,7 +24,7 @@ public class DatabaseService {
      * Вернет массив всех профилей. Временная шняга
      * @return List<UserProfileDto>
      */
-    public static List<UserProfileDto> getAllUsers() throws Exception{
+    public static List<UserProfileDto> getAllUsers() throws Exception {
         List<UserProfileDto> userProfileList = new ArrayList<>();
         Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
         PreparedStatement preparedStatement = connection.prepareStatement(
@@ -124,6 +124,8 @@ public class DatabaseService {
      */
     public static boolean checkPassword(String login, String password) throws Exception {
         UserProfileDto user = getUserProfileForLogin(login);
-        return user != null && Password.check(password, user.getPassword());
+        if (user == null)
+            throw new Exception("Invalid login");
+        return Password.check(password, user.getPassword());
     }
 }
