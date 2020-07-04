@@ -26,7 +26,6 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getAllUsers());
 			} catch (Exception ex) {
-				res.status(500);
 				return processException(ex);
 			}
 		});
@@ -37,7 +36,6 @@ public class MajorEndpoint implements SparkApplication {
 				ValidateHelper.validateBaseUserProfile(user);
 				DatabaseService.createUserProfile(user);
 			} catch (Exception ex) {
-				res.status(500);
 				return processException(ex);
 			}
 			return "";
@@ -47,7 +45,6 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
 			} catch (Exception ex) {
-				res.status(500);
 				return processException(ex);
 			}
 		});
@@ -58,7 +55,6 @@ public class MajorEndpoint implements SparkApplication {
 				ValidateHelper.validateBaseUserProfile(user);
 				DatabaseService.updateUserProfile(user);
 			} catch (Exception ex) {
-				res.status(500);
 				return processException(ex);
 			}
 			return "";
