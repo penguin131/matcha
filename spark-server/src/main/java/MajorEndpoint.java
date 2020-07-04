@@ -11,7 +11,7 @@ import static spark.Spark.*;
 
 public class MajorEndpoint implements SparkApplication {
 
-	private static long TTL = 10000000;
+	private static long TTL = 1000000000;
 	public static void main(String[] args) {
 		new MajorEndpoint().init();
 	}
@@ -29,7 +29,7 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-		post("/protected/createUserProfile", (req, res) -> {
+		post("/createUserProfile", (req, res) -> {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
@@ -37,6 +37,9 @@ public class MajorEndpoint implements SparkApplication {
 			} catch (Exception ex) {
 				return processException(ex);
 			}
+			res.header("Access-Control-Allow-Origin","*");
+			res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
+			res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 			return "";
 		});
 
