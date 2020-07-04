@@ -1,8 +1,7 @@
 import React from 'react';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 import Main from './components/Main/Main'
-import JoinPage from './components/JoinPage/JoinPage'
-import LoginPage from './components/LoginPage/LoginPage'
+import AuthPage from './pages/AuthPage/AuthPage'
 import { Route, BrowserRouter, Switch} from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import './App.css'
@@ -14,8 +13,8 @@ const App = () => {
     <ErrorBoundary>
       <BrowserRouter>
       <Switch>
-        <Route path='/join' component={JoinPage}/>
-        <Route path='/login' component={LoginPage}/>
+        <Route path='/join' component={AuthPage}/>
+        <Route path='/login' component={AuthPage}/>
         <ProtectedRoute path='/' component={Main} />
       </Switch>
       </BrowserRouter>

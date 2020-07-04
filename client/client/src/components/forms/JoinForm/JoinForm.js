@@ -1,20 +1,23 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
-import css from './RegistrationForm.module.less'
+import css from '../authForms.module.less'
 
 const onSubmit = async values => {
   window.alert(JSON.stringify(values, 0, 2))
 }
 
-const RegistrationForm = () => {
+const JoinForm = () => {
   return (
-    <div className={css.registrationFormContainer}>
+    <div className={css.authFormContainer}>
       <Form
         onSubmit={onSubmit}
         validate={values => {
           const errors = {}
           if (!values.username) {
             errors.username = 'Required'
+          }
+          if (!values.email) {
+            errors.email = 'Required'
           }
           if (!values.password) {
             errors.password = 'Required'
@@ -36,6 +39,14 @@ const RegistrationForm = () => {
                 </div>
               )}
             </Field>
+            <Field name="email">
+              {({ input, meta }) => (
+                <div className={css.fieldString}>
+                  <input {...input} type="email" placeholder="Email" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </div>
+              )}
+            </Field>
             <Field name="password">
               {({ input, meta }) => (
                 <div className={css.fieldString}>
@@ -52,9 +63,9 @@ const RegistrationForm = () => {
                 </div>
               )}
             </Field>
-            <div className="buttons">
-              <button type="submit" disabled={submitting || pristine}>
-              Submit
+            <div className={css.buttons}>
+              <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
+                Join us
               </button>
             </div>
           </form>
@@ -64,4 +75,4 @@ const RegistrationForm = () => {
   )
 }
 
-export default RegistrationForm
+export default JoinForm
