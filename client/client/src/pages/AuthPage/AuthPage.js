@@ -17,6 +17,7 @@ const JoinButton = () => {
 }
 
 const AuthPage = () => {
+    console.log('lel')
     return (
         <>
             <Switch>

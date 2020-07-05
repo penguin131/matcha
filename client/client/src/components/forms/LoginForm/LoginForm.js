@@ -1,35 +1,43 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import { Form, Field } from 'react-final-form'
 import axios from "axios";
 import css from '../authForms.module.less'
+import Loader from '../../Loader/Loader'
+import { useHistory } from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext'
 
 const url = 'https://cors-anywhere.herokuapp.com/http://84.38.183.163:8080/spark-server-1.0/'
 
-const onSubmit = async (values) => {
+const onSubmit = async (values, setIsLoading, history, setIsAuth) => {
   const data = {
     "login": values.username,
     "password": values.password,
   }
-  console.log(data)
+
+
   try {
-
-    const response = await axios
-    .post(`${url}getToken`,data)
-    .then(res => {
-      console.log(res)
- 
-    })
-
-  }catch(e) {
+    setIsLoading(true)
+    await axios.post(`${url}getToken`,data)
+      .then(res => {
+        console.log(res)
+        setIsLoading(false)
+        setIsAuth(true)
+        history.push('/')
+      })
+  } catch(e) {
     console.log(e)
   }
 }
 
-const JoinForm = () => {
+const LoginForm = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const { setIsAuth } = useContext(AuthContext)
+  let history = useHistory()
+
   return (
     <div className={css.authFormContainer}>
       <Form
-        onSubmit={onSubmit}
+        onSubmit={e => onSubmit(e, setIsLoading, history, setIsAuth)}
         validate={values => {
           const errors = {}
           if (!values.username) {
@@ -59,6 +67,9 @@ const JoinForm = () => {
                 </div>
               )}
             </Field>
+            <div className={css.loaderBlock}>
+                {isLoading && <Loader/>}
+            </div>
             <div className={css.buttons}>
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
                 Log in
@@ -67,8 +78,8 @@ const JoinForm = () => {
           </form>
         )}
       />
-    </div>     
+    </div> 
   )
 }
 
-export default JoinForm
+export default LoginForm

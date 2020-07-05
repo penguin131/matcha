@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
 import Navigation from '../Navigation/Navigation'
@@ -7,10 +7,11 @@ import MainSection from '../MainSection/MainSection'
 import Settings from '../Settings/Settings'
 import { Route, Switch } from 'react-router-dom'
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
+import { AuthContext } from '../context/AuthContext'
 import css from './Main.module.css'
 
 const Main = () => {
-
+  const { isAuth } = useContext(AuthContext)
 
   return (
     <div className={css.appContainer}>
@@ -18,8 +19,8 @@ const Main = () => {
         <main className={css.mainContainer}>
           <Navigation/>
           <Switch>
-            <ProtectedRoute path='/settings' component={Settings}/>
-            <Route exact path='/' component={MainSection}/>
+            <ProtectedRoute path='/settings' component={Settings} isAuth={isAuth}/>
+            <ProtectedRoute exact path='/' component={MainSection} isAuth={isAuth}/>
           </Switch>
           <Aside/>
         </main>
