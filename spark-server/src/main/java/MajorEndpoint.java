@@ -74,7 +74,7 @@ public class MajorEndpoint implements SparkApplication {
 					return "403 Forbidden";
 				}
 			} catch (Exception ex) {
-				return processException(ex);
+				return processException(ex) + "Request body: " + req.body();
 			}
 		});
 
