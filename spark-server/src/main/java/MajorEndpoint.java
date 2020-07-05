@@ -1,4 +1,5 @@
 import com.dto.BaseUserProfileDto;
+import com.dto.CredentialsDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.ValidateHelper;
@@ -64,8 +65,9 @@ public class MajorEndpoint implements SparkApplication {
 		 * Security
 		 */
 		post("/getToken", (req, res) -> {
-			String login = req.queryParams("login");
-			String password = req.queryParams("password");
+			CredentialsDto credentials = mapper.readValue(req.body(), CredentialsDto.class);
+			String login = credentials.getLogin();
+			String password = credentials.getPassword();
 			try {
 				if (DatabaseService.checkPassword(login, password)) {
 					return JWTHelper.createJWT(login, "securityService", "security", TTL);
