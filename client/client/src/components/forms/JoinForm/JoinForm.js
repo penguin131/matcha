@@ -1,16 +1,49 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
+import axios from "axios";
 import css from '../authForms.module.less'
+import Loader from '../../Loader/Loader'
 
-const onSubmit = async values => {
-  window.alert(JSON.stringify(values, 0, 2))
+const url = 'https://cors-anywhere.herokuapp.com/http://84.38.183.163:8080/spark-server-1.0/'
+const onSubmit = async (values, setIsLoading) => {
+const status = {
+  0: '',
+}
+  const data = {
+    "login": values.username,
+    "password": values.password,
+    "email": values.email,  
+    "sex": 0
+  }
+  try {
+    setIsLoading(true)
+    const response = await axios
+    .post(`${url}createUserProfile`,data)
+    .then(res => {
+      console.log(res)
+      setIsLoading(false)
+    })
+
+  }catch(e) {
+    console.log(e)
+  }
 }
 
 const JoinForm = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [axiosStatus, setAxiosStatus] = useState(0)
   return (
     <div className={css.authFormContainer}>
       <Form
-        onSubmit={onSubmit}
+        onSubmit={e => onSubmit(e, setIsLoading)}
+        mutators={{
+          setLoading: (args, state, utils) => {
+            utils.changeValue(state, 'isLoading', () => args[0])
+          }
+        }}
+        initialValues={{
+          isLoading: false
+        }}
         validate={values => {
           const errors = {}
           if (!values.username) {
@@ -62,8 +95,12 @@ const JoinForm = () => {
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
-            </Field>
+            </Field> 
+            <div className={css.loaderBlock}>
+                {isLoading && <Loader/>}
+            </div>
             <div className={css.buttons}>
+            
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
                 Join us
               </button>
