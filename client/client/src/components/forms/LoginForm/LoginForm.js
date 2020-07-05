@@ -14,7 +14,6 @@ const onSubmit = async (values, setIsLoading, history, setIsAuth) => {
     "password": values.password,
   }
 
-
   try {
     setIsLoading(true)
     await axios.post(`${url}getToken`,data)
@@ -23,6 +22,7 @@ const onSubmit = async (values, setIsLoading, history, setIsAuth) => {
         setIsLoading(false)
         setIsAuth(true)
         history.push('/')
+        localStorage.setItem('token', res.data)
       })
   } catch(e) {
     console.log(e)
