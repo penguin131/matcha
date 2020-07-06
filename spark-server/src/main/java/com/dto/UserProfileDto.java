@@ -11,8 +11,8 @@ public class UserProfileDto extends BaseUserProfileDto {
     private String biography;
     @JsonProperty("sex_preferences")
     private int sexPreferences;
-    @JsonProperty("verification_token")
-    private String verificationToken;
+    @JsonProperty("confirmed_token")
+    private String confirmedToken;
 
     public int getSexPreferences() {
         return sexPreferences;
@@ -76,11 +76,11 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public UserProfileDto() { }
 
-    public String getVerificationToken() {
-        return verificationToken;
+    public String getConfirmedToken() {
+        return confirmedToken;
     }
 
-    public void setVerificationToken(String verificationToken) {
-        this.verificationToken = verificationToken;
+    public void setConfirmedToken(String confirmedToken) {
+        this.confirmedToken = confirmedToken;
     }
 }
