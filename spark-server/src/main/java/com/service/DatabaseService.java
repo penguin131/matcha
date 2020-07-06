@@ -8,7 +8,6 @@ import com.helper.DatabaseConfig;
 import com.helper.Password;
 import com.security.SecurityHelper;
 import org.apache.log4j.Logger;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +160,7 @@ public class DatabaseService {
             preparedStatement.setInt(3, userProfileDto.getSexPreferences());
             preparedStatement.setString(4, userProfileDto.getBiography());
             preparedStatement.setString(5, userProfileDto.getLogin());
-            preparedStatement.execute();
+            preparedStatement.executeUpdate();
         } catch (JsonProcessingException | SQLException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
             throw ex;
@@ -191,7 +190,7 @@ public class DatabaseService {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_user_profile set confirmed=true where confirmed_token=?");
             preparedStatement.setString(1, token);
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             logger.info("confirmUserForToken() exception:\n" + ex.getMessage());
             throw ex;

@@ -85,7 +85,7 @@ public class MajorEndpoint implements SparkApplication {
 
 		get("/verification/:hash", (req, res) -> {
 			DatabaseService.confirmUserForToken(req.params(":hash"));
-			return "OK";
+			return "Your account is verified!";
 		});
 
 		/**
