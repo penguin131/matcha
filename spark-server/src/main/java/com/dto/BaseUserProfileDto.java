@@ -1,27 +1,9 @@
 package com.dto;
 
-public class BaseUserProfileDto {
+public class BaseUserProfileDto extends CredentialsDto {
 
-    private String login;
-    private String password;
     private String email;
     private int sex;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
 
     public String getEmail() {
         return email;

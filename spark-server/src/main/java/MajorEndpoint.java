@@ -4,6 +4,7 @@ import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
+import com.mail.MailService;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
@@ -46,6 +47,7 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
+				MailService.sendConfirmationEmail(user.getEmail());
 				DatabaseService.createUserProfile(user);
 			} catch (Exception ex) {
 				return processException(ex);
@@ -72,6 +74,20 @@ public class MajorEndpoint implements SparkApplication {
 			return "";
 		});
 
+		get("/sendMail/:email", (req, res) -> {
+			try {
+				MailService.sendConfirmationEmail(req.params(":email"));
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+			return "OK";
+		});
+
+		get("/verification/:hash", (req, res) -> {
+			DatabaseService.confirmUserForToken(req.params(":hash"));
+			return "OK";
+		});
+
 		/**
 		 * Security
 		 */
@@ -86,7 +102,6 @@ public class MajorEndpoint implements SparkApplication {
 					return "Invalid login/password";
 				}
 			} catch (Exception ex) {
-				logger.info("DatabaseService.checkPassword() exception.");
 				return processException(ex);
 			}
 		});
@@ -125,7 +140,7 @@ public class MajorEndpoint implements SparkApplication {
 	}
 
 	private static String processException(Exception ex) {
-		logger.info("Exception message: " + ex.getMessage());
+//		logger.info("Exception message: " + ex.getMessage());
 		return ex.getMessage() == null ? "Error" : ex.getMessage();
 //		return ex.getMessage() == null ? "Error. Current directory: " + System.getProperty("user.dir") : ex.getMessage();
 	}

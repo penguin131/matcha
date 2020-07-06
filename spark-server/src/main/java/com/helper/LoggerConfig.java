@@ -1,7 +1,6 @@
 package com.helper;
 
 import org.apache.log4j.PropertyConfigurator;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -15,7 +14,7 @@ public class LoggerConfig {
             if (!Config.isIsProd()) {
                 p.setProperty("log4j.appender.file.File", "/Users/bootcamp/logs/log4j-spark-application.log");
             } else {
-                p.setProperty("log4j.appender.file.File", "/Users/bootcamp/logs/log4j-spark-application.log");//todo add prod classpath
+                p.setProperty("log4j.appender.file.File", "/root/logs/log4j-spark-application.log");
             }
             PropertyConfigurator.configure(p);
         } catch (IOException e) {
