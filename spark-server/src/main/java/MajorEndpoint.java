@@ -2,16 +2,22 @@ import com.dto.BaseUserProfileDto;
 import com.dto.CredentialsDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
+import org.apache.log4j.Logger;
 import spark.Response;
 import spark.servlet.SparkApplication;
+
+import java.io.IOException;
 
 import static spark.Spark.*;
 
 public class MajorEndpoint implements SparkApplication {
+
+	private final static Logger logger = Logger.getLogger(MajorEndpoint.class);
 
 	private static long TTL = 1000000000;
 	public static void main(String[] args) {
@@ -20,6 +26,11 @@ public class MajorEndpoint implements SparkApplication {
 
 	@Override
 	public void init() {
+		try {
+			LoggerConfig.configureLogger();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		get("/protected/hello", (req, res) -> "Hello world!");
 
@@ -65,31 +76,43 @@ public class MajorEndpoint implements SparkApplication {
 		 * Security
 		 */
 		post("/getToken", (req, res) -> {
-			CredentialsDto credentials = mapper.readValue(req.body(), CredentialsDto.class);
-			String login = credentials.getLogin();
-			String password = credentials.getPassword();
 			try {
+				CredentialsDto credentials = mapper.readValue(req.body(), CredentialsDto.class);
+				String login = credentials.getLogin();
+				String password = credentials.getPassword();
 				if (DatabaseService.checkPassword(login, password)) {
 					return JWTHelper.createJWT(login, "securityService", "security", TTL);
 				} else {
-					res.status(403);
-					return "403 Forbidden";
+					return "Invalid login/password";
 				}
 			} catch (Exception ex) {
-				return processException(ex) + "Request body: " + req.body();
+				logger.info("DatabaseService.checkPassword() exception.");
+				return processException(ex);
 			}
 		});
 
+		before((request, response) -> {
+			logger.info("==> Request start: " + request.url());
+		});
+
+		afterAfter((request, response) -> {
+			logger.info("<== Request end: " + request.url());
+		});
+
 		before("/protected/*", (request, response) -> {
+			Claims claims = null;
+			long currentTime = 0;
 			try {
 				addHeaders(response);
 				String JWTToken = request.headers("Authorization");
-				Claims claims = JWTHelper.decodeJWT(JWTToken);
-				long currentTime = System.currentTimeMillis();
-				if (currentTime > claims.getExpiration().getTime()) {
-					halt(403, "403 Forbidden");
-				}
+				claims = JWTHelper.decodeJWT(JWTToken);
+				currentTime = System.currentTimeMillis();
 			} catch (Exception ex) {
+				logger.info("before() Exception: " + ex.getMessage());
+				halt(403, "403 Forbidden");
+			}
+			if (currentTime > claims.getExpiration().getTime()) {
+				logger.info("Token timed out.");
 				halt(403, "403 Forbidden");
 			}
 		});
@@ -102,7 +125,8 @@ public class MajorEndpoint implements SparkApplication {
 	}
 
 	private static String processException(Exception ex) {
-//		return ex.getMessage() == null ? "Error" : ex.getMessage();
-		return ex.getMessage() == null ? "Error. Current directory: " + System.getProperty("user.dir") : ex.getMessage();
+		logger.info("Exception message: " + ex.getMessage());
+		return ex.getMessage() == null ? "Error" : ex.getMessage();
+//		return ex.getMessage() == null ? "Error. Current directory: " + System.getProperty("user.dir") : ex.getMessage();
 	}
 }

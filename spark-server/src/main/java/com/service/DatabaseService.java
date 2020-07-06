@@ -2,8 +2,10 @@ package com.service;
 
 import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.DatabaseConfig;
 import com.helper.Password;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.List;
 
 public class DatabaseService {
     private static DatabaseConfig.DatabaseProperties props = null;
+    private final static Logger logger = Logger.getLogger(DatabaseService.class);
+    private static ObjectMapper mapper = new ObjectMapper();
 
     static {
         try {
@@ -81,6 +85,7 @@ public class DatabaseService {
      * @return JSON UserProfileDto
      */
     public static UserProfileDto getUserProfileForLogin(String login) throws Exception {
+        logger.info("getUserProfileForLogin() login: " + login);
         UserProfileDto userProfile;
         Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
         PreparedStatement preparedStatement = connection.prepareStatement(
@@ -99,8 +104,10 @@ public class DatabaseService {
                     rs.getString("email"),
                     rs.getBoolean("confirmed"));
         } else {
+            logger.info("No user profile with login: " + login);
             return null;
         }
+        logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
         return userProfile;
     }
 
@@ -123,9 +130,11 @@ public class DatabaseService {
      * Проверка совпадения пароля и логина
      */
     public static boolean checkPassword(String login, String password) throws Exception {
+        logger.info(String.format("checkPassword() login: %s, password: %s", login, password));
         UserProfileDto user = getUserProfileForLogin(login);
-        if (user == null)
-            throw new Exception("Invalid login");
+        if (user == null) {
+            throw new Exception("Invalid login + password");
+        }
         return Password.check(password, user.getPassword());
     }
 }

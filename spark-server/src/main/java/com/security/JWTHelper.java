@@ -66,7 +66,9 @@ public class JWTHelper {
         return builder.compact();
     }
 
-    public static Claims decodeJWT(String jwt) {
+    public static Claims decodeJWT(String jwt) throws Exception {
+        if (jwt == null)
+            throw new Exception("jwt string is null.");
         return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(jwt).getBody();
