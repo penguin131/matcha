@@ -189,7 +189,7 @@ public class DatabaseService {
         try {
             connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark-db\".t_user_profile set confirm=true where token=?");
+                    "update \"spark-db\".t_user_profile set confirm=true where confirmed_token=?");
             preparedStatement.setString(1, token);
             preparedStatement.executeQuery();
         } catch (SQLException ex) {
