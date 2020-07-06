@@ -62,7 +62,7 @@ public class DatabaseService {
     /**
      * Добавление нового пользовательского профиля
      */
-    public static void createUserProfile(BaseUserProfileDto userProfileDto) throws Exception {
+    public static void createUserProfile(BaseUserProfileDto userProfileDto, String confirmed_token) throws Exception {
         logger.info("createUserProfile()");
         if (userProfileDto == null) {
             processException(new Exception("userProfileDto is null!"));
@@ -84,7 +84,7 @@ public class DatabaseService {
             preparedStatement.setString(2, userProfileDto.getPassword());
             preparedStatement.setString(3, userProfileDto.getEmail());
             preparedStatement.setInt(4, userProfileDto.getSex());
-            preparedStatement.setString(5, SecurityHelper.generateHash());
+            preparedStatement.setString(5, confirmed_token);
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(userProfileDto));
         } catch (SQLException ex) {

@@ -6,6 +6,7 @@ import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.mail.MailService;
 import com.security.JWTHelper;
+import com.security.SecurityHelper;
 import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
@@ -47,8 +48,9 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
-				//MailService.sendConfirmationEmail(user.getEmail());
-				DatabaseService.createUserProfile(user);
+				String hash = SecurityHelper.generateHash();
+				DatabaseService.createUserProfile(user, hash);
+				MailService.sendConfirmationEmail(user.getEmail(), hash);
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -74,9 +76,9 @@ public class MajorEndpoint implements SparkApplication {
 			return "";
 		});
 
-		get("/sendMail/:email", (req, res) -> {
+		get("/sendMail/:email/:hash", (req, res) -> {
 			try {
-				MailService.sendConfirmationEmail(req.params(":email"));
+				MailService.sendConfirmationEmail(req.params(":email"), req.params(":hash"));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -140,8 +142,6 @@ public class MajorEndpoint implements SparkApplication {
 	}
 
 	private static String processException(Exception ex) {
-//		logger.info("Exception message: " + ex.getMessage());
 		return ex.getMessage() == null ? "Error" : ex.getMessage();
-//		return ex.getMessage() == null ? "Error. Current directory: " + System.getProperty("user.dir") : ex.getMessage();
 	}
 }
