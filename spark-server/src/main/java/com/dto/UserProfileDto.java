@@ -62,7 +62,8 @@ public class UserProfileDto extends BaseUserProfileDto {
                           int sexPreferences,
                           String biography,
                           String email,
-                          Boolean confirmed) {
+                          Boolean confirmed,
+                          String confirmedToken) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -72,6 +73,7 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.setConfirmed(confirmed);
         this.setFirstName(firstName);
         this.setLastName(lastName);
+        this.setConfirmedToken(confirmedToken);
     }
 
     public UserProfileDto() { }
