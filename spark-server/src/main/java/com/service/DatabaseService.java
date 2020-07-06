@@ -48,7 +48,8 @@ public class DatabaseService {
                         rs.getInt("sex_preferences"),
                         rs.getString("biography"),
                         rs.getString("email"),
-                        rs.getBoolean("confirmed"));
+                        rs.getBoolean("confirmed"),
+                        rs.getString("confirmed_token"));
                 userProfileList.add(userProfile);
             }
         } catch (SQLException ex) {
@@ -133,7 +134,8 @@ public class DatabaseService {
                         rs.getInt("sex_preferences"),
                         rs.getString("biography"),
                         rs.getString("email"),
-                        rs.getBoolean("confirmed"));
+                        rs.getBoolean("confirmed"),
+                        rs.getString("confirmed_token"));
                 logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
