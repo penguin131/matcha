@@ -65,20 +65,21 @@ public class DatabaseService {
     public static void createUserProfile(BaseUserProfileDto userProfileDto) throws Exception {
         logger.info("createUserProfile()");
         if (userProfileDto == null) {
-            throw new Exception("userProfileDto is null!");
+            processException(new Exception("userProfileDto is null!"));
         }
+        assert userProfileDto != null;
         if (getUserProfileForLogin(userProfileDto.getLogin()) != null) {
-            throw new Exception("Login already exists!");
+            processException(new Exception("Login already exists!"));
         }
         if (checkEmailExist(userProfileDto.getEmail())) {
-            throw new Exception("Email is already in use");
+            processException(new Exception("Email is already in use"));
         }
         try {
             Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
             userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed, confirmed_token) " +
-                            "VALUES (?, ?, ?, ?, false, ?)");
+                    "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
+                            "VALUES (?, ?, ?, ?, ?, false )");
             preparedStatement.setString(1, userProfileDto.getLogin());
             preparedStatement.setString(2, userProfileDto.getPassword());
             preparedStatement.setString(3, userProfileDto.getEmail());
@@ -193,5 +194,10 @@ public class DatabaseService {
             logger.info("confirmUserForToken() exception:\n" + ex.getMessage());
             throw ex;
         }
+    }
+
+    private static void processException(Exception ex) throws Exception {
+        logger.info(ex.getMessage());
+        throw ex;
     }
 }
