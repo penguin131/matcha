@@ -9,10 +9,16 @@ import java.util.Random;
 public class SecurityHelper {
     private final static Logger logger = Logger.getLogger(DatabaseService.class);
     public static String generateHash() {
-        byte[] array = new byte[40];
-        new Random().nextBytes(array);
-        String hash = new String(array, StandardCharsets.UTF_8);
-        logger.info("generateHash(): " + hash);
-        return hash;
+        int leftLimit = 97;
+        int rightLimit = 122;
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        logger.info("generateHash(): " + generatedString);
+        return generatedString;
     }
 }
