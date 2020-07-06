@@ -85,6 +85,7 @@ public class DatabaseService {
             preparedStatement.setInt(4, userProfileDto.getSex());
             preparedStatement.setString(5, SecurityHelper.generateHash());
             preparedStatement.execute();
+            logger.info(mapper.writeValueAsString(userProfileDto));
         } catch (SQLException ex) {
             logger.info("createUserProfile() exception:\n" + ex.getMessage());
             throw ex;

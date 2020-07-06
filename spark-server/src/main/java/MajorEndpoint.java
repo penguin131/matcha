@@ -47,7 +47,7 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
-				MailService.sendConfirmationEmail(user.getEmail());
+				//MailService.sendConfirmationEmail(user.getEmail());
 				DatabaseService.createUserProfile(user);
 			} catch (Exception ex) {
 				return processException(ex);
