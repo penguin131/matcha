@@ -1,17 +1,20 @@
 package com.security;
 
+import com.helper.Config;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.log4j.Logger;
+
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Key;
-import com.helper.Config;
-import io.jsonwebtoken.*;
 import java.util.Date;
 import java.util.Properties;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.Claims;
 
 /**
  * Работа с JWT
@@ -19,6 +22,7 @@ import io.jsonwebtoken.Claims;
  * Заголовок, полезная нагрузка, подпись
  */
 public class JWTHelper {
+    private final static Logger logger = Logger.getLogger(JWTHelper.class);
 
     private static String SECRET_KEY;
     static {
@@ -29,7 +33,7 @@ public class JWTHelper {
             props.load(input);
             SECRET_KEY = props.getProperty("JWT.key");
         } catch (Exception ex) {
-            //todo log
+            logger.info("Read config exception: " + ex.getMessage());
         }
     }
 
@@ -67,8 +71,10 @@ public class JWTHelper {
     }
 
     public static Claims decodeJWT(String jwt) throws Exception {
-        if (jwt == null)
+        logger.info("decodeJWT() jwt string: " + jwt);
+        if (jwt == null) {
             throw new Exception("jwt string is null.");
+        }
         return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(jwt).getBody();

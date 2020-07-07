@@ -12,7 +12,6 @@ import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Response;
 import spark.servlet.SparkApplication;
-
 import java.io.IOException;
 
 import static spark.Spark.*;
@@ -60,6 +59,15 @@ public class MajorEndpoint implements SparkApplication {
 		get("/protected/getUserProfileForLogin/:login", (req, res) -> {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+		});
+
+		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
+			try {
+				DatabaseService.deleteUserProfileForLogin(req.params(":login"));
+				return "OK";
 			} catch (Exception ex) {
 				return processException(ex);
 			}

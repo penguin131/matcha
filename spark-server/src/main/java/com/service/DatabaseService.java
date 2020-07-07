@@ -147,6 +147,25 @@ public class DatabaseService {
     }
 
     /**
+     * Удаляет профиль юзера по login
+     * @param login login in PathVariable
+     */
+    public static void deleteUserProfileForLogin(String login) throws SQLException {
+        logger.info("deleteUserProfileForLogin() login: " + login);
+        Connection connection;
+        try {
+            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "delete from \"spark-db\".t_user_profile where login=?");
+            preparedStatement.setString(1, login);
+            preparedStatement.executeQuery();
+        } catch (SQLException ex) {
+            logger.info("deleteUserProfileForLogin() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    /**
      * Обновляет пользовательский профиль
      */
     public static void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
