@@ -192,27 +192,17 @@ public class DatabaseService {
     /**
      * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.
      */
-    public static List<FriendDto> setLike(String from, String to) throws Exception {
+    public static void setLike(String from, String to) throws Exception {
         logger.info("setLike() from: " + from);
         if (from.equals(to))
             throw new Exception("User cannot be friends with himself");
         if (getUserProfileForLogin(to) == null)
             throw new Exception(String.format("User %s does not exists", to));
-        Connection connection;
-        List<FriendDto> friendList = new ArrayList<>();
         try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_users_unity t1 " +
-                            "join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
-                            "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
-                            "where t2.login=? and t3.login=?");
-            preparedStatement.setString(1, to);
-            preparedStatement.setString(2, from);
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {//если запись уже есть, тупо подтверждаю ее
+            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            if (checkUserUnity(from, to)) {//если запись уже есть, тупо подтверждаю ее
                 logger.info("rs.next() == true");
-                preparedStatement = connection.prepareStatement(
+                PreparedStatement preparedStatement = connection.prepareStatement(
                     "WITH cte_unity AS (\n" +
                             "    select\n" +
                             "        t1.t_users_unity_id\n" +
@@ -224,22 +214,38 @@ public class DatabaseService {
                             "update \"spark-db\".t_users_unity set confirmed=true where t_users_unity_id in (select * from cte_unity)\n");
                 preparedStatement.setString(1, to);
                 preparedStatement.setString(2, from);
-            } else {
+                preparedStatement.executeUpdate();
+            } else if (!checkUserUnity(to, from)) {
                 logger.info("rs.next() == false");
-                preparedStatement = connection.prepareStatement(
+                PreparedStatement preparedStatement = connection.prepareStatement(
                         "insert into \"spark-db\".t_users_unity (user1_id, user2_id) VALUES " +
                                 "((select user_profile_id from \"spark-db\".t_user_profile where login=?)," +
                                 " (select user_profile_id from \"spark-db\".t_user_profile where login=?))");
                 preparedStatement.setString(1, from);
                 preparedStatement.setString(2, to);
+                preparedStatement.execute();
             }
-            preparedStatement.executeQuery();
             logger.info("setLike OK");
         } catch (SQLException ex) {
             logger.info("setLike() exception:\n" + ex.getMessage());
             throw ex;
         }
-        return friendList;
+    }
+
+    private static boolean checkUserUnity(String login1, String login2) throws SQLException {
+        logger.info(String.format("checkUserUnity: %s, %s", login1, login2));
+        Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select * from \"spark-db\".t_users_unity t1 " +
+                        "join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
+                        "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
+                        "where t2.login=? and t3.login=?");
+        preparedStatement.setString(1, login1);
+        preparedStatement.setString(2, login2);
+        ResultSet rs = preparedStatement.executeQuery();
+        boolean result = rs.next();
+        logger.info("result: " + result);
+        return result;
     }
 
     /**

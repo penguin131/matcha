@@ -77,7 +77,8 @@ public class MajorEndpoint implements SparkApplication {
 			try {
 				String from = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
 				String to = req.params(":to");
-				return mapper.writeValueAsString(DatabaseService.setLike(from, to));
+				DatabaseService.setLike(from, to);
+				return "OK";
 			} catch (Exception ex) {
 				return processException(ex);
 			}
