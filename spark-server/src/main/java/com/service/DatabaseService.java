@@ -7,9 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.DatabaseConfig;
 import com.helper.Password;
-import com.security.SecurityHelper;
 import org.apache.log4j.Logger;
-import spark.utils.StringUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -174,10 +172,10 @@ public class DatabaseService {
                             "    order by date desc\n" +
                             ")\n" +
                             "select t4.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
-                            "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
+                            "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
                             "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
                             "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id and t3.nb=1)\n" +
-                            "    where t1.login=?");
+                            "    where t1.login=? and t2.confirmed=true");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
