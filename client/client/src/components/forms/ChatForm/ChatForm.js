@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Field } from 'react-final-form'
 import css from './ChatForm.module.less'
 
-const ChatForm = ( onSubmit ) => {
+const ChatForm = ({ onSubmit }) => {
     return (
         <div className={css.chatFormContainer}>
             <Form

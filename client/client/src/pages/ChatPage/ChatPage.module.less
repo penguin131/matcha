@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center;
     background: white;
-
+   
     .chatBar {
         background: #0048AA;
         border-radius: 10px 0 0 10px;
@@ -15,10 +15,11 @@
         flex: 1 0 0%;
         display: flex;
         flex-direction: column;
-
+       
         .chatTitle {
             flex: 0 0 71px;
             display: flex;
+            z-index: 1;
             justify-content: space-between;
             align-items: center;
             background: #eee;
@@ -38,11 +39,6 @@
                 flex: 0 0 36px;
                 cursor: pointer;
             }
-        }
-
-        .chatList {
-            padding: 0 20px;
-            flex: 1 0 0%;
         }
     }
 }

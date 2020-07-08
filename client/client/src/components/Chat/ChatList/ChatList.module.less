@@ -1,0 +1,54 @@
+.chatList {
+    padding: 0 20px;
+    flex: 1 0 0%;
+    display: flex;
+    flex-flow: column-reverse nowrap;
+    
+    max-height: 75vh;
+    overflow-y: scroll;
+    .messageRow {
+        display: flex;
+        flex: 0 0 auto;
+ 
+        
+        .messageDetails {
+            
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 70%;
+            align-items: flex-start; 
+            .messageText {
+                padding: 9px 14px;
+                font-size: 1.6rem;
+                margin-bottom: 5px;
+            }
+            .messageDate {
+                font-size: 1.3rem;
+                color: #777;
+                padding: 0 0 10px 10px;
+            }
+            
+        }
+        margin-bottom: 20px;
+        
+    }
+    .youMessage  {
+        background: #0048aa;
+        color:#eee;
+        border: 1px solid #0048aa;
+        border-radius: 14px 14px 0 14px;
+
+        align-self: flex-end;
+        justify-content: flex-end;
+    }
+
+    .otherMessage {
+        background: #eee;
+        color: #111;
+        border: 1px solid #ddd;
+        border-radius: 14px 14px 14px 0;
+
+        align-self: flex-start;
+    }
+    
+}
