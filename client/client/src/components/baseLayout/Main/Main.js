@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
-import Navigation from '../Navigation/Navigation'
+import Navigation from '../../Navigation/Navigation'
 import Aside from '../Aside/Aside'
-import MainSection from '../MainSection/MainSection'
-import Settings from '../Settings/Settings'
-import ChatPage from '../../pages/ChatPage/ChatPage'
+import MainPage from '../../../pages/MainPage/MainPage'
+import SettingsPage from '../../../pages/SettingsPage/SettingsPage'
+import ChatPage from '../../../pages/ChatPage/ChatPage'
 import { Switch } from 'react-router-dom'
-import ProtectedRoute from '../ProtectedRoute/ProtectedRoute'
-import { AuthContext } from '../context/AuthContext'
+import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
+import { AuthContext } from '../../context/AuthContext'
 import css from './Main.module.css'
 
 const Main = () => {
@@ -22,8 +22,8 @@ const Main = () => {
           <Navigation/>
           <Switch>
             <ProtectedRoute path='/chats' component={ChatPage} isAuth={isAuth}/>
-            <ProtectedRoute path='/settings' component={Settings} isAuth={isAuth}/>
-            <ProtectedRoute exact path='/' component={MainSection} isAuth={isAuth}/>
+            <ProtectedRoute path='/settings' component={SettingsPage} isAuth={isAuth}/>
+            <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
           </Switch>
           <Aside/>
         </main>

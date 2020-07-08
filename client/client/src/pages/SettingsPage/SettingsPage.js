@@ -1,10 +1,10 @@
 import React from 'react'
-import css from './Settings.module.css'
+import css from './SettingsPage.module.less'
 
-const Settings = () => {
+const SettingsPage = () => {
     return (
         <div className={css.settingsContainer}>Settings</div>
     )
 }
 
-export default Settings
+export default SettingsPage

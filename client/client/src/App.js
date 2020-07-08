@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
-import Main from './components/Main/Main'
+import Main from './components/baseLayout/Main/Main'
 import AuthPage from './pages/AuthPage/AuthPage'
 import { Route, BrowserRouter, Switch} from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
