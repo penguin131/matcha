@@ -1,6 +1,7 @@
 package com.service;
 
 import com.dto.BaseUserProfileDto;
+import com.dto.FriendDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,7 +112,7 @@ public class DatabaseService {
     /**
      * Вернет первый профиль юзера по login
      * @param login login in PathVariable
-     * @return JSON UserProfileDto
+     * @return UserProfileDto
      */
     public static UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException {
         logger.info("getUserProfileForLogin() login: " + login);
@@ -145,6 +146,87 @@ public class DatabaseService {
         }
         return userProfile;
     }
+
+    /**
+     * Вернет всех друзей с последним сообщением
+     * @param login login
+     * @return List<FriendDto>
+     */
+    public static List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
+        logger.info("getAllFriendsForLogin() login: " + login);
+        Connection connection;
+        List<FriendDto> friendList = new ArrayList<>();
+        try {
+            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "WITH cte_message AS (\n" +
+                            "    SELECT\n" +
+                            "        text,\n" +
+                            "        date,\n" +
+                            "        user_unity\n" +
+                            "    FROM\n" +
+                            "        \"spark-db\".t_message\n" +
+                            "    where\n" +
+                            "        t_message.user_unity in (select t_users_unity_id from \"spark-db\".t_users_unity)\n" +
+                            "    order by date desc\n" +
+                            ")\n" +
+                            "select t4.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
+                            "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
+                            "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
+                            "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id)\n" +
+                            "    where t1.login=?");
+            preparedStatement.setString(1, login);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getDate("date")));
+            }
+            logger.info("friends count: " + friendList.size());
+        } catch (SQLException ex) {
+            logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+        return friendList;
+    }
+
+//    /**
+//     * Вернет всех друзей с последним сообщением
+//     * @param login login
+//     * @return List<FriendDto>
+//     */
+//    public static List<FriendDto> setLike(String user1, String user2) throws SQLException {
+//        logger.info("getAllFriendsForLogin() login: " + login);
+//        Connection connection;
+//        List<FriendDto> friendList = new ArrayList<>();
+//        try {
+//            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+//            PreparedStatement preparedStatement = connection.prepareStatement(
+//                    "WITH cte_message AS (\n" +
+//                            "    SELECT\n" +
+//                            "        text,\n" +
+//                            "        date,\n" +
+//                            "        user_unity\n" +
+//                            "    FROM\n" +
+//                            "        \"spark-db\".t_message\n" +
+//                            "    where\n" +
+//                            "        t_message.user_unity in (select t_users_unity_id from \"spark-db\".t_users_unity)\n" +
+//                            "    order by date desc\n" +
+//                            ")\n" +
+//                            "select t1.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
+//                            "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
+//                            "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id)\n" +
+//                            "    where t1.login=?");
+//            preparedStatement.setString(1, login);
+//            ResultSet rs = preparedStatement.executeQuery();
+//            while (rs.next()) {
+//                friendList.add(new FriendDto(rs.getString("first_name"), rs.getString("first_name"), rs.getDate("date")));
+//            }
+//            logger.info("friends count: " + friendList.size());
+//        } catch (SQLException ex) {
+//            logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
+//            throw ex;
+//        }
+//        return friendList;
+//    }
 
     /**
      * Удаляет профиль юзера по login

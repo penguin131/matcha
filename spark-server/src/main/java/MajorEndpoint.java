@@ -64,6 +64,25 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
+		get("/protected/getAllFriends", (req, res) -> {
+			try {
+				String login = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
+				return mapper.writeValueAsString(DatabaseService.getAllFriendsForLogin(login));
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+		});
+
+//		get("/protected/setLike/:login", (req, res) -> {
+//			try {
+//				String user1 = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
+//				String user2 = req.params(":login");
+//				return mapper.writeValueAsString(DatabaseService.setLike(user1, user2));
+//			} catch (Exception ex) {
+//				return processException(ex);
+//			}
+//		});
+
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			try {
 				DatabaseService.deleteUserProfileForLogin(req.params(":login"));
@@ -116,13 +135,9 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-		before((request, response) -> {
-			logger.info("==> Request start: " + request.url());
-		});
+		before((request, response) -> logger.info("==> Request start: " + request.url()));
 
-		afterAfter((request, response) -> {
-			logger.info("<== Request end: " + request.url());
-		});
+		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
 
 		before("/protected/*", (request, response) -> {
 			Claims claims = null;

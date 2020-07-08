@@ -33,3 +33,5 @@ Remote connection: psql -h 84.38.183.163 -d sammy -U sammy<br>
 
 
 GPS
+
+{"login":"smight","password":"smight", "email":"zininlol@rambler.ru", "sex":0}
