@@ -1,0 +1,48 @@
+.chatContainer {
+    flex: 1 1 0%;
+    display: flex;
+    justify-content: center;
+    background: white;
+
+    .chatBar {
+        background: #0048AA;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .chatWindow {
+        border-radius: 0 10px 10px 0;
+        border: 1px solid black;
+        flex: 1 0 0%;
+        display: flex;
+        flex-direction: column;
+
+        .chatTitle {
+            flex: 0 0 71px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eee;
+            padding: 0 20px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px -1px rgba(0,0,0,0.75);
+            border-radius: 0 10px 0 0;
+            font-size: 2.0rem;
+            color: #0048AA;
+            
+            .userName { 
+                flex: 1 0 0%;
+            }
+            .trashLogo {
+                stroke: #0048AA;
+                height: 36px;
+                flex: 0 0 36px;
+                cursor: pointer;
+            }
+        }
+
+        .chatList {
+            padding: 0 20px;
+            flex: 1 0 0%;
+        }
+    }
+}

@@ -8,7 +8,7 @@ import { AuthContext } from './components/context/AuthContext'
 import './App.css'
 
 const App = () => {
-  const [isAuth, setIsAuth] = useState(false)
+  const [isAuth, setIsAuth] = useState(true)
 
   const AuthPageWithContext = () => (
     <AuthContext.Provider value={{setIsAuth}}>

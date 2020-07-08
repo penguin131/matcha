@@ -1,7 +1,8 @@
 import React from 'react'
-import JoinPage from '../../components/forms/JoinForm/JoinForm'
-import LoginPage from '../../components/forms/LoginForm/LoginForm'
+import JoinForm from '../../components/forms/JoinForm/JoinForm'
+import LoginForm from '../../components/forms/LoginForm/LoginForm'
 import { Switch, Link, Route } from 'react-router-dom'
+import * as services from '../../services/auth'
 import css from './AuthPage.module.less'
 
 const LoginButton = () => {
@@ -16,6 +17,8 @@ const JoinButton = () => {
     )
 }
 
+
+
 const AuthPage = () => {
 
     return (
@@ -27,8 +30,8 @@ const AuthPage = () => {
         
             <div className={css.joinPageContainer}>
                 <Switch>
-                    <Route path='/login' component={LoginPage}/>
-                    <Route path='/join' component={JoinPage}/>
+                    <Route path='/login' component={() => <LoginForm onSubmit={services.login}/>}/>
+                    <Route path='/join' component={() => <JoinForm onSubmit={services.join}/>}/>
                 </Switch>
             </div>
         </>
