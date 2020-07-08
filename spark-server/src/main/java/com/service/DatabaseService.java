@@ -9,6 +9,8 @@ import com.helper.DatabaseConfig;
 import com.helper.Password;
 import com.security.SecurityHelper;
 import org.apache.log4j.Logger;
+import spark.utils.StringUtils;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,45 +191,58 @@ public class DatabaseService {
         return friendList;
     }
 
-//    /**
-//     * Вернет всех друзей с последним сообщением
-//     * @param login login
-//     * @return List<FriendDto>
-//     */
-//    public static List<FriendDto> setLike(String user1, String user2) throws SQLException {
-//        logger.info("getAllFriendsForLogin() login: " + login);
-//        Connection connection;
-//        List<FriendDto> friendList = new ArrayList<>();
-//        try {
-//            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
-//            PreparedStatement preparedStatement = connection.prepareStatement(
-//                    "WITH cte_message AS (\n" +
-//                            "    SELECT\n" +
-//                            "        text,\n" +
-//                            "        date,\n" +
-//                            "        user_unity\n" +
-//                            "    FROM\n" +
-//                            "        \"spark-db\".t_message\n" +
-//                            "    where\n" +
-//                            "        t_message.user_unity in (select t_users_unity_id from \"spark-db\".t_users_unity)\n" +
-//                            "    order by date desc\n" +
-//                            ")\n" +
-//                            "select t1.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
-//                            "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
-//                            "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id)\n" +
-//                            "    where t1.login=?");
-//            preparedStatement.setString(1, login);
-//            ResultSet rs = preparedStatement.executeQuery();
-//            while (rs.next()) {
-//                friendList.add(new FriendDto(rs.getString("first_name"), rs.getString("first_name"), rs.getDate("date")));
-//            }
-//            logger.info("friends count: " + friendList.size());
-//        } catch (SQLException ex) {
-//            logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
-//            throw ex;
-//        }
-//        return friendList;
-//    }
+    /**
+     * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.
+     */
+    public static List<FriendDto> setLike(String from, String to) throws Exception {
+        logger.info("setLike() from: " + from);
+        if (from.equals(to))
+            throw new Exception("User cannot be friends with himself");
+        if (getUserProfileForLogin(to) == null)
+            throw new Exception(String.format("User %s does not exists", to));
+        Connection connection;
+        List<FriendDto> friendList = new ArrayList<>();
+        try {
+            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from \"spark-db\".t_users_unity t1 " +
+                            "join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
+                            "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
+                            "where t2.login=? and t3.login=?");
+            preparedStatement.setString(1, to);
+            preparedStatement.setString(2, from);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {//если запись уже есть, тупо подтверждаю ее
+                logger.info("rs.next() == true");
+                preparedStatement = connection.prepareStatement(
+                    "WITH cte_unity AS (\n" +
+                            "    select\n" +
+                            "        t1.t_users_unity_id\n" +
+                            "    from \"spark-db\".t_users_unity t1\n" +
+                            "             join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)\n" +
+                            "             join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)\n" +
+                            "    where t2.login=? and t3.login=?\n" +
+                            ")\n" +
+                            "update \"spark-db\".t_users_unity set confirmed=true where t_users_unity_id in (select * from cte_unity)\n");
+                preparedStatement.setString(1, to);
+                preparedStatement.setString(2, from);
+            } else {
+                logger.info("rs.next() == false");
+                preparedStatement = connection.prepareStatement(
+                        "insert into \"spark-db\".t_users_unity (user1_id, user2_id) VALUES " +
+                                "((select user_profile_id from \"spark-db\".t_user_profile where login=?)," +
+                                " (select user_profile_id from \"spark-db\".t_user_profile where login=?))");
+                preparedStatement.setString(1, from);
+                preparedStatement.setString(2, to);
+            }
+            preparedStatement.executeQuery();
+            logger.info("setLike OK");
+        } catch (SQLException ex) {
+            logger.info("setLike() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+        return friendList;
+    }
 
     /**
      * Удаляет профиль юзера по login

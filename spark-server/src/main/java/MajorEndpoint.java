@@ -73,15 +73,15 @@ public class MajorEndpoint implements SparkApplication {
 			}
 		});
 
-//		get("/protected/setLike/:login", (req, res) -> {
-//			try {
-//				String user1 = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
-//				String user2 = req.params(":login");
-//				return mapper.writeValueAsString(DatabaseService.setLike(user1, user2));
-//			} catch (Exception ex) {
-//				return processException(ex);
-//			}
-//		});
+		get("/protected/setLike/:to", (req, res) -> {
+			try {
+				String from = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
+				String to = req.params(":to");
+				return mapper.writeValueAsString(DatabaseService.setLike(from, to));
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+		});
 
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			try {
