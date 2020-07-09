@@ -12,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Response;
 import spark.servlet.SparkApplication;
+
 import java.io.IOException;
 
 import static spark.Spark.*;
@@ -34,7 +35,6 @@ public class MajorEndpoint implements SparkApplication {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		get("/protected/hello", (req, res) -> "Hello world!");
-
 		get("/protected/getAllUsers", (req, res) -> {
 			try {
 				return mapper.writeValueAsString(DatabaseService.getAllUsers());
@@ -66,7 +66,7 @@ public class MajorEndpoint implements SparkApplication {
 
 		get("/protected/getAllFriends", (req, res) -> {
 			try {
-				String login = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
+				String login = JWTHelper.getUserName(req.headers("Authorization"));
 				return mapper.writeValueAsString(DatabaseService.getAllFriendsForLogin(login));
 			} catch (Exception ex) {
 				return processException(ex);
@@ -75,7 +75,7 @@ public class MajorEndpoint implements SparkApplication {
 
 		get("/protected/setLike/:to", (req, res) -> {
 			try {
-				String from = JWTHelper.decodeJWT(req.headers("Authorization")).getId();
+				String from = JWTHelper.getUserName(req.headers("Authorization"));
 				String to = req.params(":to");
 				DatabaseService.setLike(from, to);
 				return "OK";

@@ -79,4 +79,8 @@ public class JWTHelper {
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(jwt).getBody();
     }
+
+    public static String getUserName(String jwt) throws Exception {
+        return JWTHelper.decodeJWT(jwt).getId();
+    }
 }
