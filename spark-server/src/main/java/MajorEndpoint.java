@@ -1,3 +1,4 @@
+import com.chat.Chat;
 import com.chat.ChatWebSocketHandler;
 import com.dto.BaseUserProfileDto;
 import com.dto.CredentialsDto;
@@ -12,10 +13,12 @@ import com.security.SecurityHelper;
 import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.websocket.api.Session;
 import spark.Response;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.*;
 
@@ -122,6 +125,13 @@ public class MajorEndpoint {
 			String user = JWTHelper.getUserName(req.headers("Authorization"));
 			List<MessageDto> messages = DatabaseService.getChatHistory(req.params(":user"), user);
 			return mapper.writeValueAsString(messages);
+		});
+
+		get("/kek", (req, res) -> {
+			for (Map.Entry<Session, String> entry : Chat.activeUserMap.entrySet()) {
+				entry.getKey().getRemote().sendString("OLOLO");
+			}
+			return "";
 		});
 
 		/**

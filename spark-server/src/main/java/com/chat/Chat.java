@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Chat {
 
     // this map is shared between sessions and threads, so it needs to be thread-safe (http://stackoverflow.com/a/2688817)
-    static Map<Session, String> activeUserMap = new ConcurrentHashMap<>();
+    public static Map<Session, String> activeUserMap = new ConcurrentHashMap<>();
     private final static Logger logger = Logger.getLogger(Chat.class);
 
     public static void sendMessage(String sender, MessageDto message) throws IOException {
