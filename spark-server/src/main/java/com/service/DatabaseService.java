@@ -1,5 +1,6 @@
 package com.service;
 
+import com.dictionary.MessageType;
 import com.dto.BaseUserProfileDto;
 import com.dto.FriendDto;
 import com.dto.MessageDto;
@@ -323,17 +324,31 @@ public class DatabaseService {
         logger.info(String.format("getChatHistory() user1: %s, user2: %s", user1, user2));
         List<MessageDto> messages = new ArrayList<>();
         Connection connection;
-//        try {
-//            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
-//            PreparedStatement preparedStatement = connection.prepareStatement(
-//                    "select * from \"spark-db\".t_message where confirmed_token=?");
-//            preparedStatement.setString(1, token);
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException ex) {
-//            logger.info("getChatHistory() exception:\n" + ex.getMessage());
-//            throw ex;
-//        }
-
+        try {
+            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select t1.text, t1.date, t3.login as login1, t4.login as login2 from \"spark-db\".t_message t1\n" +
+                            "join \"spark-db\".t_users_unity t2 on (t2.t_users_unity_id=t1.user_unity)\n" +
+                            "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
+                            "join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
+                            "where t3.login=? and t4.login=? or t3.login=? and t4.login=?\n" +
+                            "order by t1.date desc");
+            preparedStatement.setString(1, user1);
+            preparedStatement.setString(2, user2);
+            preparedStatement.setString(3, user2);
+            preparedStatement.setString(4, user1);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                messages.add(new MessageDto(MessageType.CHAT_MESSAGE,
+                        rs.getString("text"),
+                        rs.getString("login1"),
+                        rs.getString("login2"),
+                        rs.getDate("date").getTime()));
+            }
+        } catch (SQLException ex) {
+            logger.info("getChatHistory() exception:\n" + ex.getMessage());
+            throw ex;
+        }
         return messages;
     }
 

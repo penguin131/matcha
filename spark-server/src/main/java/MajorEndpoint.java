@@ -121,7 +121,7 @@ public class MajorEndpoint {
 			return "Your account is verified!";
 		});
 
-		get("protected/getChatHistory/:user", (req, res) -> {
+		get("/protected/getChatHistory/:user", (req, res) -> {
 			String user = JWTHelper.getUserName(req.headers("Authorization"));
 			List<MessageDto> messages = DatabaseService.getChatHistory(req.params(":user"), user);
 			return mapper.writeValueAsString(messages);

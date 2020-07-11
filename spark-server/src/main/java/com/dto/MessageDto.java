@@ -48,4 +48,17 @@ public class MessageDto {
     public void setDate(long date) {
         this.date = date;
     }
+
+    public MessageDto(MessageType type,
+                      String msgText,
+                      String from,
+                      String to,
+                      long date) {
+
+        this.type = type;
+        this.msgText = msgText;
+        this.from = from;
+        this.to = to;
+        this.date = date;
+    }
 }
