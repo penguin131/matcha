@@ -10,6 +10,10 @@ Deploy guide:
     3.3 sudo sh /opt/tomcat/bin/startup.sh
     3.4 sudo systemctl start tomcat
 
+chat deploy:
+mvn clean install
+mvn exec:java
+
 Postgres Database:<br>
 User sammy, password 123<br>
 Enter to psql command line: sudo -u sammy psql<br>
@@ -32,6 +36,8 @@ Remote connection: psql -h 84.38.183.163 -d sammy -U sammy<br>
 Уведомления
 
 
-GPS
+GPS - only frontend?
 
 {"login":"smight","password":"smight", "email":"zininlol@rambler.ru", "sex":0}
+
+Сейчас сложность: чатик и уведомления, короче работа через сокеты

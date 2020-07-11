@@ -1,3 +1,4 @@
+import com.chat.ChatWebSocketHandler;
 import com.dto.BaseUserProfileDto;
 import com.dto.CredentialsDto;
 import com.dto.UserProfileDto;
@@ -11,23 +12,21 @@ import com.service.DatabaseService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Response;
-import spark.servlet.SparkApplication;
 
 import java.io.IOException;
 
 import static spark.Spark.*;
 
-public class MajorEndpoint implements SparkApplication {
+public class MajorEndpoint {
 
 	private final static Logger logger = Logger.getLogger(MajorEndpoint.class);
 
 	private static long TTL = 1000000000;
 	public static void main(String[] args) {
-		new MajorEndpoint().init();
-	}
-
-	@Override
-	public void init() {
+		port(8080);
+		staticFiles.location("/public"); //index.html is served at localhost:4567 (default port)
+		staticFiles.expireTime(600);
+		webSocket("/chat", ChatWebSocketHandler.class);
 		try {
 			LoggerConfig.configureLogger();
 		} catch (IOException e) {
@@ -157,6 +156,7 @@ public class MajorEndpoint implements SparkApplication {
 				halt(403, "403 Forbidden");
 			}
 		});
+		init();
 	}
 
 	private static void	addHeaders(Response res) {

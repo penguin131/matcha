@@ -24,5 +24,4 @@ public class ChatWebSocketHandler {
     public void onMessage(Session user, String message) {
         Chat.broadcastMessage(sender = Chat.userUsernameMap.get(user), msg = message);
     }
-
 }

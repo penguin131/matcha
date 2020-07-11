@@ -32,11 +32,7 @@ public class MailService {
     }
 
     private static String getUrlToText() {
-        if (!Config.isIsProd()) {
-            return "To confirm the account click on the link:\nhttp://localhost:8080/tomeeapp/verification/";
-        } else {
-            return "To confirm the account click on the link:\nhttp://84.38.183.163:8080/spark-server-1.0/verification/";
-        }
+        return "To confirm the account click on the link:\nhttp://84.38.183.163:8080/spark-server-1.0/verification/";
     }
 
     public static void sendEmail(Session session, String toEmail, String subject, String body) throws UnsupportedEncodingException, MessagingException {
