@@ -1,5 +1,5 @@
 //Establish the WebSocket connection and set up event handlers
-var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat?token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiZmFsbWVyIiwiaWF0IjoxNTk0MjM1NDA0LCJzdWIiOiJzZWN1cml0eSIsImlzcyI6InNlY3VyaXR5U2VydmljZSIsImV4cCI6MTU5NTIzNTQwNH0.Rbm_1w8yPdGQ83SoFLb7W-o_fZgpeYY4dlR4QEOsIjM");
+var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/chat?token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiZmFsbWVyIiwiaWF0IjoxNTk0NDc0NzA1LCJzdWIiOiJzZWN1cml0eSIsImlzcyI6InNlY3VyaXR5U2VydmljZSIsImV4cCI6MTU5NTQ3NDcwNX0.XWa8PEnBMNIF2MHLFVlnnV-GyB4R69xd7np-ExjVWhc");
 webSocket.onmessage = function (msg) { updateChat(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 

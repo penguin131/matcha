@@ -18,6 +18,8 @@ Postgres Database:<br>
 User sammy, password 123<br>
 Enter to psql command line: sudo -u sammy psql<br>
 Remote connection: psql -h 84.38.183.163 -d sammy -U sammy<br>
+ssh root@84.38.183.163 -p 22
+
 
 Клиент: https://stackoverflow.com/questions/32586990/how-to-send-http-request-using-jwt-token-for-authentication-from-cookie-storage
 Короче, суть в чем: у клиента хранится хеш токена. Он пихает его в каждый свой заголовок запроса к серверу.

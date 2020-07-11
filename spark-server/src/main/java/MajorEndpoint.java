@@ -1,6 +1,7 @@
 import com.chat.ChatWebSocketHandler;
 import com.dto.BaseUserProfileDto;
 import com.dto.CredentialsDto;
+import com.dto.MessageDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
@@ -14,6 +15,7 @@ import org.apache.log4j.Logger;
 import spark.Response;
 
 import java.io.IOException;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -24,8 +26,7 @@ public class MajorEndpoint {
 	private static long TTL = 1000000000;
 	public static void main(String[] args) {
 		port(8080);
-		staticFiles.location("/public"); //index.html is served at localhost:4567 (default port)
-		staticFiles.expireTime(600);
+		staticFiles.location("/public");
 		webSocket("/chat", ChatWebSocketHandler.class);
 		try {
 			LoggerConfig.configureLogger();
@@ -115,6 +116,12 @@ public class MajorEndpoint {
 		get("/verification/:hash", (req, res) -> {
 			DatabaseService.confirmUserForToken(req.params(":hash"));
 			return "Your account is verified!";
+		});
+
+		get("protected/getChatHistory/:user", (req, res) -> {
+			String user = JWTHelper.getUserName(req.headers("Authorization"));
+			List<MessageDto> messages = DatabaseService.getChatHistory(req.params(":user"), user);
+			return mapper.writeValueAsString(messages);
 		});
 
 		/**

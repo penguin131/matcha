@@ -1,8 +1,8 @@
 package com.chat;
 
+import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.JWTHelper;
-import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -12,8 +12,6 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.utils.StringUtils;
 
 import java.io.IOException;
-import java.net.HttpCookie;
-import java.util.List;
 
 @WebSocket
 public class ChatWebSocketHandler {
@@ -22,24 +20,27 @@ public class ChatWebSocketHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {
-        logger.info("onConnect()");
+        logger.info("Start connection to web socket");
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
         String username = JWTHelper.getUserName(token);
         if (StringUtils.isEmpty(username)) {
             logger.info("Empty username");
             throw new Exception("Empty username");
         }
+        logger.info("put user: " + username);
         Chat.activeUserMap.put(userSession, username);
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
+        logger.info("End connection to web socket");
         Chat.activeUserMap.remove(user);
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) throws IOException {
-        Message message1 = mapper.readValue(message, Message.class);
+        MessageDto message1 = mapper.readValue(message, MessageDto.class);
+        logger.info("Send message: " + mapper.writeValueAsString(message1));
         Chat.sendMessage(Chat.activeUserMap.get(user), message1);
         //todo save to database
     }

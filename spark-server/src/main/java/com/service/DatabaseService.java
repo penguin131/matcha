@@ -2,6 +2,7 @@ package com.service;
 
 import com.dto.BaseUserProfileDto;
 import com.dto.FriendDto;
+import com.dto.MessageDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -316,6 +317,24 @@ public class DatabaseService {
             logger.info("confirmUserForToken() exception:\n" + ex.getMessage());
             throw ex;
         }
+    }
+
+    public static List<MessageDto> getChatHistory(String user1, String user2) throws SQLException {
+        logger.info(String.format("getChatHistory() user1: %s, user2: %s", user1, user2));
+        List<MessageDto> messages = new ArrayList<>();
+        Connection connection;
+//        try {
+//            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+//            PreparedStatement preparedStatement = connection.prepareStatement(
+//                    "select * from \"spark-db\".t_message where confirmed_token=?");
+//            preparedStatement.setString(1, token);
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException ex) {
+//            logger.info("getChatHistory() exception:\n" + ex.getMessage());
+//            throw ex;
+//        }
+
+        return messages;
     }
 
     private static void processException(Exception ex) throws Exception {

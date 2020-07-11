@@ -1,8 +1,8 @@
-package com.chat;
+package com.dto;
 
 import com.dictionary.MessageType;
 
-public class Message {
+public class MessageDto {
     private MessageType type;
     private String msgText;
     private String from;
