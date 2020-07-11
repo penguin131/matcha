@@ -3,6 +3,7 @@ package com.chat;
 import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.JWTHelper;
+import com.service.DatabaseService;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -38,10 +39,11 @@ public class ChatWebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session user, String message) throws IOException {
+    public void onMessage(Session user, String message) throws Exception {
         MessageDto message1 = mapper.readValue(message, MessageDto.class);
         logger.info("Send message: " + mapper.writeValueAsString(message1));
         Chat.sendMessage(Chat.activeUserMap.get(user), message1);
         //todo save to database
+        DatabaseService.saveChatMessage(message1);
     }
 }

@@ -352,6 +352,33 @@ public class DatabaseService {
         return messages;
     }
 
+    public static void saveChatMessage(MessageDto messageDto) throws Exception {
+        logger.info("saveChatMessage()");
+        try {
+            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "insert into \"spark-db\".t_message (text, user_unity, date) values\n" +
+                            "(?,\n" +
+                            " (select t2.t_users_unity_id from \"spark-db\".t_users_unity t2\n" +
+                            "       join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
+                            "       join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
+                            "     where t3.login=? and t4.login=? or t3.login=? and t4.login=?" +
+                            "limit 1),\n" +
+                            " ?);");
+            preparedStatement.setString(1, messageDto.getMsgText());
+            preparedStatement.setString(2, messageDto.getFrom());
+            preparedStatement.setString(3, messageDto.getTo());
+            preparedStatement.setString(4, messageDto.getTo());
+            preparedStatement.setString(5, messageDto.getFrom());
+            preparedStatement.setDate(6, new Date(System.currentTimeMillis()));
+            preparedStatement.execute();
+            logger.info(mapper.writeValueAsString(messageDto));
+        } catch (SQLException ex) {
+            logger.info("saveChatMessage() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
     private static void processException(Exception ex) throws Exception {
         logger.info(ex.getMessage());
         throw ex;

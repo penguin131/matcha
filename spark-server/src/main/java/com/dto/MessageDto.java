@@ -61,4 +61,19 @@ public class MessageDto {
         this.to = to;
         this.date = date;
     }
+
+    public MessageDto(String msgText,
+                      String from,
+                      String to,
+                      long date) {
+
+        this.msgText = msgText;
+        this.from = from;
+        this.to = to;
+        this.date = date;
+    }
+
+    public MessageDto() {
+
+    }
 }

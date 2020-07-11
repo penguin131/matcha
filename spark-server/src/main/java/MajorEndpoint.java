@@ -157,6 +157,17 @@ public class MajorEndpoint {
 
 		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
 
+		post("/saveMessage", (req, res) -> {
+			try {
+				MessageDto messageDto = mapper.readValue(req.body(), MessageDto.class);
+
+				DatabaseService.saveChatMessage(messageDto);
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+			return "";
+		});
+
 		before("/protected/*", (request, response) -> {
 			Claims claims = null;
 			long currentTime = 0;
