@@ -129,6 +129,7 @@ public class MajorEndpoint {
 
 		get("/kek", (req, res) -> {
 			for (Map.Entry<Session, String> entry : Chat.activeUserMap.entrySet()) {
+				logger.info("send OLOLO to socket: " + entry.getValue());
 				entry.getKey().getRemote().sendString("OLOLO");
 			}
 			return "";
