@@ -1,6 +1,5 @@
 import axios from 'axios'
-
-const url = 'https://cors-anywhere.herokuapp.com/http://84.38.183.163:8080/spark-server-1.0/'
+import url from './backendUrl'
 
 export const join = async (values, setIsLoading) => {
   const data = {
@@ -14,7 +13,6 @@ export const join = async (values, setIsLoading) => {
     setIsLoading(true)
     await axios.post(`${url}createUserProfile`,data)
       .then(res => {
-        console.log(res)
         setIsLoading(false)
       })
   } catch(e) {

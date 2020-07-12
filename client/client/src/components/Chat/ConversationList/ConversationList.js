@@ -1,44 +1,41 @@
 import React from 'react'
+import moment from 'moment'
 import css from './ConversationList.module.less'
 
-const Conversation = () => {
+const Conversation = ({ data, setCurrentChat, index }) => {
+    const { login, date, lastMessage } = data
+    const formatedDate = date && moment(date).format('MMM Do')
+    const onClick = () => {
+        setCurrentChat(login)
+        localStorage.currentChat = login
+    }
     return (
-        <div className={`${css.conversation}`}>
+        <div className={`${css.conversation}`} onClick={onClick}>
             <div className={css.messageStatus}>+</div>
             <div className={css.conversationDetails}>
                 <div className={css.conversationTitle}>
-                    <div className={css.titleText}>keasasdasf af aseke
-                    afasfasf
-                    asfasffas</div>
-                    <div className={css.tetleDate}>123</div>
+                    <div className={css.titleText}>{login}</div>
+                    <div className={css.tetleDate}>{formatedDate}</div>
                 </div>
                 <div className={css.conversationMessage}>
-                    messывдмлсолтфирмыпфл таьвбдыошгрлмп
+                    {lastMessage && lastMessage}
                 </div>
             </div>
-            
-        </div>
-        
+        </div>  
     )
 }
 
-const ConversationList = () => {
+const ConversationList = ({ data, setCurrentChat }) => {
     return (
         <div className={css.conversationList}>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-            <Conversation/>
-
+            {data.map((element, i) => (
+                <Conversation
+                    key={i}
+                    index={i}
+                    data={element}
+                    setCurrentChat={setCurrentChat}
+                />
+            ))}
         </div>
     )
 }
