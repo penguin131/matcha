@@ -36,7 +36,7 @@ const ChatPage = () => {
     const message = {
       type: 0,
       msgText: values.message,
-      from: 'bfalmer',
+      from: localStorage.currentUser,
       to: currentChat,
     }
 
