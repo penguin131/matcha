@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
 import Navigation from '../../Navigation/Navigation'
@@ -8,7 +8,7 @@ import SettingsPage from '../../../pages/SettingsPage/SettingsPage'
 import ChatPage from '../../../pages/ChatPage/ChatPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
-import { AuthContext } from '../../context/AuthContext'
+/* import { AuthContext } from '../../context/AuthContext' */
 import css from './Main.module.css'
 
 const Main = () => {

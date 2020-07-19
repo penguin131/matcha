@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 import Main from './components/baseLayout/Main/Main'
 import AuthPage from './pages/AuthPage/AuthPage'
@@ -7,27 +7,9 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import { AuthContext } from './components/context/AuthContext'
 import './App.css'
 
-
 const App = () => {
   const [isAuth, setIsAuth] = useState(true)
-  const token = localStorage.token
-  const url = '84.38.183.163:8080/chat'
-  const webSocket = useRef(null)
-  const [messages, setMessages] = useState([])
-  useEffect(() => {
-      webSocket.current = new WebSocket(`ws://${url}?token=${token}`)
-      webSocket.current.onopen = () => {
-          // on connecting, do nothing but log it to the console
-          console.log('connected')
-      }
-      webSocket.current.onmessage = (message) => {
-          console.log(message)
-      }
-      return () => {
-          webSocket.current.close()
-          console.log('closed')
-      }
-  }, [])
+
   const AuthPageWithContext = () => (
     <AuthContext.Provider value={{setIsAuth}}>
       <AuthPage/>
@@ -35,7 +17,7 @@ const App = () => {
   )
 
   const MainPageWithContext = () => (
-    <AuthContext.Provider value={{isAuth, messages, setMessages, webSocket}}>
+    <AuthContext.Provider value={{isAuth}}>
       <Main/>
     </AuthContext.Provider>
   )

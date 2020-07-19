@@ -1,34 +1,44 @@
-import React, {useState, useEffect } from 'react'
+import React from 'react'
+import moment from 'moment'
 import css from './ChatList.module.less'
 import Loader from '../../Loader/Loader'
-import * as services from '../../../services/chat'
 
-const MessageRow = ({ data, myself }) => {
-    return (
-        <div className={myself? `${css.messageRow} ${css.youMessage}` : `${css.messageRow} ${css.otherMessage}`}>
-            <div className={css.messageDetails}>
-                <div className={css.messageText}>1ds;asdasffafkmvsdlk23</div>
-                <div className={css.messageDate}>123</div>
-            </div>
-        </div>
-    )
+const MessageRow = ({ msgText, date, myself }) => { 
+  const formatedDate = date && moment(date).format('MMM Do')
+  const whoseMessage = myself ? `${css.messageRow} ${css.youMessage}`
+    : `${css.messageRow} ${css.otherMessage}`
+  
+  return (
+    <div className={whoseMessage}>
+      <div className={css.messageDetails}>
+        <div className={css.messageText}>{msgText}</div>
+        <div className={css.messageDate}>{formatedDate}</div>
+      </div>
+    </div>
+  )
 }
 
-const ChatList = ({ currentChat, messages }) => {
-    const [isLoading, setIsLoading] = useState(false)
+const ChatList = ({ currentChat, messages, isLoading }) => {
 
-    /* useEffect(() =>{
-        services.getUser(setIsLoading, setMessages, currentChat)
-    }) */
-    console.log(currentChat)
-    return (
-        <div className={css.chatList}>
-            {currentChat ? isLoading ? <Loader/> :
-            messages.map((element, i) => (
-                <MessageRow key={i} data={element} myself/>
-            )) : <p>select chat...</p>}
-        </div>
-    )
+  return (
+    <div className={css.chatContainer}>
+      {currentChat ? isLoading ? <Loader/> :
+      <div className={css.chatList}>
+        {messages.map((element, i) => {
+          const { msgText, from, date } = element
+
+          return (
+            <MessageRow
+              key={i}
+              msgText={msgText}
+              date={date}
+              myself={from !== currentChat}
+            />
+          )
+        })}
+      </div> : <p>select chat...</p>}
+    </div>
+  )
 }
 
 export default ChatList
