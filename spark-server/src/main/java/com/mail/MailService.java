@@ -1,6 +1,5 @@
 package com.mail;
 
-import com.helper.Config;
 import org.apache.log4j.Logger;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

@@ -175,9 +175,9 @@ public class DatabaseService {
                             ")\n" +
                             "select t4.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
                             "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
-                            "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
+                            "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id) or t4.user_profile_id=t2.user1_id\n" +
                             "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id and t3.nb=1)\n" +
-                            "    where t1.login=? and t2.confirmed=true");
+                            "    where t1.login=? and t2.confirmed=true and t1.login != t4.login");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {

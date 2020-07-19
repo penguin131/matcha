@@ -20,8 +20,7 @@ function sendMessage(message) {
             type: 0,
             msgText: message,
             from: 'bfalmer',
-            to: 'smight',
-            date: 0
+            to: 'smight'
         };
         //todo json кому отправляем
         webSocket.send(JSON.stringify(msg));

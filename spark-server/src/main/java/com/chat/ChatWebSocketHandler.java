@@ -43,7 +43,6 @@ public class ChatWebSocketHandler {
         MessageDto message1 = mapper.readValue(message, MessageDto.class);
         logger.info("Send message: " + mapper.writeValueAsString(message1));
         Chat.sendMessage(Chat.activeUserMap.get(user), message1);
-        //todo save to database
         DatabaseService.saveChatMessage(message1);
     }
 }
