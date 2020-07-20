@@ -1,4 +1,5 @@
 const proxy = 'cors-anywhere.herokuapp.com/'
-const url = `https://${proxy}http://84.38.183.163:8080/`
+const ip = '84.201.142.89:8080'
+export const url = `https://${proxy}http://${ip}/`
+export const ws = `ws://${ip}?token=`
 
-export default url

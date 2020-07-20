@@ -4,6 +4,7 @@ import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
 /* import { ReactComponent as TrashLogo } from '../../imgs/trash.svg' */
 import css from './ChatPage.module.less'
+import { ws, url } from '../../services/backendUrl'
 import * as services from '../../services/chat.js'
 
 const ChatPage = () => {
@@ -12,8 +13,7 @@ const ChatPage = () => {
   const [friendsList, setFriendsList] = useState([])
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
   const token = localStorage.token
-  const url = '84.38.183.163:8080/chat'
-  const webSocket = useRef(new WebSocket(`ws://${url}?token=${token}`))
+  const webSocket = useRef(new WebSocket(`${ws}/chat//${url}?token=${token}`))
   const [messages, setMessages] = useState([])
   
   useEffect(() => {

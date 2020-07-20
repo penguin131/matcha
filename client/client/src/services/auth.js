@@ -1,5 +1,5 @@
 import axios from 'axios'
-import url from './backendUrl'
+import { url } from './backendUrl'
 
 export const join = async (values, setIsLoading) => {
   const data = {
