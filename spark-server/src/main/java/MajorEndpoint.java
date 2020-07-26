@@ -123,7 +123,7 @@ public class MajorEndpoint {
 
 		get("/protected/getChatHistory/:user", (req, res) -> {
 			String user = JWTHelper.getUserName(req.headers("Authorization"));
-			List<MessageDto> messages = DatabaseService.getChatHistory(req.params(":user"), user);
+			List<MessageDto> messages = DatabaseService.getChatHistory(user, req.params(":user"));
 			return mapper.writeValueAsString(messages);
 		});
 
