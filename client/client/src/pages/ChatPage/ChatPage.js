@@ -40,7 +40,7 @@ useEffect(() => {
       msgText: values.message,
       from: localStorage.currentUser,
       to: currentChat,
-      date: new Date(),
+      date: Date.now(),
     }
 
     webSocket.current.send(JSON.stringify(message))
