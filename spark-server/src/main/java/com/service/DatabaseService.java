@@ -329,7 +329,7 @@ public class DatabaseService {
                         rs.getString("text"),
                         rs.getString("login1"),
                         rs.getString("login2"),
-                        rs.getDate("date").getTime()));
+                        rs.getLong("date")));
             }
         } catch (SQLException ex) {
             logger.info("getChatHistory() exception:\n" + ex.getMessage());
