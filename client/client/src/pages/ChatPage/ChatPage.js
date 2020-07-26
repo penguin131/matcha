@@ -4,7 +4,7 @@ import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
 /* import { ReactComponent as TrashLogo } from '../../imgs/trash.svg' */
 import css from './ChatPage.module.less'
-import { ws, url } from '../../services/backendUrl'
+import { ws } from '../../services/backendUrl'
 import * as services from '../../services/chat.js'
 
 const ChatPage = () => {
@@ -13,7 +13,7 @@ const ChatPage = () => {
   const [friendsList, setFriendsList] = useState([])
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
   const token = localStorage.token
-  const webSocket = useRef(new WebSocket(`${ws}/chat//${url}?token=${token}`))
+  const webSocket = useRef(new WebSocket(`${ws}${token}`))
   const [messages, setMessages] = useState([])
   
   useEffect(() => {
@@ -23,25 +23,29 @@ const ChatPage = () => {
     webSocket.current.onclose = () => {
       console.log('closed')
     }
-    webSocket.current.onmessage = (message) => {
-      setMessages([message.data, ...messages])
-    }
+    
     return () => {
       webSocket.current.close()
       console.log('closed')
     }
   }, [])
-
+useEffect(() => {
+  webSocket.current.onmessage = (message) => {
+    setMessages([JSON.parse(message.data), ...messages])
+  }
+}, [messages])
   const onSubmit = (values) => {
     const message = {
       type: 0,
       msgText: values.message,
       from: localStorage.currentUser,
       to: currentChat,
+      date: new Date(),
     }
 
     webSocket.current.send(JSON.stringify(message))
-    setMessages([ message, ...messages])
+    setMessages([message, ...messages])
+   // services.getUserChatHistory(setChatListIsLoading, setMessages, currentChat)
   }
 
   useEffect(() => {
