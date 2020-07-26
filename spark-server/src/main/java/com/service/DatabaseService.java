@@ -154,15 +154,18 @@ public class DatabaseService {
         List<FriendDto> friendList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())){
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "WITH cte_message AS (SELECT row_number() over () as nb, text, date, \"from\", \"to\"\n" +
+                    "WITH cte_message AS (SELECT row_number() over (order by date desc) as nb, text, date, \"from\", \"to\"\n" +
                             "                    FROM \"spark-db\".t_message\n" +
-                            "                    order by date desc)\n" +
-                            "select t4.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
+                            "                    where \"from\"=(select user_profile_id from \"spark-db\".t_user_profile where login=?) or\n" +
+                            "                             \"to\"=(select user_profile_id from \"spark-db\".t_user_profile where login=?))\n" +
+                            "select t4.login, t3.text, t3.date, t3.\"from\", t3.\"to\", t1.user_profile_id, t4.user_profile_id, nb from \"spark-db\".t_user_profile t1\n" +
                             "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
                             "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id or t4.user_profile_id=t2.user1_id)\n" +
-                            "    left join cte_message t3 on (t3.\"from\"=t1.user_profile_id and t3.nb=1)\n" +
+                            "    left join cte_message t3 on ((t3.\"from\"=t1.user_profile_id and t3.\"to\"=t4.user_profile_id) or (t3.\"from\"=t4.user_profile_id and t3.\"to\"=t1.user_profile_id)) and nb=1\n" +
                             "where t1.login=? and t2.confirmed=true and t1.login != t4.login");
             preparedStatement.setString(1, login);
+            preparedStatement.setString(2, login);
+            preparedStatement.setString(3, login);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getLong("date")));
@@ -307,10 +310,12 @@ public class DatabaseService {
                     "select t1.text, t1.date, t2.login as login1, t3.login as login2 from \"spark-db\".t_message t1\n" +
                             "join \"spark-db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
                             "join \"spark-db\".t_user_profile t3 on (t1.\"to\"=t3.user_profile_id)\n" +
-                            "where t2.login=? and t3.login=?\n" +
+                            "where t2.login=? and t3.login=? or t2.login=? and t3.login=?\n" +
                             "order by t1.date desc");
             preparedStatement.setString(1, user1);
             preparedStatement.setString(2, user2);
+            preparedStatement.setString(3, user2);
+            preparedStatement.setString(4, user1);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 messages.add(new MessageDto(MessageType.CHAT_MESSAGE,
