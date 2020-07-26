@@ -355,7 +355,7 @@ public class DatabaseService {
             preparedStatement.setString(3, messageDto.getTo());
             preparedStatement.setString(4, messageDto.getTo());
             preparedStatement.setString(5, messageDto.getFrom());
-            preparedStatement.setDate(6, new Date(messageDto.getDate()));
+            preparedStatement.setLong(6, messageDto.getDate());
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(messageDto));
         } catch (SQLException ex) {
