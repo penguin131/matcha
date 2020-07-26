@@ -313,16 +313,13 @@ public class DatabaseService {
         List<MessageDto> messages = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());){
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select t1.text, t1.date, t3.login as login1, t4.login as login2 from \"spark-db\".t_message t1\n" +
-                            "join \"spark-db\".t_users_unity t2 on (t2.t_users_unity_id=t1.user_unity)\n" +
-                            "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
-                            "join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
-                            "where t3.login=? and t4.login=? or t3.login=? and t4.login=?\n" +
+                    "select t1.text, t1.date, t2.login as login1, t3.login as login2 from \"spark-db\".t_message t1\n" +
+                            "join \"spark-db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
+                            "join \"spark-db\".t_user_profile t3 on (t1.\"to\"=t3.user_profile_id)\n" +
+                            "where t2.login=? and t3.login=?\n" +
                             "order by t1.date desc");
             preparedStatement.setString(1, user1);
             preparedStatement.setString(2, user2);
-            preparedStatement.setString(3, user2);
-            preparedStatement.setString(4, user1);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 messages.add(new MessageDto(MessageType.CHAT_MESSAGE,
@@ -342,20 +339,15 @@ public class DatabaseService {
         logger.info("saveChatMessage()");
         try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark-db\".t_message (text, user_unity, date) values\n" +
-                            "(?,\n" +
-                            " (select t2.t_users_unity_id from \"spark-db\".t_users_unity t2\n" +
-                            "       join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
-                            "       join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id)\n" +
-                            "     where t3.login=? and t4.login=? or t3.login=? and t4.login=?" +
-                            "limit 1),\n" +
-                            " ?);");
+                    "insert into \"spark-db\".t_message (text, date, \"from\", \"to\") VALUES\n" +
+                    "(?\n" +
+                    " ,?\n" +
+                    " ,(select user_profile_id from \"spark-db\".t_user_profile where login=?)\n" +
+                    " ,(select user_profile_id from \"spark-db\".t_user_profile where login=?))");
             preparedStatement.setString(1, messageDto.getMsgText());
-            preparedStatement.setString(2, messageDto.getFrom());
-            preparedStatement.setString(3, messageDto.getTo());
+            preparedStatement.setLong(2, messageDto.getDate());
+            preparedStatement.setString(3, messageDto.getFrom());
             preparedStatement.setString(4, messageDto.getTo());
-            preparedStatement.setString(5, messageDto.getFrom());
-            preparedStatement.setLong(6, messageDto.getDate());
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(messageDto));
         } catch (SQLException ex) {
