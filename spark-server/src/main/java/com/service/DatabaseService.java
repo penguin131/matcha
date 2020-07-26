@@ -35,8 +35,7 @@ public class DatabaseService {
     public static List<UserProfileDto> getAllUsers() throws SQLException, JsonProcessingException {
         logger.info("getAllUsers()");
         List<UserProfileDto> userProfileList = new ArrayList<>();
-        try {
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_user_profile");
             ResultSet rs = preparedStatement.executeQuery();
@@ -77,8 +76,7 @@ public class DatabaseService {
         if (checkEmailExist(userProfileDto.getEmail())) {
             processException(new Exception("Email is already in use"));
         }
-        try {
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
@@ -97,9 +95,8 @@ public class DatabaseService {
     }
 
     private static boolean checkEmailExist(String email) throws SQLException {
-        try {
-            logger.info("checkEmailExist(), email: " + email);
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        logger.info("checkEmailExist(), email: " + email);
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_user_profile where email=?");
             preparedStatement.setString(1, email);
@@ -118,10 +115,8 @@ public class DatabaseService {
      */
     public static UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException {
         logger.info("getUserProfileForLogin() login: " + login);
-        Connection connection;
         UserProfileDto userProfile = null;
-        try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
@@ -156,10 +151,8 @@ public class DatabaseService {
      */
     public static List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
         logger.info("getAllFriendsForLogin() login: " + login);
-        Connection connection;
         List<FriendDto> friendList = new ArrayList<>();
-        try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "WITH cte_message AS (\n" +
                             "    SELECT\n" +
@@ -200,8 +193,7 @@ public class DatabaseService {
             throw new Exception("User cannot be friends with himself");
         if (getUserProfileForLogin(to) == null)
             throw new Exception(String.format("User %s does not exists", to));
-        try {
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             if (checkUserUnity(from, to)) {//если запись уже есть, тупо подтверждаю ее
                 logger.info("rs.next() == true");
                 PreparedStatement preparedStatement = connection.prepareStatement(
@@ -236,18 +228,19 @@ public class DatabaseService {
 
     private static boolean checkUserUnity(String login1, String login2) throws SQLException {
         logger.info(String.format("checkUserUnity: %s, %s", login1, login2));
-        Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
-        PreparedStatement preparedStatement = connection.prepareStatement(
-                "select * from \"spark-db\".t_users_unity t1 " +
-                        "join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
-                        "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
-                        "where t2.login=? and t3.login=?");
-        preparedStatement.setString(1, login1);
-        preparedStatement.setString(2, login2);
-        ResultSet rs = preparedStatement.executeQuery();
-        boolean result = rs.next();
-        logger.info("result: " + result);
-        return result;
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from \"spark-db\".t_users_unity t1 " +
+                            "join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
+                            "join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
+                            "where t2.login=? and t3.login=?");
+            preparedStatement.setString(1, login1);
+            preparedStatement.setString(2, login2);
+            ResultSet rs = preparedStatement.executeQuery();
+            boolean result = rs.next();
+            logger.info("result: " + result);
+            return result;
+        }
     }
 
     /**
@@ -256,9 +249,7 @@ public class DatabaseService {
      */
     public static void deleteUserProfileForLogin(String login) throws SQLException {
         logger.info("deleteUserProfileForLogin() login: " + login);
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "delete from \"spark-db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
@@ -273,9 +264,8 @@ public class DatabaseService {
      * Обновляет пользовательский профиль
      */
     public static void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
-        try {
-            logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
             preparedStatement.setString(1, userProfileDto.getFirstName());
@@ -284,7 +274,7 @@ public class DatabaseService {
             preparedStatement.setString(4, userProfileDto.getBiography());
             preparedStatement.setString(5, userProfileDto.getLogin());
             preparedStatement.executeUpdate();
-        } catch (JsonProcessingException | SQLException ex) {
+        } catch (SQLException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
             throw ex;
         }
@@ -307,9 +297,7 @@ public class DatabaseService {
      */
     public static void confirmUserForToken(String token) throws SQLException {
         logger.info("confirmUserForToken() token: " + token);
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_user_profile set confirmed=true where confirmed_token=?");
             preparedStatement.setString(1, token);
@@ -323,9 +311,7 @@ public class DatabaseService {
     public static List<MessageDto> getChatHistory(String user1, String user2) throws SQLException {
         logger.info(String.format("getChatHistory() user1: %s, user2: %s", user1, user2));
         List<MessageDto> messages = new ArrayList<>();
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select t1.text, t1.date, t3.login as login1, t4.login as login2 from \"spark-db\".t_message t1\n" +
                             "join \"spark-db\".t_users_unity t2 on (t2.t_users_unity_id=t1.user_unity)\n" +
@@ -354,8 +340,7 @@ public class DatabaseService {
 
     public static void saveChatMessage(MessageDto messageDto) throws Exception {
         logger.info("saveChatMessage()");
-        try {
-            Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties());
+        try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark-db\".t_message (text, user_unity, date) values\n" +
                             "(?,\n" +
@@ -370,7 +355,7 @@ public class DatabaseService {
             preparedStatement.setString(3, messageDto.getTo());
             preparedStatement.setString(4, messageDto.getTo());
             preparedStatement.setString(5, messageDto.getFrom());
-            preparedStatement.setDate(6, new Date(System.currentTimeMillis()));
+            preparedStatement.setDate(6, new Date(messageDto.getDate()));
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(messageDto));
         } catch (SQLException ex) {
