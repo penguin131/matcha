@@ -154,23 +154,14 @@ public class DatabaseService {
         List<FriendDto> friendList = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(props.getUrl(), props.getProperties())){
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "WITH cte_message AS (\n" +
-                            "    SELECT\n" +
-                            "        row_number() over () as \"nb\",\n" +
-                            "        text,\n" +
-                            "        date,\n" +
-                            "        user_unity\n" +
-                            "    FROM\n" +
-                            "        \"spark-db\".t_message\n" +
-                            "    where\n" +
-                            "        t_message.user_unity in (select t_users_unity_id from \"spark-db\".t_users_unity)\n" +
-                            "    order by date desc\n" +
-                            ")\n" +
+                    "WITH cte_message AS (SELECT row_number() over () as nb, text, date, \"from\", \"to\"\n" +
+                            "                    FROM \"spark-db\".t_message\n" +
+                            "                    order by date desc)\n" +
                             "select t4.login, t3.text, t3.date from \"spark-db\".t_user_profile t1\n" +
                             "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
-                            "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id) or t4.user_profile_id=t2.user1_id\n" +
-                            "    left join cte_message t3 on (t3.user_unity=t2.t_users_unity_id and t3.nb=1)\n" +
-                            "    where t1.login=? and t2.confirmed=true and t1.login != t4.login");
+                            "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id or t4.user_profile_id=t2.user1_id)\n" +
+                            "    left join cte_message t3 on (t3.\"from\"=t1.user_profile_id and t3.nb=1)\n" +
+                            "where t1.login=? and t2.confirmed=true and t1.login != t4.login");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
