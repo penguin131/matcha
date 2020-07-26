@@ -5,7 +5,7 @@ import java.sql.Date;
 public class FriendDto {
     private String login;
     private String lastMessage;
-    private Date date;
+    private long date;
 
     public String getLogin() {
         return login;
@@ -23,17 +23,17 @@ public class FriendDto {
         this.lastMessage = lastMessage;
     }
 
-    public FriendDto(String login, String lastMessage, Date date) {
+    public FriendDto(String login, String lastMessage, long date) {
         this.login = login;
         this.lastMessage = lastMessage;
         this.date = date;
     }
 
-    public Date getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 }

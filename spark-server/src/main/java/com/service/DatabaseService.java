@@ -174,7 +174,7 @@ public class DatabaseService {
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getDate("date")));
+                friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getLong("date")));
             }
             logger.info("friends count: " + friendList.size());
         } catch (SQLException ex) {
