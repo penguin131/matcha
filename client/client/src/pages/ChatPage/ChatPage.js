@@ -44,7 +44,7 @@ useEffect(() => {
     }
 
     webSocket.current.send(JSON.stringify(message))
-    setMessages([message, ...messages])
+  /*   setMessages([message, ...messages]) */
    // services.getUserChatHistory(setChatListIsLoading, setMessages, currentChat)
   }
 

@@ -12,6 +12,7 @@ export const getAllFriends = async (setIsLoading, setFriendsList) => {
         } } )
       .then(res => {
         setIsLoading(false) 
+        console.log(res.data)
         setFriendsList(res.data)
       })
     } catch(e) {
@@ -31,7 +32,6 @@ export const getUserChatHistory = async (setIsLoading, setMessages, login) => {
         .then(res => {
           setIsLoading(false) 
           setMessages(res.data)
-          console.log(res.data)
         })
     } catch(e) {
       setIsLoading(false) 

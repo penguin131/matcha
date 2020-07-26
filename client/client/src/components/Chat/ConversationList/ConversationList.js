@@ -5,7 +5,7 @@ import css from './ConversationList.module.less'
 
 const Conversation = ({ data, setCurrentChat, index }) => {
   const { login, date, lastMessage } = data
-  const formatedDate = date && moment(date).format('MMM Do')
+  //const formatedDate = date/*  && moment(date).format('MMM Do') */
   
   const onClick = () => {
     setCurrentChat(login)
@@ -18,17 +18,18 @@ const Conversation = ({ data, setCurrentChat, index }) => {
       <div className={css.conversationDetails}>
         <div className={css.conversationTitle}>
           <div className={css.titleText}>{login}</div>
-          <div className={css.tetleDate}>{formatedDate}</div>
+         {/*  <div className={css.tetleDate}>{formatedDate}</div> */}
         </div>
-        <div className={css.conversationMessage}>
+  {/*       <div className={css.conversationMessage}>
           {lastMessage && lastMessage}
-        </div>
+        </div> */}
       </div>
     </div>  
   )
 }
 
-const ConversationList = ({ data, setCurrentChat, isLoading }) => {
+const ConversationList = ({ data = [], setCurrentChat, isLoading }) => {
+
   return (
     <div className={css.conversationList}>
       {!isLoading ? (
