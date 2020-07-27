@@ -1,12 +1,11 @@
 package com.security;
 
-import com.service.DatabaseService;
 import org.apache.log4j.Logger;
 
 import java.util.Random;
 
 public class SecurityHelper {
-    private final static Logger logger = Logger.getLogger(DatabaseService.class);
+    private final static Logger logger = Logger.getLogger(SecurityHelper.class);
     public static String generateHash() {
         int leftLimit = 48;
         int rightLimit = 122;

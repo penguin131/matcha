@@ -5,12 +5,14 @@ import com.dto.CredentialsDto;
 import com.dto.MessageDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helper.Config;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
 import com.service.DatabaseService;
+import com.service.DatabaseServiceHelper;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -25,8 +27,10 @@ import static spark.Spark.*;
 public class MajorEndpoint {
 
 	private final static Logger logger = Logger.getLogger(MajorEndpoint.class);
-
+	private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService(Config.getConfig());
+	private static ObjectMapper mapper = new ObjectMapper();
 	private static long TTL = 1000000000;
+
 	public static void main(String[] args) {
 		port(8080);
 		staticFiles.location("/public");
@@ -36,11 +40,10 @@ public class MajorEndpoint {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ObjectMapper mapper = new ObjectMapper();
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
 			try {
-				return mapper.writeValueAsString(DatabaseService.getAllUsers());
+				return mapper.writeValueAsString(databaseService.getAllUsers());
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -51,7 +54,7 @@ public class MajorEndpoint {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
 				String hash = SecurityHelper.generateHash();
-				DatabaseService.createUserProfile(user, hash);
+				databaseService.createUserProfile(user, hash);
 				MailService.sendConfirmationEmail(user.getEmail(), hash);
 			} catch (Exception ex) {
 				return processException(ex);
@@ -61,7 +64,7 @@ public class MajorEndpoint {
 
 		get("/protected/getUserProfileForLogin/:login", (req, res) -> {
 			try {
-				return mapper.writeValueAsString(DatabaseService.getUserProfileForLogin(req.params(":login")));
+				return mapper.writeValueAsString(databaseService.getUserProfileForLogin(req.params(":login")));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -70,7 +73,7 @@ public class MajorEndpoint {
 		get("/protected/getAllFriends", (req, res) -> {
 			try {
 				String login = JWTHelper.getUserName(req.headers("Authorization"));
-				return mapper.writeValueAsString(DatabaseService.getAllFriendsForLogin(login));
+				return mapper.writeValueAsString(databaseService.getAllFriendsForLogin(login));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -80,7 +83,7 @@ public class MajorEndpoint {
 			try {
 				String from = JWTHelper.getUserName(req.headers("Authorization"));
 				String to = req.params(":to");
-				DatabaseService.setLike(from, to);
+				databaseService.setLike(from, to);
 				return "OK";
 			} catch (Exception ex) {
 				return processException(ex);
@@ -89,7 +92,7 @@ public class MajorEndpoint {
 
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			try {
-				DatabaseService.deleteUserProfileForLogin(req.params(":login"));
+				databaseService.deleteUserProfileForLogin(req.params(":login"));
 				return "OK";
 			} catch (Exception ex) {
 				return processException(ex);
@@ -100,7 +103,7 @@ public class MajorEndpoint {
 			try {
 				UserProfileDto user = mapper.readValue(req.body(), UserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
-				DatabaseService.updateUserProfile(user);
+				databaseService.updateUserProfile(user);
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -117,13 +120,13 @@ public class MajorEndpoint {
 		});
 
 		get("/verification/:hash", (req, res) -> {
-			DatabaseService.confirmUserForToken(req.params(":hash"));
+			databaseService.confirmUserForToken(req.params(":hash"));
 			return "Your account is verified!";
 		});
 
 		get("/protected/getChatHistory/:user", (req, res) -> {
 			String user = JWTHelper.getUserName(req.headers("Authorization"));
-			List<MessageDto> messages = DatabaseService.getChatHistory(user, req.params(":user"));
+			List<MessageDto> messages = databaseService.getChatHistory(user, req.params(":user"));
 			return mapper.writeValueAsString(messages);
 		});
 
@@ -143,7 +146,7 @@ public class MajorEndpoint {
 				CredentialsDto credentials = mapper.readValue(req.body(), CredentialsDto.class);
 				String login = credentials.getLogin();
 				String password = credentials.getPassword();
-				if (DatabaseService.checkPassword(login, password)) {
+				if (databaseService.checkPassword(login, password)) {
 					return JWTHelper.createJWT(login, "securityService", "security", TTL);
 				} else {
 					return "Invalid login/password";
@@ -160,8 +163,7 @@ public class MajorEndpoint {
 		post("/saveMessage", (req, res) -> {
 			try {
 				MessageDto messageDto = mapper.readValue(req.body(), MessageDto.class);
-
-				DatabaseService.saveChatMessage(messageDto);
+				databaseService.saveChatMessage(messageDto);
 			} catch (Exception ex) {
 				return processException(ex);
 			}

@@ -2,8 +2,10 @@ package com.chat;
 
 import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helper.Config;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
+import com.service.DatabaseServiceHelper;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -12,12 +14,11 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.utils.StringUtils;
 
-import java.io.IOException;
-
 @WebSocket
 public class ChatWebSocketHandler {
     private final static Logger logger = Logger.getLogger(ChatWebSocketHandler.class);
     private static ObjectMapper mapper = new ObjectMapper();
+    private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService(Config.getConfig());
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {
@@ -43,6 +44,6 @@ public class ChatWebSocketHandler {
         MessageDto message1 = mapper.readValue(message, MessageDto.class);
         logger.info("Send message: " + mapper.writeValueAsString(message1));
         Chat.sendMessage(Chat.activeUserMap.get(user), message1);
-        DatabaseService.saveChatMessage(message1);
+        databaseService.saveChatMessage(message1);
     }
 }

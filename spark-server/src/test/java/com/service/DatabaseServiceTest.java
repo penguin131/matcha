@@ -21,9 +21,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DatabaseServiceTest {
 
     @Mock
@@ -50,18 +50,18 @@ public class DatabaseServiceTest {
     public static void tearDownClass() {
     }
 
-//    @Before
-//    public void setUp() throws SQLException {
-//        when(mockDataSource.getConnection()).thenReturn(mockConn);
-//        when(mockDataSource.getConnection(anyString(), anyString())).thenReturn(mockConn);
-//        doNothing().when(mockConn).commit();
-//        when(mockConn.prepareStatement(anyString(), anyInt())).thenReturn(mockPreparedStmnt);
-//        doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
-//        when(mockPreparedStmnt.execute()).thenReturn(Boolean.TRUE);
-//        when(mockPreparedStmnt.getGeneratedKeys()).thenReturn(mockResultSet);
-//        when(mockResultSet.next()).thenReturn(Boolean.TRUE, Boolean.FALSE);
-////        when(mockResultSet.getInt(userId)).thenReturn(userId);
-//    }
+    @Before
+    public void setUp() throws SQLException {
+        when(mockDataSource.getConnection()).thenReturn(mockConn);
+        when(mockDataSource.getConnection(anyString(), anyString())).thenReturn(mockConn);
+        doNothing().when(mockConn).commit();
+        when(mockConn.prepareStatement(anyString(), anyInt())).thenReturn(mockPreparedStmnt);
+        doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
+        when(mockPreparedStmnt.execute()).thenReturn(Boolean.TRUE);
+        when(mockPreparedStmnt.getGeneratedKeys()).thenReturn(mockResultSet);
+        when(mockResultSet.next()).thenReturn(Boolean.TRUE, Boolean.FALSE);
+        when(mockResultSet.getInt(userId)).thenReturn(userId);
+    }
 
     @After
     public void tearDown() {
