@@ -2,7 +2,6 @@ package com.chat;
 
 import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.Config;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
 import com.service.DatabaseServiceHelper;
@@ -18,7 +17,7 @@ import spark.utils.StringUtils;
 public class ChatWebSocketHandler {
     private final static Logger logger = Logger.getLogger(ChatWebSocketHandler.class);
     private static ObjectMapper mapper = new ObjectMapper();
-    private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService(Config.getConfig());
+    private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {

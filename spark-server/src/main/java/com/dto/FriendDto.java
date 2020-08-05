@@ -1,7 +1,5 @@
 package com.dto;
 
-import java.sql.Date;
-
 public class FriendDto {
     private String login;
     private String lastMessage;

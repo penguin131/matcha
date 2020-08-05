@@ -5,9 +5,9 @@ import com.dto.CredentialsDto;
 import com.dto.MessageDto;
 import com.dto.UserProfileDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.Config;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
+import com.images.ImageManager;
 import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
@@ -27,9 +27,10 @@ import static spark.Spark.*;
 public class MajorEndpoint {
 
 	private final static Logger logger = Logger.getLogger(MajorEndpoint.class);
-	private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService(Config.getConfig());
-	private static ObjectMapper mapper = new ObjectMapper();
-	private static long TTL = 1000000000;
+	private static DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
+	private final static ObjectMapper mapper = new ObjectMapper();
+	private final static long TTL = 1000000000;
+	private static ImageManager imageManager = new ImageManager();
 
 	public static void main(String[] args) {
 		port(8080);
@@ -155,6 +156,25 @@ public class MajorEndpoint {
 				return processException(ex);
 			}
 		});
+
+		/**
+		 * Download images
+		 */
+		post("/downloadImage", ((req, res) -> {
+			try {
+//				String from = JWTHelper.getUserName(req.headers("Authorization"));
+				String from = "smight";
+				imageManager.saveImage(from, req.bodyAsBytes());
+				return "OK";
+			} catch (IOException ex) {
+				return ex.getMessage();
+			}
+		}));
+
+		get("/image/:id", ((request, response) -> {
+			response.type("image/jpeg");
+			return imageManager.getImage(request.params(":id"));
+		}));
 
 		before((request, response) -> logger.info("==> Request start: " + request.url()));
 

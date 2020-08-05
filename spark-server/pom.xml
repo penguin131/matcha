@@ -10,7 +10,6 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<tomee.version>1.7.1</tomee.version>
 		<pac4j.version>4.0.3</pac4j.version>
 	</properties>
 
@@ -71,11 +70,6 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>javax.mail</artifactId>
-			<version>1.5.5</version>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>9.4.3.v20170317</version>
@@ -130,6 +124,17 @@
 			<version>1.14.3</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.163</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -164,23 +169,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.openejb.maven</groupId>
-				<artifactId>tomee-maven-plugin</artifactId>
-				<version>${tomee.version}</version>
-				<configuration>
-					<context>tomeeapp</context>
-					<tomeeVersion>${tomee.version}</tomeeVersion>
-					<tomeeClassifier>plus</tomeeClassifier>
-					<args>-Xmx512m -XX:PermSize=256m</args>
-					<libs>
-						<lib>remove:javaee-api</lib>
-						<lib>unzip:org.apache.openejb:javaee-api:6.0-5:zip</lib>
-						<lib>remove:geronimo-jcdi_1.0_spec-1.0</lib>
-						<lib>javax.enterprise:cdi-api:1.1</lib>
-					</libs>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

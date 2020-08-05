@@ -21,4 +21,6 @@ public interface DatabaseService {
     void confirmUserForToken(String token) throws SQLException;
     List<MessageDto> getChatHistory(String user1, String user2) throws SQLException;
     void saveChatMessage(MessageDto messageDto) throws Exception;
+    String saveImage(String user) throws SQLException;
+    void deleteImage(String id) throws SQLException;
 }
