@@ -10,15 +10,16 @@ public class UserProfileDto extends BaseUserProfileDto {
     private Boolean confirmed;
     private String biography;
     @JsonProperty("sex_preferences")
-    private int sexPreferences;
+    private String sexPreferences;
     @JsonProperty("confirmed_token")
     private String confirmedToken;
+    private float[] location;
 
-    public int getSexPreferences() {
+    public String getSexPreferences() {
         return sexPreferences;
     }
 
-    public void setSexPreferences(int sexPreferences) {
+    public void setSexPreferences(String sexPreferences) {
         this.sexPreferences = sexPreferences;
     }
 
@@ -58,12 +59,13 @@ public class UserProfileDto extends BaseUserProfileDto {
                           String lastName,
                           String login,
                           String password,
-                          int sex,
-                          int sexPreferences,
+                          String sex,
+                          String sexPreferences,
                           String biography,
                           String email,
                           Boolean confirmed,
-                          String confirmedToken) {
+                          String confirmedToken,
+                          float[] location) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -74,6 +76,7 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.setFirstName(firstName);
         this.setLastName(lastName);
         this.setConfirmedToken(confirmedToken);
+        this.setLocation(location);
     }
 
     public UserProfileDto() { }
@@ -84,5 +87,13 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setConfirmedToken(String confirmedToken) {
         this.confirmedToken = confirmedToken;
+    }
+
+    public float[] getLocation() {
+        return location;
+    }
+
+    public void setLocation(float[] location) {
+        this.location = location;
     }
 }

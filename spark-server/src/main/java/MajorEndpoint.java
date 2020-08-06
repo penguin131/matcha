@@ -1,13 +1,11 @@
 import com.chat.Chat;
 import com.chat.ChatWebSocketHandler;
-import com.dto.BaseUserProfileDto;
-import com.dto.CredentialsDto;
-import com.dto.MessageDto;
-import com.dto.UserProfileDto;
+import com.dto.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.images.ImageManager;
+import com.dto.UserPhotoDto;
 import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
@@ -19,6 +17,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import spark.Response;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +102,7 @@ public class MajorEndpoint {
 		post("/protected/updateUserProfile", (req, res) -> {
 			try {
 				UserProfileDto user = mapper.readValue(req.body(), UserProfileDto.class);
-				ValidateHelper.validateBaseUserProfile(user);
+				ValidateHelper.validateUserProfile(user);
 				databaseService.updateUserProfile(user);
 			} catch (Exception ex) {
 				return processException(ex);
@@ -160,11 +159,22 @@ public class MajorEndpoint {
 		/**
 		 * Download images
 		 */
+		post("/protected/downloadImage", ((req, res) -> {
+			try {
+				String login = JWTHelper.getUserName(req.headers("Authorization"));
+//				String login = "smight";
+				imageManager.saveImage(login, req.bodyAsBytes());
+				return "OK";
+			} catch (IOException ex) {
+				return ex.getMessage();
+			}
+		}));
+
 		post("/downloadImage", ((req, res) -> {
 			try {
-//				String from = JWTHelper.getUserName(req.headers("Authorization"));
-				String from = "smight";
-				imageManager.saveImage(from, req.bodyAsBytes());
+//				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = "smight";
+				imageManager.saveImage(login, req.bodyAsBytes());
 				return "OK";
 			} catch (IOException ex) {
 				return ex.getMessage();
@@ -175,6 +185,24 @@ public class MajorEndpoint {
 			response.type("image/jpeg");
 			return imageManager.getImage(request.params(":id"));
 		}));
+
+		get("/protected/setAvatar/:imageId", (request, response) -> {
+			try {
+				String login = JWTHelper.getUserName(request.headers("Authorization"));
+				databaseService.setMainImage(request.params(":imageId"), login);
+				return "OK";
+			} catch (SQLException ex) {
+				return processException(ex);
+			}
+		});
+
+		get("/protected/getUserPhotos/:login", (request, response) -> {
+			try {
+				return mapper.writeValueAsString(databaseService.getUserPhotos(request.params(":login")));
+			} catch (SQLException ex) {
+				return processException(ex);
+			}
+		});
 
 		before((request, response) -> logger.info("==> Request start: " + request.url()));
 

@@ -1,14 +1,13 @@
 package com.service;
 
 import com.dictionary.MessageType;
-import com.dto.BaseUserProfileDto;
-import com.dto.FriendDto;
-import com.dto.MessageDto;
-import com.dto.UserProfileDto;
+import com.dictionary.Sex;
+import com.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.ConnectionFactory;
 import com.helper.Password;
+import com.dto.UserPhotoDto;
 import org.apache.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
@@ -36,12 +35,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getString("last_name"),
                         rs.getString("login"),
                         rs.getString("password"),
-                        rs.getInt("sex"),
-                        rs.getInt("sex_preferences"),
+                        Sex.convertCodeToString(rs.getInt("sex")),
+                        Sex.convertCodeToString(rs.getInt("sex_preferences")),
                         rs.getString("biography"),
                         rs.getString("email"),
                         rs.getBoolean("confirmed"),
-                        rs.getString("confirmed_token"));
+                        rs.getString("confirmed_token"),
+                        new float[2]);
                 userProfileList.add(userProfile);
             }
         } catch (SQLException ex) {
@@ -75,7 +75,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, userProfileDto.getLogin());
             preparedStatement.setString(2, userProfileDto.getPassword());
             preparedStatement.setString(3, userProfileDto.getEmail());
-            preparedStatement.setInt(4, userProfileDto.getSex());
+            preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
             preparedStatement.setString(5, confirmed_token);
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(userProfileDto));
@@ -118,12 +118,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getString("last_name"),
                         rs.getString("login"),
                         rs.getString("password"),
-                        rs.getInt("sex"),
-                        rs.getInt("sex_preferences"),
+                        Sex.convertCodeToString(rs.getInt("sex")),
+                        Sex.convertCodeToString(rs.getInt("sex_preferences")),
                         rs.getString("biography"),
                         rs.getString("email"),
                         rs.getBoolean("confirmed"),
-                        rs.getString("confirmed_token"));
+                        rs.getString("confirmed_token"),
+                        new float[]{rs.getFloat("location_1"), rs.getFloat("location_2")});
                 logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
@@ -255,7 +256,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                     "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
             preparedStatement.setString(1, userProfileDto.getFirstName());
             preparedStatement.setString(2, userProfileDto.getLastName());
-            preparedStatement.setInt(3, userProfileDto.getSexPreferences());
+            preparedStatement.setInt(3, Sex.convertStringToCode(userProfileDto.getSexPreferences()));
             preparedStatement.setString(4, userProfileDto.getBiography());
             preparedStatement.setString(5, userProfileDto.getLogin());
             preparedStatement.executeUpdate();
@@ -369,6 +370,41 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             logger.info("deleteImage() exception:\n" + ex.getMessage());
             throw ex;
         }
+    }
+
+    public void setMainImage(String imageId, String userLogin) throws SQLException {
+        logger.info(String.format("setMainImage(%s)", imageId));
+        try (Connection connection = connectionFactory.createConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "update \"spark-db\".t_image set is_main=false where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
+            preparedStatement.setString(1, userLogin);
+            preparedStatement.executeUpdate();
+            preparedStatement = connection.prepareStatement("update \"spark-db\".t_image set is_main=true where id_image=?");
+            preparedStatement.setInt(1, Integer.parseInt(imageId));
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            logger.info("setMainImage() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public List<UserPhotoDto> getUserPhotos(String user) throws SQLException {
+        logger.info(String.format("getUserPhotos(%s)", user));
+        List<UserPhotoDto> photos = new ArrayList<>();
+        try (Connection connection = connectionFactory.createConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from \"spark-db\".t_image where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
+            preparedStatement.setString(1, user);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+
+                photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main")));
+            }
+        } catch (SQLException ex) {
+            logger.info("setMainImage() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+        return photos;
     }
 
     private void processException(Exception ex) throws Exception {

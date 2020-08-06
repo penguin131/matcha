@@ -3,7 +3,7 @@ package com.dto;
 public class BaseUserProfileDto extends CredentialsDto {
 
     private String email;
-    private int sex;
+    private String sex;
 
     public String getEmail() {
         return email;
@@ -13,11 +13,11 @@ public class BaseUserProfileDto extends CredentialsDto {
         this.email = email;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 }

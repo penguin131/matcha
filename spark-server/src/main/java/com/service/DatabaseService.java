@@ -1,10 +1,8 @@
 package com.service;
 
-import com.dto.BaseUserProfileDto;
-import com.dto.FriendDto;
-import com.dto.MessageDto;
-import com.dto.UserProfileDto;
+import com.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.dto.UserPhotoDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -23,4 +21,6 @@ public interface DatabaseService {
     void saveChatMessage(MessageDto messageDto) throws Exception;
     String saveImage(String user) throws SQLException;
     void deleteImage(String id) throws SQLException;
+    void setMainImage(String imageId, String userLogin) throws SQLException;
+    List<UserPhotoDto> getUserPhotos(String user) throws SQLException;
 }

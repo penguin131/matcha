@@ -2,6 +2,7 @@ package com.helper;
 
 import com.dictionary.Sex;
 import com.dto.BaseUserProfileDto;
+import com.dto.UserProfileDto;
 import spark.utils.StringUtils;
 
 import javax.mail.internet.InternetAddress;
@@ -13,7 +14,7 @@ public class ValidateHelper {
             throw new Exception("Login size must be between 5 and 256");
         if (StringUtils.isEmpty(baseUserProfile.getPassword()))
             throw new Exception("Password cannot be empty");
-        if (!Sex.containsCode(baseUserProfile.getSex()))
+        if (Sex.containsCode(baseUserProfile.getSex()))
             throw new Exception("Non-existent gender");
         validateEmail(baseUserProfile.getEmail());
     }
@@ -23,5 +24,11 @@ public class ValidateHelper {
             throw new Exception("Empty email");
         InternetAddress emailAddr = new InternetAddress(email);
         emailAddr.validate();
+    }
+
+    public static void validateUserProfile(UserProfileDto userProfileDto) throws Exception {
+        validateBaseUserProfile(userProfileDto);
+        if (userProfileDto.getSexPreferences() != null && Sex.containsCode(userProfileDto.getSexPreferences()))
+            throw new Exception("Non-existent gender in sex preferences");
     }
 }
