@@ -3,6 +3,7 @@ package com.service;
 import com.dictionary.MessageType;
 import com.dictionary.Sex;
 import com.dto.*;
+import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.ConnectionFactory;
@@ -26,8 +27,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("getAllUsers()");
         List<UserProfileDto> userProfileList = new ArrayList<>();
         try (Connection connection = connectionFactory.createConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_user_profile");
+            String queryString = "select *, (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo from \"spark-db\".t_user_profile";
+            PreparedStatement preparedStatement = connection.prepareStatement(queryString);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 UserProfileDto userProfile = new UserProfileDto(
@@ -41,7 +42,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getString("email"),
                         rs.getBoolean("confirmed"),
                         rs.getString("confirmed_token"),
-                        new float[2]);
+                        new float[2],
+                        rs.getInt("photo"));
                 userProfileList.add(userProfile);
             }
         } catch (SQLException ex) {
@@ -109,7 +111,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         UserProfileDto userProfile = null;
         try (Connection connection = connectionFactory.createConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_user_profile where login=?");
+                    "select *, (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo from \"spark-db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -124,7 +126,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getString("email"),
                         rs.getBoolean("confirmed"),
                         rs.getString("confirmed_token"),
-                        new float[]{rs.getFloat("location_1"), rs.getFloat("location_2")});
+                        new float[]{rs.getFloat("location_1"), rs.getFloat("location_2")},
+                        rs.getInt("photo"));
                 logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
@@ -355,6 +358,22 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             return resultSet.getString("id_image");
         } catch (SQLException ex) {
             logger.info("saveImage() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public void deleteImage(String user, String id) throws SQLException, AccessDeniedException {
+        logger.info(String.format("deleteImage(%s, %s)", id, user));
+        try (Connection connection = connectionFactory.createConnection()) {
+            String queryString = "select (select login from \"spark-db\".t_user_profile where user_profile_id=user_id limit 1) as user from \"spark-db\".t_image where id_image=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(queryString);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (user.equals(resultSet.getString("id_image")))
+                throw new AccessDeniedException("this photo does not belong to the current user!");
+            deleteImage(id);
+        } catch (SQLException ex) {
+            logger.info("deleteImage() exception:\n" + ex.getMessage());
             throw ex;
         }
     }

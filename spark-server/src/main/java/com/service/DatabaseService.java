@@ -1,6 +1,7 @@
 package com.service;
 
 import com.dto.*;
+import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.dto.UserPhotoDto;
 
@@ -20,7 +21,7 @@ public interface DatabaseService {
     List<MessageDto> getChatHistory(String user1, String user2) throws SQLException;
     void saveChatMessage(MessageDto messageDto) throws Exception;
     String saveImage(String user) throws SQLException;
-    void deleteImage(String id) throws SQLException;
+    void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
     void setMainImage(String imageId, String userLogin) throws SQLException;
     List<UserPhotoDto> getUserPhotos(String user) throws SQLException;
 }

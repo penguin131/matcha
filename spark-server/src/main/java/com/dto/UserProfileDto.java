@@ -14,6 +14,7 @@ public class UserProfileDto extends BaseUserProfileDto {
     @JsonProperty("confirmed_token")
     private String confirmedToken;
     private float[] location;
+    private int photo;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -65,7 +66,8 @@ public class UserProfileDto extends BaseUserProfileDto {
                           String email,
                           Boolean confirmed,
                           String confirmedToken,
-                          float[] location) {
+                          float[] location,
+                          int photo) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -77,6 +79,7 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.setLastName(lastName);
         this.setConfirmedToken(confirmedToken);
         this.setLocation(location);
+        this.photo = photo;
     }
 
     public UserProfileDto() { }
@@ -95,5 +98,13 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setLocation(float[] location) {
         this.location = location;
+    }
+
+    public int getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(int photo) {
+        this.photo = photo;
     }
 }

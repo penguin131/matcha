@@ -1,11 +1,14 @@
 import com.chat.Chat;
 import com.chat.ChatWebSocketHandler;
-import com.dto.*;
+import com.dto.BaseUserProfileDto;
+import com.dto.CredentialsDto;
+import com.dto.MessageDto;
+import com.dto.UserProfileDto;
+import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.images.ImageManager;
-import com.dto.UserPhotoDto;
 import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
@@ -157,12 +160,11 @@ public class MajorEndpoint {
 		});
 
 		/**
-		 * Download images
+		 * Images
 		 */
 		post("/protected/downloadImage", ((req, res) -> {
 			try {
 				String login = JWTHelper.getUserName(req.headers("Authorization"));
-//				String login = "smight";
 				imageManager.saveImage(login, req.bodyAsBytes());
 				return "OK";
 			} catch (IOException ex) {
@@ -170,9 +172,21 @@ public class MajorEndpoint {
 			}
 		}));
 
+		get("/protected/deleteImage/:id", ((req, res) -> {
+			try {
+				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				imageManager.deleteImage(login, req.params(":id"));
+				return "OK";
+			} catch (IOException ex) {
+				return ex.getMessage();
+			} catch (AccessDeniedException ex) {
+				res.status(404);
+				return null;
+			}
+		}));
+
 		post("/downloadImage", ((req, res) -> {
 			try {
-//				String login = JWTHelper.getUserName(req.headers("Authorization"));
 				String login = "smight";
 				imageManager.saveImage(login, req.bodyAsBytes());
 				return "OK";
@@ -204,10 +218,6 @@ public class MajorEndpoint {
 			}
 		});
 
-		before((request, response) -> logger.info("==> Request start: " + request.url()));
-
-		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
-
 		post("/saveMessage", (req, res) -> {
 			try {
 				MessageDto messageDto = mapper.readValue(req.body(), MessageDto.class);
@@ -217,6 +227,10 @@ public class MajorEndpoint {
 			}
 			return "";
 		});
+
+		before((request, response) -> logger.info("==> Request start: " + request.url()));
+
+		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
 
 		before("/protected/*", (request, response) -> {
 			Claims claims = null;
