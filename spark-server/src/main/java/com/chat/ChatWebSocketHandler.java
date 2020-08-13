@@ -4,7 +4,7 @@ import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
-import com.service.DatabaseServiceHelper;
+import com.helper.DatabaseServiceHelper;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;

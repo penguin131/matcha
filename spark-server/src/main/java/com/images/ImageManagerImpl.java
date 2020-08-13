@@ -3,7 +3,7 @@ package com.images;
 import com.exceptions.AccessDeniedException;
 import com.helper.Config;
 import com.service.DatabaseService;
-import com.service.DatabaseServiceHelper;
+import com.helper.DatabaseServiceHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -41,7 +41,7 @@ public class ImageManagerImpl implements ImageManager{
     }
 
     public void saveImage(String from, byte[] data) throws Exception {
-        logger.info(String.format("saveImage(%s, ...)", from));
+        logger.info(String.format("saveImage(%s, bytes...)", from));
         String imageId = databaseService.saveImage(from);
         File newFile = new File(getImagesDir() + imageId);
         FileUtils.writeByteArrayToFile(newFile, data);
@@ -57,7 +57,7 @@ public class ImageManagerImpl implements ImageManager{
     }
 
     public byte[] getImage(String name) throws IOException {
-        logger.info(String.format("getImage(%s, ...)", name));
+        logger.info(String.format("getImage(%s)", name));
         File image = images.stream().
                 filter(file -> name.equals(file.getName())).findFirst().orElse(null);
         if (image == null) return null;

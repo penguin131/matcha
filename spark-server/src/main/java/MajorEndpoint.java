@@ -14,7 +14,7 @@ import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
 import com.service.DatabaseService;
-import com.service.DatabaseServiceHelper;
+import com.helper.DatabaseServiceHelper;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
