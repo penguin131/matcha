@@ -7,14 +7,14 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConnectionPool {
-    private static int CONNECTION_POOL_SIZE;
-    private static Queue<Connection> connectionPool;
-    private static Queue<Connection> usedConnections;
+    private static final int CONNECTION_POOL_SIZE = Integer.parseInt(Config.getConfig().getProperty("connectionPool.size"));
+    private Queue<Connection> connectionPool;
+    private Queue<Connection> usedConnections;
 
     public Connection getConnection() {
         try {
             while (connectionPool.size() == 0)
-                wait(1);
+                wait(100);
             Connection result = connectionPool.remove();
             usedConnections.add(result);
             return result;
@@ -31,10 +31,9 @@ public class ConnectionPool {
         }
     }
 
-    static {
+    public ConnectionPool() {
         try {
             Class.forName(Config.getConfig().getProperty("driver"));
-            CONNECTION_POOL_SIZE = Integer.parseInt(Config.getConfig().getProperty("connectionPool.size"));
             connectionPool = new ConcurrentLinkedQueue<>();
             usedConnections = new ConcurrentLinkedQueue<>();
             for (int i = 0; i < CONNECTION_POOL_SIZE; i++) {
