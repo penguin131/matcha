@@ -11,7 +11,7 @@ public abstract class DatabaseServiceHelper {
     public static DatabaseService getDatabaseService() {
         if (_instance == null) {
             try {
-                _instance = new DatabaseServiceSQLImpl(new ConnectionPool());
+                _instance = new DatabaseServiceSQLImpl();
             } catch (Exception ex) {
                 logger.info("Error receiving database connection info.");
             }

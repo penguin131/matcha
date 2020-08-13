@@ -7,10 +7,10 @@ import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.ConnectionPool;
+import com.helper.Config;
 import com.helper.Password;
-import com.dto.UserPhotoDto;
 import org.apache.log4j.Logger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,12 @@ import java.util.List;
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    private final ConnectionPool connectionFactory;
+    private Connection connection;
 
-    public DatabaseServiceSQLImpl(ConnectionPool connectionFactory) {
-        this.connectionFactory = connectionFactory;
+    public DatabaseServiceSQLImpl() throws SQLException {
+        connection = DriverManager.getConnection(Config.getConfig().getProperty("url"), Config.getConfig());
     }
+
     /**
      * Вернет массив всех профилей. Временная шняга
      * @return List<UserProfileDto>
@@ -30,9 +31,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public List<UserProfileDto> getAllUsers() throws SQLException, JsonProcessingException {
         logger.info("getAllUsers()");
         List<UserProfileDto> userProfileList = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select *," +
                     " (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
@@ -57,8 +56,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("getAllUsers() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
         logger.info("getAllUsers() result:\n" + mapper.writeValueAsString(userProfileList));
         return userProfileList;
@@ -79,9 +76,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         if (checkEmailExist(userProfileDto.getEmail())) {
             processException(new ValidateException("Email is already in use"));
         }
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
@@ -96,16 +91,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("createUserProfile() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     private boolean checkEmailExist(String email) throws SQLException {
         logger.info("checkEmailExist(), email: " + email);
-        Connection connection = null;
         try  {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_user_profile where email=?");
             preparedStatement.setString(1, email);
@@ -114,8 +105,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("checkEmailExist() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
@@ -127,9 +116,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException {
         logger.info("getUserProfileForLogin() login: " + login);
         UserProfileDto userProfile = null;
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select *," +
                     " (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
@@ -157,8 +144,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (JsonProcessingException | SQLException ex) {
             logger.info("getUserProfileForLogin() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
         return userProfile;
     }
@@ -171,9 +156,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
         logger.info("getAllFriendsForLogin() login: " + login);
         List<FriendDto> friendList = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "WITH cte_message AS (SELECT row_number() over (order by date desc) as nb, text, date, \"from\", \"to\"\n" +
                     "                    FROM \"spark-db\".t_message\n" +
@@ -195,8 +178,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
         return friendList;
     }
@@ -210,9 +191,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             throw new Exception("User cannot be friends with himself");
         if (getUserProfileForLogin(to) == null)
             throw new Exception(String.format("User %s does not exists", to));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             if (checkUserUnity(from, to)) {//если запись уже есть, тупо подтверждаю ее
                 logger.info("rs.next() == true");
                 PreparedStatement preparedStatement = connection.prepareStatement(
@@ -242,16 +221,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("setLike() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     private boolean checkUserUnity(String login1, String login2) throws SQLException {
         logger.info(String.format("checkUserUnity: %s, %s", login1, login2));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_users_unity t1 " +
                     " join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
@@ -263,8 +238,9 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             boolean result = rs.next();
             logger.info("result: " + result);
             return result;
-        } finally {
-            connectionFactory.releaseConnection(connection);
+        } catch (SQLException ex) {
+            logger.info("checkUserUnity() exception:\n" + ex.getMessage());
+            throw ex;
         }
     }
 
@@ -274,9 +250,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
      */
     public void deleteUserProfileForLogin(String login) throws SQLException {
         logger.info("deleteUserProfileForLogin() login: " + login);
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "delete from \"spark-db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
@@ -284,8 +258,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("deleteUserProfileForLogin() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
@@ -294,9 +266,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
      */
     public void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
         logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
             preparedStatement.setString(1, userProfileDto.getFirstName());
@@ -308,8 +278,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
@@ -330,9 +298,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
      */
     public void confirmUserForToken(String token) throws SQLException {
         logger.info("confirmUserForToken() token: " + token);
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_user_profile set confirmed=true where confirmed_token=?");
             preparedStatement.setString(1, token);
@@ -340,17 +306,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("confirmUserForToken() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public List<MessageDto> getChatHistory(String user1, String user2) throws SQLException {
         logger.info(String.format("getChatHistory() user1: %s, user2: %s", user1, user2));
         List<MessageDto> messages = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select t1.text, t1.date, t2.login as login1, t3.login as login2 from \"spark-db\".t_message t1\n" +
                     " join \"spark-db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
@@ -372,17 +334,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("getChatHistory() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
         return messages;
     }
 
     public void saveChatMessage(MessageDto messageDto) throws Exception {
         logger.info("saveChatMessage()");
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark-db\".t_message (text, date, \"from\", \"to\") VALUES\n" +
                     "(?\n" +
@@ -398,16 +356,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("saveChatMessage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public String saveImage(String user) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark-db\".t_image (user_id) values" +
                     " ((select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)) returning id_image");
@@ -418,16 +372,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("saveImage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public void deleteImage(String user, String id) throws SQLException, AccessDeniedException {
         logger.info(String.format("deleteImage(%s, %s)", id, user));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select (select login from \"spark-db\".t_user_profile where user_profile_id=user_id limit 1) as user" +
                     " from \"spark-db\".t_image where id_image=?");
@@ -439,16 +389,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("deleteImage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public void deleteImage(String id) throws SQLException {
         logger.info(String.format("deleteImage(%s)", id));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "delete from \"spark-db\".t_image where id_image=?");
             preparedStatement.setInt(1, Integer.parseInt(id));
@@ -456,16 +402,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("deleteImage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public void setMainImage(String imageId, String userLogin) throws SQLException {
         logger.info(String.format("setMainImage(%s)", imageId));
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark-db\".t_image set is_main=false " +
                     " where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
@@ -477,17 +419,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("setMainImage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
     }
 
     public List<UserPhotoDto> getUserPhotos(String user) throws SQLException {
         logger.info(String.format("getUserPhotos(%s)", user));
         List<UserPhotoDto> photos = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark-db\".t_image " +
                     " where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
@@ -500,8 +438,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } catch (SQLException ex) {
             logger.info("setMainImage() exception:\n" + ex.getMessage());
             throw ex;
-        } finally {
-            connectionFactory.releaseConnection(connection);
         }
         return photos;
     }
