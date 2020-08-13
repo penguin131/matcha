@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
 import com.helper.ValidateHelper;
 import com.images.ImageManager;
+import com.images.ImageManagerImpl;
 import com.mail.MailService;
 import com.security.JWTHelper;
 import com.security.SecurityHelper;
@@ -32,17 +33,13 @@ public class MajorEndpoint {
 	private static DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
 	private final static ObjectMapper mapper = new ObjectMapper();
 	private final static long TTL = 1000000000;
-	private static ImageManager imageManager = new ImageManager();
+	private static ImageManager imageManager = new ImageManagerImpl();
 
 	public static void main(String[] args) {
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", ChatWebSocketHandler.class);
-		try {
-			LoggerConfig.configureLogger();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		LoggerConfig.configureLogger();
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
 			try {

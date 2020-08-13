@@ -1,5 +1,6 @@
 package com.service;
 
+import com.helper.ConnectionFactory;
 import org.apache.log4j.Logger;
 
 public abstract class DatabaseServiceHelper {
@@ -9,7 +10,7 @@ public abstract class DatabaseServiceHelper {
     public static DatabaseService getDatabaseService() {
         if (_instance == null) {
             try {
-                _instance = new DatabaseServiceSQLImpl();
+                _instance = new DatabaseServiceSQLImpl(new ConnectionFactory());
             } catch (Exception ex) {
                 logger.info("Error receiving database connection info.");
             }

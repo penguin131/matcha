@@ -1,20 +1,33 @@
 package com.helper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Config {
-    private static final File config;
-    private static final File loggerConfig;
+    private static final Properties config = new Properties();
+    private static final Properties loggerConfig = new Properties();
     static {
-        config = new File("target/spark-server-1.0/WEB-INF/classes/application.properties");
-        loggerConfig = new File("target/spark-server-1.0/WEB-INF/classes/log4j.properties");
+        try {
+            File configFile = new File("target/spark-server-1.0/WEB-INF/classes/application.properties");
+            InputStream input1 = new FileInputStream(configFile);
+            config.load(input1);
+            File loggerConfigFile = new File("target/spark-server-1.0/WEB-INF/classes/log4j.properties");
+            InputStream input2 = new FileInputStream(loggerConfigFile);
+            loggerConfig.load(input2);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
     }
 
-    public static File getConfig() {
+    public static Properties getConfig() {
         return config;
     }
 
-    public static File getLoggerConfig() {
+    public static Properties getLoggerConfig() {
         return loggerConfig;
     }
 }

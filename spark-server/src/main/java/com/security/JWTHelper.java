@@ -27,11 +27,7 @@ public class JWTHelper {
     private static String SECRET_KEY;
     static {
         try {
-            File conf = Config.getConfig();
-            InputStream input = new FileInputStream(conf);
-            Properties props = new Properties();
-            props.load(input);
-            SECRET_KEY = props.getProperty("JWT.key");
+            SECRET_KEY = Config.getConfig().getProperty("JWT.key");
         } catch (Exception ex) {
             logger.info("Read config exception: " + ex.getMessage());
         }

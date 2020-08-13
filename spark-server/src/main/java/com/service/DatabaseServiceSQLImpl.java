@@ -17,8 +17,11 @@ import java.util.List;
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
     private final ObjectMapper mapper = new ObjectMapper();
-    private final ConnectionFactory connectionFactory = new ConnectionFactory();
+    private final ConnectionFactory connectionFactory;
 
+    public DatabaseServiceSQLImpl(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
     /**
      * Вернет массив всех профилей. Временная шняга
      * @return List<UserProfileDto>
