@@ -50,7 +50,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getBoolean("confirmed"),
                         rs.getString("confirmed_token"),
                         new float[2],
-                        rs.getInt("photo"));
+                        rs.getInt("photo"),
+                        rs.getInt("rating"));
                 userProfileList.add(userProfile);
             }
         } catch (SQLException ex) {
@@ -136,7 +137,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         rs.getBoolean("confirmed"),
                         rs.getString("confirmed_token"),
                         new float[]{rs.getFloat("location_1"), rs.getFloat("location_2")},
-                        rs.getInt("photo"));
+                        rs.getInt("photo"),
+                        rs.getInt("rating"));
                 logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
@@ -188,9 +190,9 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public void setLike(String from, String to) throws Exception {
         logger.info("setLike() from: " + from);
         if (from.equals(to))
-            throw new Exception("User cannot be friends with himself");
+            throw new ValidateException("User cannot be friends with himself");
         if (getUserProfileForLogin(to) == null)
-            throw new Exception(String.format("User %s does not exists", to));
+            throw new ValidateException(String.format("User %s does not exists", to));
         try {
             if (checkUserUnity(from, to)) {//если запись уже есть, тупо подтверждаю ее
                 logger.info("rs.next() == true");
@@ -217,9 +219,39 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 preparedStatement.setString(2, to);
                 preparedStatement.execute();
             }
+            updateUserRating(to, 1);
             logger.info("setLike OK");
         } catch (SQLException ex) {
             logger.info("setLike() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public void setComplaint(String from, String to) throws SQLException {
+        logger.info(String.format("setComplaint(%s, %s)", from, to));
+        try {
+            CallableStatement preparedStatement = connection.prepareCall("{CALL set_complaint(?,?)}");
+            preparedStatement.setString(1, from);
+            preparedStatement.setString(2, to);
+            preparedStatement.execute();
+            logger.info("complaint created");
+        } catch (SQLException ex) {
+            logger.info("setComplaint() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    private void updateUserRating(String login, int value) throws SQLException {
+        logger.info(String.format("updateUserRating(%s, %d)", login, value));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "update \"spark-db\".t_user_profile set rating=rating+? where login=?");
+            preparedStatement.setInt(1, value);
+            preparedStatement.setString(2, login);
+            preparedStatement.executeUpdate();
+            logger.info("user rating updated");
+        } catch (SQLException ex) {
+            logger.info("updateUserRating() exception:\n" + ex.getMessage());
             throw ex;
         }
     }
@@ -432,7 +464,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, user);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-
                 photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main")));
             }
         } catch (SQLException ex) {
@@ -440,6 +471,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             throw ex;
         }
         return photos;
+    }
+
+    public List<UserProfileDto> getUserWithFilter(FilterDto filter) throws SQLException {
+
+        return null;
     }
 
     private void processException(Exception ex) throws Exception {

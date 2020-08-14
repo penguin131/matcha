@@ -90,6 +90,17 @@ public class MajorEndpoint {
 			}
 		});
 
+		get("/protected/setComplaint/:to", (req, res) -> {
+			try {
+				String from = JWTHelper.getUserName(req.headers("Authorization"));
+				String to = req.params(":to");
+				databaseService.setComplaint(from, to);
+				return "OK";
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+		});
+
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			try {
 				databaseService.deleteUserProfileForLogin(req.params(":login"));

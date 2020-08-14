@@ -14,6 +14,7 @@ public interface DatabaseService {
     UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException;
     List<FriendDto> getAllFriendsForLogin(String login) throws SQLException;
     void setLike(String from, String to) throws Exception;
+    void setComplaint(String from, String to) throws SQLException;
     void deleteUserProfileForLogin(String login) throws SQLException;
     void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException;
     boolean checkPassword(String login, String password) throws Exception;
@@ -24,4 +25,5 @@ public interface DatabaseService {
     void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
     void setMainImage(String imageId, String userLogin) throws SQLException;
     List<UserPhotoDto> getUserPhotos(String user) throws SQLException;
+    List<UserProfileDto> getUserWithFilter(FilterDto filter) throws SQLException;
 }

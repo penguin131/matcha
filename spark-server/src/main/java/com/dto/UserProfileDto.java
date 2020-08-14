@@ -15,6 +15,7 @@ public class UserProfileDto extends BaseUserProfileDto {
     private String confirmedToken;
     private float[] location;
     private int photo;
+    private int rating;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -67,7 +68,8 @@ public class UserProfileDto extends BaseUserProfileDto {
                           Boolean confirmed,
                           String confirmedToken,
                           float[] location,
-                          int photo) {
+                          int photo,
+                          int rating) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -80,6 +82,7 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.setConfirmedToken(confirmedToken);
         this.setLocation(location);
         this.photo = photo;
+        this.rating = rating;
     }
 
     public UserProfileDto() { }
@@ -106,5 +109,13 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setPhoto(int photo) {
         this.photo = photo;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
