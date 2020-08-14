@@ -54,6 +54,8 @@
     "react-dev-utils": "^10.2.1",
     "react-dom": "^16.13.1",
     "react-final-form": "^6.5.0",
+    "react-image-lightbox": "^5.1.1",
+    "react-photo-gallery": "^8.0.0",
     "react-router-dom": "^5.2.0",
     "resolve": "1.15.0",
     "resolve-url-loader": "3.1.1",

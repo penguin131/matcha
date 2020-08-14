@@ -7,6 +7,7 @@ const Navigation = () => {
         <nav className={css.navContainer}>
             <Link to={'/chats'}>Chats</Link>
             <Link to={'/settings'}>Settings</Link>
+            <Link to={'/profile'}>Profile</Link>
         </nav>
     )
 }

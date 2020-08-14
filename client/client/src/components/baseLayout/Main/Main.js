@@ -1,11 +1,12 @@
 import React from 'react'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
-import Navigation from '../../Navigation/Navigation'
+import Navigation from '../Navigation/Navigation'
 import Aside from '../Aside/Aside'
 import MainPage from '../../../pages/MainPage/MainPage'
 import SettingsPage from '../../../pages/SettingsPage/SettingsPage'
 import ChatPage from '../../../pages/ChatPage/ChatPage'
+import ProfilePage from '../../../pages/ProfilePage/ProfilePage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 /* import { AuthContext } from '../../context/AuthContext' */
@@ -23,6 +24,7 @@ const Main = () => {
           <Switch>
             <ProtectedRoute path='/chats' component={ChatPage} isAuth={isAuth}/>
             <ProtectedRoute path='/settings' component={SettingsPage} isAuth={isAuth}/>
+            <ProtectedRoute path='/profile' component={ProfilePage} isAuth={isAuth}/>
             <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
           </Switch>
           <Aside/>
