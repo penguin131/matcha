@@ -8,4 +8,4 @@ mvn exec:java
 
 последний патч -
 /protected/setComplaint/{to}
-добавил 
+добавил рейтинг

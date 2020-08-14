@@ -194,33 +194,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         if (getUserProfileForLogin(to) == null)
             throw new ValidateException(String.format("User %s does not exists", to));
         try {
-            if (checkUserUnity(from, to)) {//если запись уже есть, тупо подтверждаю ее
-                logger.info("rs.next() == true");
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                    "WITH cte_unity AS (\n" +
-                    "    select\n" +
-                    "        t1.t_users_unity_id\n" +
-                    "    from \"spark-db\".t_users_unity t1\n" +
-                    "             join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)\n" +
-                    "             join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)\n" +
-                    "    where t2.login=? and t3.login=?)\n" +
-                    " update \"spark-db\".t_users_unity set confirmed=true " +
-                    " where t_users_unity_id in (select * from cte_unity)\n");
-                preparedStatement.setString(1, to);
-                preparedStatement.setString(2, from);
-                preparedStatement.executeUpdate();
-            } else if (!checkUserUnity(to, from)) {
-                logger.info("rs.next() == false");
-                PreparedStatement preparedStatement = connection.prepareStatement(
-                        "insert into \"spark-db\".t_users_unity (user1_id, user2_id) VALUES " +
-                        " ((select user_profile_id from \"spark-db\".t_user_profile where login=?)," +
-                        " (select user_profile_id from \"spark-db\".t_user_profile where login=?))");
-                preparedStatement.setString(1, from);
-                preparedStatement.setString(2, to);
-                preparedStatement.execute();
-            }
-            updateUserRating(to, 1);
-            logger.info("setLike OK");
+            CallableStatement preparedStatement = connection.prepareCall("{CALL set_like(?,?)}");
+            preparedStatement.setString(1, from);
+            preparedStatement.setString(2, to);
+            preparedStatement.execute();
+            logger.info("complaint created");
         } catch (SQLException ex) {
             logger.info("setLike() exception:\n" + ex.getMessage());
             throw ex;
@@ -237,41 +215,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             logger.info("complaint created");
         } catch (SQLException ex) {
             logger.info("setComplaint() exception:\n" + ex.getMessage());
-            throw ex;
-        }
-    }
-
-    private void updateUserRating(String login, int value) throws SQLException {
-        logger.info(String.format("updateUserRating(%s, %d)", login, value));
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark-db\".t_user_profile set rating=rating+? where login=?");
-            preparedStatement.setInt(1, value);
-            preparedStatement.setString(2, login);
-            preparedStatement.executeUpdate();
-            logger.info("user rating updated");
-        } catch (SQLException ex) {
-            logger.info("updateUserRating() exception:\n" + ex.getMessage());
-            throw ex;
-        }
-    }
-
-    private boolean checkUserUnity(String login1, String login2) throws SQLException {
-        logger.info(String.format("checkUserUnity: %s, %s", login1, login2));
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_users_unity t1 " +
-                    " join \"spark-db\".t_user_profile t2 on (t2.user_profile_id=t1.user1_id)" +
-                    " join \"spark-db\".t_user_profile t3 on (t3.user_profile_id=t1.user2_id)" +
-                    " where t2.login=? and t3.login=?");
-            preparedStatement.setString(1, login1);
-            preparedStatement.setString(2, login2);
-            ResultSet rs = preparedStatement.executeQuery();
-            boolean result = rs.next();
-            logger.info("result: " + result);
-            return result;
-        } catch (SQLException ex) {
-            logger.info("checkUserUnity() exception:\n" + ex.getMessage());
             throw ex;
         }
     }
