@@ -1,6 +1,10 @@
 package com.dto;
 
+import com.dictionary.Sex;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserProfileDto extends BaseUserProfileDto {
     @JsonProperty("first_name")
@@ -117,5 +121,22 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public static UserProfileDto getInstance(ResultSet rs) throws SQLException {
+        return new UserProfileDto(
+                rs.getString("first_name"),
+                rs.getString("last_name"),
+                rs.getString("login"),
+                rs.getString("password"),
+                Sex.convertCodeToString(rs.getInt("sex")),
+                Sex.convertCodeToString(rs.getInt("sex_preferences")),
+                rs.getString("biography"),
+                rs.getString("email"),
+                rs.getBoolean("confirmed"),
+                rs.getString("confirmed_token"),
+                new float[] {rs.getFloat("location_1"), rs.getFloat("location_2")},
+                rs.getInt("photo"),
+                rs.getInt("rating"));
     }
 }

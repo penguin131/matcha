@@ -25,5 +25,5 @@ public interface DatabaseService {
     void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
     void setMainImage(String imageId, String userLogin) throws SQLException;
     List<UserPhotoDto> getUserPhotos(String user) throws SQLException;
-    List<UserProfileDto> getUserWithFilter(FilterDto filter) throws SQLException;
+    List<UserProfileDto> getUsersWithFilter(UserFilterDto filter) throws SQLException, JsonProcessingException;
 }

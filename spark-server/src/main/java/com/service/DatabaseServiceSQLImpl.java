@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Config;
 import com.helper.Password;
+import com.helper.SQLRequestGenerationHelper;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -29,37 +30,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
      * @return List<UserProfileDto>
      */
     public List<UserProfileDto> getAllUsers() throws SQLException, JsonProcessingException {
-        logger.info("getAllUsers()");
-        List<UserProfileDto> userProfileList = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select *," +
-                    " (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
-                    " from \"spark-db\".t_user_profile");
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                UserProfileDto userProfile = new UserProfileDto(
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        Sex.convertCodeToString(rs.getInt("sex")),
-                        Sex.convertCodeToString(rs.getInt("sex_preferences")),
-                        rs.getString("biography"),
-                        rs.getString("email"),
-                        rs.getBoolean("confirmed"),
-                        rs.getString("confirmed_token"),
-                        new float[2],
-                        rs.getInt("photo"),
-                        rs.getInt("rating"));
-                userProfileList.add(userProfile);
-            }
-        } catch (SQLException ex) {
-            logger.info("getAllUsers() exception:\n" + ex.getMessage());
-            throw ex;
-        }
-        logger.info("getAllUsers() result:\n" + mapper.writeValueAsString(userProfileList));
-        return userProfileList;
+        return getUsersWithFilter(null);
     }
 
     /**
@@ -125,20 +96,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                userProfile = new UserProfileDto(
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        Sex.convertCodeToString(rs.getInt("sex")),
-                        Sex.convertCodeToString(rs.getInt("sex_preferences")),
-                        rs.getString("biography"),
-                        rs.getString("email"),
-                        rs.getBoolean("confirmed"),
-                        rs.getString("confirmed_token"),
-                        new float[]{rs.getFloat("location_1"), rs.getFloat("location_2")},
-                        rs.getInt("photo"),
-                        rs.getInt("rating"));
+                userProfile = UserProfileDto.getInstance(rs);
                 logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
@@ -416,9 +374,25 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return photos;
     }
 
-    public List<UserProfileDto> getUserWithFilter(FilterDto filter) throws SQLException {
-
-        return null;
+    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter) throws SQLException, JsonProcessingException {
+        logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
+        List<UserProfileDto> profiles = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    SQLRequestGenerationHelper.generateUserSearchRequest(filter));
+            SQLRequestGenerationHelper.addValuesToPreparedStatement(preparedStatement, filter);
+            preparedStatement.execute();
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                UserProfileDto userProfile = UserProfileDto.getInstance(rs);
+                profiles.add(userProfile);
+                logger.info("getUsersWithFilter() result:\n" + mapper.writeValueAsString(profiles));
+            }
+        } catch (SQLException | JsonProcessingException ex) {
+            logger.info("getUserWithFilter() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+        return profiles;
     }
 
     private void processException(Exception ex) throws Exception {
