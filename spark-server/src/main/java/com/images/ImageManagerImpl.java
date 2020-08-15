@@ -19,7 +19,7 @@ public class ImageManagerImpl implements ImageManager{
     private static DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
     private final String IMAGES_DIR_PROD;
     private final String IMAGES_DIR;
-    private boolean isProd = true;
+    private boolean isProd;
     private List<File> images = new ArrayList<>();
 
     private String getImagesDir() {
@@ -29,11 +29,8 @@ public class ImageManagerImpl implements ImageManager{
     public ImageManagerImpl() {
         IMAGES_DIR_PROD = Config.getConfig().getProperty("images.dir.prod");
         IMAGES_DIR = Config.getConfig().getProperty("images.dir");
-        File folder = new File(IMAGES_DIR_PROD);
-        if (!folder.exists()) {
-            folder = new File(IMAGES_DIR);
-            this.isProd = false;
-        }
+        isProd = "true".equals(Config.getConfig().getProperty("isprod"));
+        File folder = new File(getImagesDir());
         logger.info("images dir: " + getImagesDir());
         File[] files = folder.listFiles();
         if (files != null && files.length > 0)
