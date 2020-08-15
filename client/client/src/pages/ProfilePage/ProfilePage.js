@@ -1,36 +1,32 @@
-import React, { useState, useCallback } from "react";
-import Gallery from "react-photo-gallery";
-import { photos } from "./photos";
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css'; // This only needs to be imported once in your app
- 
+import React, { useState, useEffect } from "react";
+import Carousel from '../../components/Carousel/Carousel'
+import * as services from '../../services/settings.js'
+import { ip } from '../../services/backendUrl'
 import css from './ProfilePage.module.less'
 
-const ProfilePage = () => {
+const ProfilePage = ({match}) => {
+  const [userProfile, setUserProfile] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [userPhotos, setUserPhotos] = useState([])
+  const user = match.params.login.substring(1, match.params.login.length)
 
-    const [photoIndex, setPhotoIndex] = useState(0)
-    const [isOpen, setIsOpen] = useState(false)
+  useEffect(() => {
+      services.getUserProfile(setIsLoading, setUserProfile, user)
+      services.getUserPhotos(setIsLoading, setUserPhotos, user)
+  }, [])
+
+  const {
+    first_name,
+    last_name,
+    login,
+    biography
+  } = userProfile
+
   return (
-    <div className={css.kek}>
-      <Gallery photos={photos} onClick={() => setIsOpen(true)} />
-      <div>
-     
- 
-        {isOpen && (
-          <Lightbox
-            mainSrc={photos[photoIndex].src}
-            nextSrc={photos[(photoIndex + 1) % photos.length].src}
-            prevSrc={photos[(photoIndex + photos.length - 1) % photos.length].src}
-            onCloseRequest={() => setIsOpen(false)}
-            onMovePrevRequest={() =>
-              setPhotoIndex((photoIndex + photos.length - 1) % photos.length)
-            }
-            onMoveNextRequest={() =>
-                setPhotoIndex((photoIndex + 1) % photos.length)
-            }
-          />
-        )}
-      </div>
+    <div className={css.mainSectionContainer}>
+      <div className={css.userName}>{`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}</div>
+        <Carousel photos={userPhotos}/>  
+      <div className={css.userInfo}>{`${biography || '-'}`}</div>
     </div>
   );
 }

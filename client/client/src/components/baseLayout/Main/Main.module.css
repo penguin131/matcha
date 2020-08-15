@@ -1,18 +1,18 @@
 .mainContainer {
-    display: flex;
-   
-    flex: 1 1 0%;
-    justify-content: center;
+	display: flex;
+  background-color: #F8F8FB;
+	flex: 1 1 0%;
+	justify-content: center;
 }
 
 @media (max-width: 700px) {
-    .mainContainer {
-        flex-direction: column;
-    }
+	.mainContainer {
+		flex-direction: column;
+	}
 }
 
 .appContainer {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }

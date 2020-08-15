@@ -2,19 +2,15 @@ import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import settingsCss from './SettingsForm.module.less'
-import Loader from '../../Loader/Loader'
+
 const SettingsForm = ({ onSubmit, data, isLoading, geolocation }) => {
   const [isFormLoading, setFormIsLoading] = useState(false)
   const {
-    first_name,
-    last_name,
-    login,
     biography,
     /* sex,
     sex_preferences, */
   } = data
 
-  const {latitude, longitude} = geolocation
   const sex = 'male'
   const sex_preferences = 'female'
 
@@ -22,11 +18,8 @@ const SettingsForm = ({ onSubmit, data, isLoading, geolocation }) => {
 
   return (
     <div className={css.authFormContainer}>{
-      isLoading ? <Loader/> : (
+
         <>
-          <div className={settingsCss.userName}>
-            {`${first_name} ${login} ${last_name}`}
-          </div>
           <Form
             onSubmit={e => onSubmit(e, setFormIsLoading)}
             mutators={{
@@ -132,13 +125,13 @@ const SettingsForm = ({ onSubmit, data, isLoading, geolocation }) => {
               </Field>  */}
               <div className={css.buttons}>
                 <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
-                  Join us
+                  Save
                 </button>
               </div>
             </form>
           )}/>
         </>
-      )}   
+      }   
     </div>     
   )
 }

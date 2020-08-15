@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
 import Navigation from '../Navigation/Navigation'
@@ -7,26 +7,68 @@ import MainPage from '../../../pages/MainPage/MainPage'
 import SettingsPage from '../../../pages/SettingsPage/SettingsPage'
 import ChatPage from '../../../pages/ChatPage/ChatPage'
 import ProfilePage from '../../../pages/ProfilePage/ProfilePage'
+import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
+import Loader from '../../Loader/Loader'
+import * as services from '../../../services/settings'
 /* import { AuthContext } from '../../context/AuthContext' */
 import css from './Main.module.css'
 
 const Main = () => {
   /* const { isAuth } = useContext(AuthContext) */
   const isAuth = true
+  const [isLoading, setIsLoading] = useState(false)
+  const [userProfile, setUserProfile] = useState({})
+  const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
+  const [userPhotos, setUserPhotos] = useState([])
+  const user = localStorage.currentUser
+
+  useEffect(() => {  
+    services.getUserProfile(setIsLoading, setUserProfile, user)
+    services.getUserPhotos(setIsLoading, setUserPhotos, user)
+  }, [])
+  
+  useEffect(() => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    const success = (pos) => {
+      const crd = pos.coords;
+      setGeolocation({
+        latitude: crd.latitude,
+        longitude: crd.longitude
+      })
+    };
+    
+    const error = (err) => {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  }, [])
 
   return (
     <div className={css.appContainer}>
-      <Header/>
+      <Header data={{userProfile, userPhotos}}/>
         <main className={css.mainContainer}>
           <Navigation/>
-          <Switch>
-            <ProtectedRoute path='/chats' component={ChatPage} isAuth={isAuth}/>
-            <ProtectedRoute path='/settings' component={SettingsPage} isAuth={isAuth}/>
-            <ProtectedRoute path='/profile' component={ProfilePage} isAuth={isAuth}/>
-            <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
-          </Switch>
+          {isLoading ? <Loader/> : (
+            <Switch>
+              <ProtectedRoute exact path='/chats' component={ChatPage} isAuth={isAuth}/>
+              <ProtectedRoute exact
+                              path='/settings'
+                              component={() => <SettingsPage data={{userProfile, userPhotos}}/>}
+                              isAuth={isAuth}
+              />
+              <ProtectedRoute exact path='/profile/:login' component={ProfilePage} isAuth={isAuth}/>
+              <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
+              <ProtectedRoute exact path='/*' component={NotFoundPage} isAuth={isAuth}/>
+            </Switch>
+          )} 
           <Aside/>
         </main>
       <Footer/>

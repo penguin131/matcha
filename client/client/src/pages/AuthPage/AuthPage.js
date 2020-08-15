@@ -6,36 +6,33 @@ import * as services from '../../services/auth'
 import css from './AuthPage.module.less'
 
 const LoginButton = () => {
-    return (
-        <Link to='/login'><button className={css.loginButton}>Log in</button></Link>
-    )
+	return (
+		<Link to='/login'><button className={css.loginButton}>Log in</button></Link>
+	)
 }
 
 const JoinButton = () => {
-    return (
-        <Link to='/join'><button className={css.loginButton}>Join us</button></Link>
-    )
+	return (
+		<Link to='/join'><button className={css.loginButton}>Join us</button></Link>
+	)
 }
 
-
-
 const AuthPage = () => {
-
-    return (
-        <>
-            <Switch>
-                <Route path='/login' component={JoinButton}/>
-                <Route path='/join' component={LoginButton}/>
-            </Switch>
-        
-            <div className={css.joinPageContainer}>
-                <Switch>
-                    <Route path='/login' component={() => <LoginForm onSubmit={services.login}/>}/>
-                    <Route path='/join' component={() => <JoinForm onSubmit={services.join}/>}/>
-                </Switch>
-            </div>
-        </>
-    )
+	return (
+		<>
+			<Switch>
+				<Route path='/login' component={JoinButton}/>
+				<Route path='/join' component={LoginButton}/>
+			</Switch>
+	
+			<div className={css.joinPageContainer}>
+				<Switch>
+					<Route path='/login' component={() => <LoginForm onSubmit={services.login}/>}/>
+					<Route path='/join' component={() => <JoinForm onSubmit={services.join}/>}/>
+				</Switch>
+			</div>
+		</>
+	)
 }
 
 export default AuthPage
