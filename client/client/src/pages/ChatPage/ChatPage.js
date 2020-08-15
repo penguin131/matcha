@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import ConversationList from '../../components/Chat/ConversationList/ConversationList'
 import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
-/* import { ReactComponent as TrashLogo } from '../../imgs/trash.svg' */
+import { Link } from 'react-router-dom'
 import css from './ChatPage.module.less'
 import { ws } from '../../services/backendUrl'
 import * as services from '../../services/chat.js'
@@ -68,7 +68,9 @@ useEffect(() => {
       </div>
       <div className={css.chatWindow}>
         <div className={css.chatTitle}>
-          <span className={css.userName}>{currentChat && currentChat}</span>
+          <Link to={`/profile/:${currentChat}`}>
+            <span className={css.userName}>{currentChat && currentChat}</span>
+          </Link>
           {/* <TrashLogo className={css.trashLogo}/> */}
         </div>
         <ChatList

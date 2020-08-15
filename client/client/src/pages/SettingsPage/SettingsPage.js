@@ -29,7 +29,7 @@ const SettingsPage = ({data}) => {
       {isLoading ? <Loader/> : (
       <>
         <div className={css.userName}>
-          {`${first_name} ${login} ${last_name}`}
+          {`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}
         </div>
         <ImageUploader
           withIcon={true}

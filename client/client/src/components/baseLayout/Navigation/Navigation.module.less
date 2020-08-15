@@ -5,7 +5,14 @@
     align-items: center;
     background-color: #373b53;
     padding-top: 35px;
+    @media(max-width: 700px) {
+        flex-direction: row;
+        justify-content: center;
+        a {
+            margin-right : 40px;
+        }
+    }
     a {
-        margin : 20px;
+        margin-bottom : 40px;
     }
 }

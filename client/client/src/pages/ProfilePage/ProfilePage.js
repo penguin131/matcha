@@ -11,8 +11,8 @@ const ProfilePage = ({match}) => {
   const user = match.params.login.substring(1, match.params.login.length)
 
   useEffect(() => {
-      services.getUserProfile(setIsLoading, setUserProfile, user)
-      services.getUserPhotos(setIsLoading, setUserPhotos, user)
+    services.getUserProfile(setIsLoading, setUserProfile, user)
+    services.getUserPhotos(setIsLoading, setUserPhotos, user)
   }, [])
 
   const {
@@ -25,7 +25,7 @@ const ProfilePage = ({match}) => {
   return (
     <div className={css.mainSectionContainer}>
       <div className={css.userName}>{`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}</div>
-        <Carousel photos={userPhotos}/>  
+        {/* <Carousel photos={userPhotos}/>   */}
       <div className={css.userInfo}>{`${biography || '-'}`}</div>
     </div>
   );
