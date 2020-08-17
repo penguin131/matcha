@@ -1,9 +1,6 @@
 import com.chat.Chat;
 import com.chat.ChatWebSocketHandler;
-import com.dto.BaseUserProfileDto;
-import com.dto.CredentialsDto;
-import com.dto.MessageDto;
-import com.dto.UserProfileDto;
+import com.dto.*;
 import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.LoggerConfig;
@@ -43,7 +40,8 @@ public class MajorEndpoint {
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
 			try {
-				return mapper.writeValueAsString(databaseService.getAllUsers());
+				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				return mapper.writeValueAsString(databaseService.getAllUsers(login));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -74,6 +72,16 @@ public class MajorEndpoint {
 			try {
 				String login = JWTHelper.getUserName(req.headers("Authorization"));
 				return mapper.writeValueAsString(databaseService.getAllFriendsForLogin(login));
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+		});
+
+		post("/protected/getUsersWithFilter", (req, res) -> {
+			try {
+				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				UserFilterDto filter = mapper.readValue(req.body(), UserFilterDto.class);
+				return mapper.writeValueAsString(databaseService.getUsersWithFilter(filter, login));
 			} catch (Exception ex) {
 				return processException(ex);
 			}

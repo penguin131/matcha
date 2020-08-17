@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DatabaseService {
-    List<UserProfileDto> getAllUsers() throws SQLException, JsonProcessingException;
+    List<UserProfileDto> getAllUsers(String login) throws SQLException, JsonProcessingException;
     void createUserProfile(BaseUserProfileDto userProfileDto, String confirmed_token) throws Exception;
     UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException;
     List<FriendDto> getAllFriendsForLogin(String login) throws SQLException;
@@ -25,5 +25,5 @@ public interface DatabaseService {
     void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
     void setMainImage(String imageId, String userLogin) throws SQLException;
     List<UserPhotoDto> getUserPhotos(String user) throws SQLException;
-    List<UserProfileDto> getUsersWithFilter(UserFilterDto filter) throws SQLException, JsonProcessingException;
+    List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException;
 }

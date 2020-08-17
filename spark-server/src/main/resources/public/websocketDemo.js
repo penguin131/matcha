@@ -22,7 +22,6 @@ function sendMessage(message) {
             from: 'bfalmer',
             to: 'smight'
         };
-        //todo json кому отправляем
         webSocket.send(JSON.stringify(msg));
         id("message").value = "";
     }

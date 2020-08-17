@@ -29,8 +29,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
      * Вернет массив всех профилей. Временная шняга
      * @return List<UserProfileDto>
      */
-    public List<UserProfileDto> getAllUsers() throws SQLException, JsonProcessingException {
-        return getUsersWithFilter(null);
+    public List<UserProfileDto> getAllUsers(String login) throws SQLException, JsonProcessingException {
+        return getUsersWithFilter(null, login);
     }
 
     /**
@@ -374,20 +374,20 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return photos;
     }
 
-    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter) throws SQLException, JsonProcessingException {
+    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException {
         logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
         List<UserProfileDto> profiles = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQLRequestGenerationHelper.generateUserSearchRequest(filter));
+                    SQLRequestGenerationHelper.generateUserSearchRequest(filter, login));
             SQLRequestGenerationHelper.addValuesToPreparedStatement(preparedStatement, filter);
             preparedStatement.execute();
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 UserProfileDto userProfile = UserProfileDto.getInstance(rs);
                 profiles.add(userProfile);
-                logger.info("getUsersWithFilter() result:\n" + mapper.writeValueAsString(profiles));
             }
+            logger.info("getUsersWithFilter() result:\n" + mapper.writeValueAsString(profiles));
         } catch (SQLException | JsonProcessingException ex) {
             logger.info("getUserWithFilter() exception:\n" + ex.getMessage());
             throw ex;

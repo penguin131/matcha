@@ -19,6 +19,10 @@ public class UserFilterDto {
 		this.rating = rating;
 	}
 
+	public UserFilterDto() {
+
+	}
+
 	public Integer getDistance() {
 		return distance;
 	}
