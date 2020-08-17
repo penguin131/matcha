@@ -1,6 +1,27 @@
 import axios from 'axios'
 import { url } from './backendUrl'
 
+const token = localStorage.token
+
+export const fetchData = async (setIsLoading, setData, api, id, source) => {
+  try {
+    setIsLoading(true)
+    await axios.get(`${url}/protected/${api}/${id}`, {
+      headers: {
+        'Authorization': `${token}`
+      },
+      cancelToken: source.token
+    } )
+    .then(res => {
+      setIsLoading(false) 
+      setData(res.data)
+    })
+  } catch(e) {
+    setIsLoading(false) 
+    console.log(e)
+  }
+}
+
 export const join = async (values, setIsLoading) => {
   const data = {
     "login": values.username,
@@ -41,4 +62,22 @@ export const login = async (values, setIsLoading, history, setIsAuth) => {
     setIsLoading(false)
     console.log(e)
   }
+}
+
+export const getAllFriends = async (setIsLoading, setFriendsList) => {
+  try {
+    setIsLoading(true)
+    await axios.get(`${url}protected/getAllFriends`, {
+        headers: {
+          'Authorization': `${token}`
+        } } )
+      .then(res => {
+        setIsLoading(false) 
+        console.log(res.data)
+        setFriendsList(res.data)
+      })
+    } catch(e) {
+      setIsLoading(false) 
+      console.log(e)
+    }
 }

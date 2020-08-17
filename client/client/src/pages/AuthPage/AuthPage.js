@@ -2,7 +2,7 @@ import React from 'react'
 import JoinForm from '../../components/forms/JoinForm/JoinForm'
 import LoginForm from '../../components/forms/LoginForm/LoginForm'
 import { Switch, Link, Route } from 'react-router-dom'
-import * as services from '../../services/auth'
+import * as services from '../../services/services'
 import css from './AuthPage.module.less'
 
 const LoginButton = () => {

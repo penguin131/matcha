@@ -9,7 +9,7 @@ import css from './Header.module.less'
 const Header = ({ data }) => {
 	const { userProfile, userPhotos } = data
 	const mainPhoto = userPhotos.find(photo => photo.main)
-	console.log(mainPhoto)
+
 	return (
 		<header className={css.headerContainer}>
 			<div className={css.logo}>

@@ -5,7 +5,8 @@ import ChatList from '../../components/Chat/ChatList/ChatList'
 import { Link } from 'react-router-dom'
 import css from './ChatPage.module.less'
 import { ws } from '../../services/backendUrl'
-import * as services from '../../services/chat.js'
+import * as services from '../../services/services.js'
+import axios from 'axios'
 
 const ChatPage = () => {
   const [friendsListIsLoading, setFriendsListIsLoading] = useState(false)
@@ -29,11 +30,12 @@ const ChatPage = () => {
       console.log('closed')
     }
   }, [])
-useEffect(() => {
-  webSocket.current.onmessage = (message) => {
-    setMessages([JSON.parse(message.data), ...messages])
-  }
-}, [messages])
+  useEffect(() => {
+    webSocket.current.onmessage = (message) => {
+      setMessages([JSON.parse(message.data), ...messages])
+    }
+  }, [messages])
+
   const onSubmit = (values) => {
     const message = {
       type: 0,
@@ -44,8 +46,6 @@ useEffect(() => {
     }
 
     webSocket.current.send(JSON.stringify(message))
-  /*   setMessages([message, ...messages]) */
-   // services.getUserChatHistory(setChatListIsLoading, setMessages, currentChat)
   }
 
   useEffect(() => {
@@ -53,9 +53,13 @@ useEffect(() => {
   }, [])
 
   useEffect(() => {
-    services.getUserChatHistory(setChatListIsLoading, setMessages, currentChat)
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source()
+    services.fetchData(setChatListIsLoading, setMessages, 'getChatHistory', currentChat, source)
+    return () => {
+      source.cancel();
+    };
   }, [currentChat])
-
 
   return (
     <div className={css.chatContainer}>

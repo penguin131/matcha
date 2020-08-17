@@ -1,7 +1,6 @@
 import React, {useState, useEffect } from 'react'
 import SettingsForm from '../../components/forms/SettingsForm/SettingsForm'
 import css from './SettingsPage.module.less'
-import * as services from '../../services/settings.js'
 import ImageUploader from "react-images-upload";
 import Loader from '../../components/Loader/Loader'
 

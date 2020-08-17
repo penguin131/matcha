@@ -11,7 +11,8 @@ import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import Loader from '../../Loader/Loader'
-import * as services from '../../../services/settings'
+import * as services from '../../../services/services'
+import axios from 'axios'
 /* import { AuthContext } from '../../context/AuthContext' */
 import css from './Main.module.css'
 
@@ -25,8 +26,16 @@ const Main = () => {
   const user = localStorage.currentUser
 
   useEffect(() => {  
-    services.getUserProfile(setIsLoading, setUserProfile, user)
-    services.getUserPhotos(setIsLoading, setUserPhotos, user)
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source()
+
+    Promise.all([
+      services.fetchData(setIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
+      services.fetchData(setIsLoading, setUserPhotos, 'getUserPhotos', user, source)
+    ])
+    return () => {
+      source.cancel();
+    };
   }, [])
   
   useEffect(() => {
