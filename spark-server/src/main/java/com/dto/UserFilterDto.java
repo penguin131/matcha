@@ -8,6 +8,7 @@ public class UserFilterDto {
 	private String sexPreferences;
 	private String sex;
 	private Integer rating;
+	private Integer age;
 
 	public UserFilterDto(Integer distance,
 						 String sexPreferences,
@@ -62,5 +63,13 @@ public class UserFilterDto {
 
 	public boolean hasFields() {
 		return distance != null || sexPreferences != null || sex != null || rating != null;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
 	}
 }
