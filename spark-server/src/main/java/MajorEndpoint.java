@@ -8,7 +8,6 @@ import com.helper.ValidateHelper;
 import com.images.ImageManager;
 import com.images.ImageManagerImpl;
 import com.mail.MailService;
-import com.security.JWTHelper;
 import com.security.SecurityHelper;
 import com.service.DatabaseService;
 import com.helper.DatabaseServiceHelper;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static spark.Spark.*;
+import static com.security.JWTHelper.*;
 
 public class MajorEndpoint {
 
@@ -40,7 +40,7 @@ public class MajorEndpoint {
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
 			try {
-				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = getUserNameFromToken(req.headers("Authorization"));
 				return mapper.writeValueAsString(databaseService.getAllUsers(login));
 			} catch (Exception ex) {
 				return processException(ex);
@@ -70,7 +70,7 @@ public class MajorEndpoint {
 
 		get("/protected/getAllFriends", (req, res) -> {
 			try {
-				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = getUserNameFromToken(req.headers("Authorization"));
 				return mapper.writeValueAsString(databaseService.getAllFriendsForLogin(login));
 			} catch (Exception ex) {
 				return processException(ex);
@@ -79,7 +79,7 @@ public class MajorEndpoint {
 
 		post("/protected/getUsersWithFilter", (req, res) -> {
 			try {
-				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = getUserNameFromToken(req.headers("Authorization"));
 				UserFilterDto filter = mapper.readValue(req.body(), UserFilterDto.class);
 				return mapper.writeValueAsString(databaseService.getUsersWithFilter(filter, login));
 			} catch (Exception ex) {
@@ -89,7 +89,7 @@ public class MajorEndpoint {
 
 		get("/protected/setLike/:to", (req, res) -> {
 			try {
-				String from = JWTHelper.getUserName(req.headers("Authorization"));
+				String from = getUserNameFromToken(req.headers("Authorization"));
 				String to = req.params(":to");
 				databaseService.setLike(from, to);
 				return "OK";
@@ -100,7 +100,7 @@ public class MajorEndpoint {
 
 		get("/protected/setComplaint/:to", (req, res) -> {
 			try {
-				String from = JWTHelper.getUserName(req.headers("Authorization"));
+				String from = getUserNameFromToken(req.headers("Authorization"));
 				String to = req.params(":to");
 				databaseService.setComplaint(from, to);
 				return "OK";
@@ -144,7 +144,7 @@ public class MajorEndpoint {
 		});
 
 		get("/protected/getChatHistory/:user", (req, res) -> {
-			String user = JWTHelper.getUserName(req.headers("Authorization"));
+			String user = getUserNameFromToken(req.headers("Authorization"));
 			List<MessageDto> messages = databaseService.getChatHistory(user, req.params(":user"));
 			return mapper.writeValueAsString(messages);
 		});
@@ -166,7 +166,7 @@ public class MajorEndpoint {
 				String login = credentials.getLogin();
 				String password = credentials.getPassword();
 				if (databaseService.checkPassword(login, password)) {
-					return JWTHelper.createJWT(login, "securityService", "security", TTL);
+					return createJWT(login, "securityService", "security", TTL);
 				} else {
 					return "Invalid login/password";
 				}
@@ -180,7 +180,7 @@ public class MajorEndpoint {
 		 */
 		post("/protected/downloadImage", ((req, res) -> {
 			try {
-				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = getUserNameFromToken(req.headers("Authorization"));
 				imageManager.saveImage(login, req.bodyAsBytes());
 				return "OK";
 			} catch (IOException ex) {
@@ -190,7 +190,7 @@ public class MajorEndpoint {
 
 		get("/protected/deleteImage/:id", ((req, res) -> {
 			try {
-				String login = JWTHelper.getUserName(req.headers("Authorization"));
+				String login = getUserNameFromToken(req.headers("Authorization"));
 				imageManager.deleteImage(login, req.params(":id"));
 				return "OK";
 			} catch (IOException ex) {
@@ -218,7 +218,7 @@ public class MajorEndpoint {
 
 		get("/protected/setAvatar/:imageId", (request, response) -> {
 			try {
-				String login = JWTHelper.getUserName(request.headers("Authorization"));
+				String login = getUserNameFromToken(request.headers("Authorization"));
 				databaseService.setMainImage(request.params(":imageId"), login);
 				return "OK";
 			} catch (SQLException ex) {
@@ -254,7 +254,7 @@ public class MajorEndpoint {
 			try {
 				addHeaders(response);
 				String JWTToken = request.headers("Authorization");
-				claims = JWTHelper.decodeJWT(JWTToken);
+				claims = decodeJWT(JWTToken);
 				currentTime = System.currentTimeMillis();
 			} catch (Exception ex) {
 				logger.info("before() Exception: " + ex.getMessage());

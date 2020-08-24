@@ -3,7 +3,6 @@ package com.images;
 import com.exceptions.AccessDeniedException;
 import com.helper.Config;
 import com.service.DatabaseService;
-import com.helper.DatabaseServiceHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -14,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.helper.DatabaseServiceHelper.getDatabaseService;
+
 public class ImageManagerImpl implements ImageManager{
     private final static Logger logger = Logger.getLogger(ImageManagerImpl.class);
-    private static DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
+    private static DatabaseService databaseService = getDatabaseService();
     private final String IMAGES_DIR_PROD;
     private final String IMAGES_DIR;
     private boolean isProd;

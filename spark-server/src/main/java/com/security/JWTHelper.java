@@ -76,7 +76,7 @@ public class JWTHelper {
                 .parseClaimsJws(jwt).getBody();
     }
 
-    public static String getUserName(String jwt) throws Exception {
+    public static String getUserNameFromToken(String jwt) throws Exception {
         return JWTHelper.decodeJWT(jwt).getId();
     }
 }

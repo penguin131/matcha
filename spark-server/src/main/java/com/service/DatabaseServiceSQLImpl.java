@@ -9,12 +9,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Config;
 import com.helper.Password;
-import com.helper.SQLRequestGenerationHelper;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.helper.SQLRequestGenerationHelper.*;
 
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
@@ -374,13 +375,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return photos;
     }
 
-    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException {
+    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login)
+            throws SQLException, JsonProcessingException {
         logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
         List<UserProfileDto> profiles = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQLRequestGenerationHelper.generateUserSearchRequest(filter, login));
-            SQLRequestGenerationHelper.addValuesToPreparedStatement(preparedStatement, filter);
+            PreparedStatement preparedStatement = connection.prepareStatement(generateUserSearchRequest(filter, login));
+            addValuesToPreparedStatement(preparedStatement, filter);
             preparedStatement.execute();
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {

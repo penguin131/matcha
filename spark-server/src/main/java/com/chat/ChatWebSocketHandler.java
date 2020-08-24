@@ -23,7 +23,7 @@ public class ChatWebSocketHandler {
     public void onConnect(Session userSession) throws Exception {
         logger.info("Start connection to web socket");
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
-        String username = JWTHelper.getUserName(token);
+        String username = JWTHelper.getUserNameFromToken(token);
         if (StringUtils.isEmpty(username)) {
             logger.info("Empty username");
             throw new Exception("Empty username");
