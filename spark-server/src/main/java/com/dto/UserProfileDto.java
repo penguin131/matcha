@@ -2,6 +2,8 @@ package com.dto;
 
 import com.dictionary.Sex;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,9 +20,9 @@ public class UserProfileDto extends BaseUserProfileDto {
     @JsonProperty("confirmed_token")
     private String confirmedToken;
     private float[] location;
-    private int photo;
-    private int rating;
-    private int age;
+    private Integer photo;
+    private Integer rating;
+    private Integer age;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -73,9 +75,9 @@ public class UserProfileDto extends BaseUserProfileDto {
                           Boolean confirmed,
                           String confirmedToken,
                           float[] location,
-                          int photo,
-                          int rating,
-                          int age) {
+                          Integer photo,
+                          Integer rating,
+                          Integer age) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -92,7 +94,11 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.age = age;
     }
 
-    public UserProfileDto() { }
+    public UserProfileDto() {
+        location = new float[] {0, 0};
+        photo = -1;
+        confirmed = false;
+    }
 
     public String getConfirmedToken() {
         return confirmedToken;
@@ -110,20 +116,28 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.location = location;
     }
 
-    public int getPhoto() {
+    public Integer getPhoto() {
         return photo;
     }
 
-    public void setPhoto(int photo) {
+    public void setPhoto(Integer photo) {
         this.photo = photo;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public static UserProfileDto getInstance(ResultSet rs) throws SQLException {
@@ -144,11 +158,27 @@ public class UserProfileDto extends BaseUserProfileDto {
                 rs.getInt("age"));
     }
 
-    public int getAge() {
-        return age;
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UserProfileDto))
+            return false;
+        UserProfileDto other = (UserProfileDto) obj;
+        return super.equals(other) &&
+                StringUtils.equals(firstName, other.getFirstName()) &&
+                StringUtils.equals(lastName, other.getLastName()) &&
+                StringUtils.equals(biography, other.getBiography()) &&
+                StringUtils.equals(sexPreferences, other.getSexPreferences()) &&
+                StringUtils.equals(confirmedToken, other.getConfirmedToken()) &&
+                ArrayUtils.isEquals(location, other.getLocation()) &&
+                integerEquals(photo, other.getPhoto()) &&
+                integerEquals(rating, other.getRating()) &&
+                integerEquals(age, other.getAge());
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    private boolean integerEquals(Integer b1, Integer b2) {
+        if (b1 != null) {
+            return b1.equals(b2);
+        }
+        return b2 == null;
     }
 }

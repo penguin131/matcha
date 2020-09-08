@@ -28,9 +28,9 @@ public class ImageManagerImpl implements ImageManager{
     }
 
     public ImageManagerImpl() {
-        IMAGES_DIR_PROD = Config.getConfig().getProperty("images.dir.prod");
-        IMAGES_DIR = Config.getConfig().getProperty("images.dir");
-        isProd = "true".equals(Config.getConfig().getProperty("isprod"));
+        IMAGES_DIR_PROD = Config.getImagesDirProd();
+        IMAGES_DIR = Config.getImagesDir();
+        isProd = "true".equals(Config.isProd());
         File folder = new File(getImagesDir());
         logger.info("images dir: " + getImagesDir());
         File[] files = folder.listFiles();

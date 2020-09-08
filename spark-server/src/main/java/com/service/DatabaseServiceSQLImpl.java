@@ -23,7 +23,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     private Connection connection;
 
     public DatabaseServiceSQLImpl() throws SQLException {
-        connection = DriverManager.getConnection(Config.getConfig().getProperty("url"), Config.getConfig());
+        connection = DriverManager.getConnection(Config.getUrl(), Config.getConfig());
     }
 
     /**
@@ -52,7 +52,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         try {
             userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark-db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
+                    "insert into \"spark_db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
                             "VALUES (?, ?, ?, ?, ?, false )");
             preparedStatement.setString(1, userProfileDto.getLogin());
             preparedStatement.setString(2, userProfileDto.getPassword());
@@ -71,7 +71,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("checkEmailExist(), email: " + email);
         try  {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_user_profile where email=?");
+                    "select * from \"spark_db\".t_user_profile where email=?");
             preparedStatement.setString(1, email);
             ResultSet rs = preparedStatement.executeQuery();
             return rs.next();
@@ -92,8 +92,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select *," +
-                    " (select id_image from \"spark-db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
-                    " from \"spark-db\".t_user_profile where login=?");
+                    " (select id_image from \"spark_db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
+                    " from \"spark_db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -120,12 +120,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "WITH cte_message AS (SELECT row_number() over (order by date desc) as nb, text, date, \"from\", \"to\"\n" +
-                    "                    FROM \"spark-db\".t_message\n" +
-                    "                    where \"from\"=(select user_profile_id from \"spark-db\".t_user_profile where login=?) or\n" +
-                    "                             \"to\"=(select user_profile_id from \"spark-db\".t_user_profile where login=?))\n" +
-                    "select t4.login, t3.text, t3.date, t3.\"from\", t3.\"to\", t1.user_profile_id, t4.user_profile_id, nb from \"spark-db\".t_user_profile t1\n" +
-                    "    join \"spark-db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
-                    "    join \"spark-db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id or t4.user_profile_id=t2.user1_id)\n" +
+                    "                    FROM \"spark_db\".t_message\n" +
+                    "                    where \"from\"=(select user_profile_id from \"spark_db\".t_user_profile where login=?) or\n" +
+                    "                             \"to\"=(select user_profile_id from \"spark_db\".t_user_profile where login=?))\n" +
+                    "select t4.login, t3.text, t3.date, t3.\"from\", t3.\"to\", t1.user_profile_id, t4.user_profile_id, nb from \"spark_db\".t_user_profile t1\n" +
+                    "    join \"spark_db\".t_users_unity t2 on (t1.user_profile_id=t2.user1_id or t1.user_profile_id=t2.user2_id)\n" +
+                    "    join \"spark_db\".t_user_profile t4 on (t4.user_profile_id=t2.user2_id or t4.user_profile_id=t2.user1_id)\n" +
                     "    left join cte_message t3 on ((t3.\"from\"=t1.user_profile_id and t3.\"to\"=t4.user_profile_id) or (t3.\"from\"=t4.user_profile_id and t3.\"to\"=t1.user_profile_id)) and nb=1\n" +
                     "where t1.login=? and t2.confirmed=true and t1.login != t4.login");
             preparedStatement.setString(1, login);
@@ -186,7 +186,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("deleteUserProfileForLogin() login: " + login);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "delete from \"spark-db\".t_user_profile where login=?");
+                    "delete from \"spark_db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
             preparedStatement.executeQuery();
         } catch (SQLException ex) {
@@ -202,7 +202,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark-db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
+                    "update \"spark_db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
             preparedStatement.setString(1, userProfileDto.getFirstName());
             preparedStatement.setString(2, userProfileDto.getLastName());
             preparedStatement.setInt(3, Sex.convertStringToCode(userProfileDto.getSexPreferences()));
@@ -234,7 +234,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("confirmUserForToken() token: " + token);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark-db\".t_user_profile set confirmed=true where confirmed_token=?");
+                    "update \"spark_db\".t_user_profile set confirmed=true where confirmed_token=?");
             preparedStatement.setString(1, token);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -248,9 +248,9 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         List<MessageDto> messages = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select t1.text, t1.date, t2.login as login1, t3.login as login2 from \"spark-db\".t_message t1\n" +
-                    " join \"spark-db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
-                    " join \"spark-db\".t_user_profile t3 on (t1.\"to\"=t3.user_profile_id)\n" +
+                    "select t1.text, t1.date, t2.login as login1, t3.login as login2 from \"spark_db\".t_message t1\n" +
+                    " join \"spark_db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
+                    " join \"spark_db\".t_user_profile t3 on (t1.\"to\"=t3.user_profile_id)\n" +
                     " where t2.login=? and t3.login=? or t2.login=? and t3.login=?\n" +
                     " order by t1.date desc");
             preparedStatement.setString(1, user1);
@@ -276,11 +276,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("saveChatMessage()");
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark-db\".t_message (text, date, \"from\", \"to\") VALUES\n" +
+                    "insert into \"spark_db\".t_message (text, date, \"from\", \"to\") VALUES\n" +
                     "(?\n" +
                     " ,?\n" +
-                    " ,(select user_profile_id from \"spark-db\".t_user_profile where login=?)\n" +
-                    " ,(select user_profile_id from \"spark-db\".t_user_profile where login=?))");
+                    " ,(select user_profile_id from \"spark_db\".t_user_profile where login=?)\n" +
+                    " ,(select user_profile_id from \"spark_db\".t_user_profile where login=?))");
             preparedStatement.setString(1, messageDto.getMsgText());
             preparedStatement.setLong(2, messageDto.getDate());
             preparedStatement.setString(3, messageDto.getFrom());
@@ -297,8 +297,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("saveImage(%s)", user));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark-db\".t_image (user_id) values" +
-                    " ((select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)) returning id_image");
+                    "insert into \"spark_db\".t_image (user_id) values" +
+                    " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)) returning id_image");
             preparedStatement.setString(1, user);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -313,8 +313,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("deleteImage(%s, %s)", id, user));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select (select login from \"spark-db\".t_user_profile where user_profile_id=user_id limit 1) as user" +
-                    " from \"spark-db\".t_image where id_image=?");
+                    "select (select login from \"spark_db\".t_user_profile where user_profile_id=user_id limit 1) as user" +
+                    " from \"spark_db\".t_image where id_image=?");
             preparedStatement.setString(1, user);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (user.equals(resultSet.getString("id_image")))
@@ -330,7 +330,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("deleteImage(%s)", id));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "delete from \"spark-db\".t_image where id_image=?");
+                    "delete from \"spark_db\".t_image where id_image=?");
             preparedStatement.setInt(1, Integer.parseInt(id));
             preparedStatement.execute();
         } catch (SQLException ex) {
@@ -343,11 +343,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("setMainImage(%s)", imageId));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark-db\".t_image set is_main=false " +
-                    " where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
+                    "update \"spark_db\".t_image set is_main=false " +
+                    " where user_id=(select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)");
             preparedStatement.setString(1, userLogin);
             preparedStatement.executeUpdate();
-            preparedStatement = connection.prepareStatement("update \"spark-db\".t_image set is_main=true where id_image=?");
+            preparedStatement = connection.prepareStatement("update \"spark_db\".t_image set is_main=true where id_image=?");
             preparedStatement.setInt(1, Integer.parseInt(imageId));
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -361,8 +361,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         List<UserPhotoDto> photos = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select * from \"spark-db\".t_image " +
-                    " where user_id=(select user_profile_id from \"spark-db\".t_user_profile where login=? limit 1)");
+                    "select * from \"spark_db\".t_image " +
+                    " where user_id=(select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)");
             preparedStatement.setString(1, user);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {

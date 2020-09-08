@@ -35,8 +35,7 @@ public class MailService {
     }
 
     public static void sendEmail(Session session, String toEmail, String subject, String body) throws UnsupportedEncodingException, MessagingException {
-        try
-        {
+        try {
             logger.info("Message body: " + body);
             MimeMessage msg = new MimeMessage(session);
             msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
@@ -50,8 +49,7 @@ public class MailService {
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
             Transport.send(msg);
             logger.info("EMail Sent Successfully!");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.info("Send mail error: " + e.getMessage());
             throw e;
         }

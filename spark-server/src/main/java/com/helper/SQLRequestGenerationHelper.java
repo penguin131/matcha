@@ -10,12 +10,12 @@ public class SQLRequestGenerationHelper {
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
 		StringBuilder sb = new StringBuilder(
 				"with CTE as (\n" +
-				"    select location_1, location_2 from \"spark-db\".t_user_profile where login='" + login + "'" +
+				"    select location_1, location_2 from \"spark_db\".t_user_profile where login='" + login + "'" +
 				" )" +
 				" select *," +
-				" (select id_image from \"spark-db\".t_image " +
+				" (select id_image from \"spark_db\".t_image " +
 				" where user_profile_id=user_id and is_main=true limit 1) as photo " +
-				" from \"spark-db\".t_user_profile");
+				" from \"spark_db\".t_user_profile");
 		if (filter != null && filter.hasFields()) {
 			sb.append(" where login<>'").append(login).append("'");
 			if (filter.getDistance() != null) {

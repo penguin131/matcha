@@ -3,14 +3,14 @@ import com.chat.ChatWebSocketHandler;
 import com.dto.*;
 import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.LoggerConfig;
+import com.helper.Config;
+import com.helper.DatabaseServiceHelper;
 import com.helper.ValidateHelper;
 import com.images.ImageManager;
 import com.images.ImageManagerImpl;
 import com.mail.MailService;
 import com.security.SecurityHelper;
 import com.service.DatabaseService;
-import com.helper.DatabaseServiceHelper;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -21,22 +21,24 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import static spark.Spark.*;
 import static com.security.JWTHelper.*;
+import static spark.Spark.*;
 
 public class MajorEndpoint {
 
-	private final static Logger logger = Logger.getLogger(MajorEndpoint.class);
-	private static DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
-	private final static ObjectMapper mapper = new ObjectMapper();
-	private final static long TTL = 1000000000;
-	private static ImageManager imageManager = new ImageManagerImpl();
-
 	public static void main(String[] args) {
+		//Инициализация стартовых обьектов
+		Logger logger = Logger.getLogger(MajorEndpoint.class);
+		DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
+		ObjectMapper mapper = new ObjectMapper();
+		long TTL = 1000000000;
+		ImageManager imageManager = new ImageManagerImpl();
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", ChatWebSocketHandler.class);
-		LoggerConfig.configureLogger();
+		Config.configureLogger();
+
+		//REST
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
 			try {
@@ -77,7 +79,7 @@ public class MajorEndpoint {
 			}
 		});
 
-		post("/protected/getUsersWithFilter", (req, res) -> {
+		get("/protected/getUsersWithFilter", (req, res) -> {
 			try {
 				String login = getUserNameFromToken(req.headers("Authorization"));
 				UserFilterDto filter = mapper.readValue(req.body(), UserFilterDto.class);
@@ -157,9 +159,7 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		/**
-		 * Security
-		 */
+		//Security
 		post("/getToken", (req, res) -> {
 			try {
 				CredentialsDto credentials = mapper.readValue(req.body(), CredentialsDto.class);
@@ -175,9 +175,7 @@ public class MajorEndpoint {
 			}
 		});
 
-		/**
-		 * Images
-		 */
+		//Images
 		post("/protected/downloadImage", ((req, res) -> {
 			try {
 				String login = getUserNameFromToken(req.headers("Authorization"));
@@ -244,6 +242,7 @@ public class MajorEndpoint {
 			return "";
 		});
 
+		//Filters
 		before((request, response) -> logger.info("==> Request start: " + request.url()));
 
 		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
@@ -275,6 +274,7 @@ public class MajorEndpoint {
 	}
 
 	private static String processException(Exception ex) {
+		ex.printStackTrace();
 		return ex.getMessage() == null ? "Error" : ex.getMessage();
 	}
 }
