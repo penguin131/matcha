@@ -8,16 +8,18 @@ public class UserFilterDto {
 	private String sexPreferences;
 	private String sex;
 	private Integer rating;
-	private Integer age;
+	private Integer ageMax;
+	private Integer ageMin;
 
 	public UserFilterDto(Integer distance,
 						 String sexPreferences,
 						 String sex,
-						 Integer rating) {
+						 Integer rating, Integer ageMin) {
 		this.distance = distance;
 		this.sexPreferences = sexPreferences;
 		this.sex = sex;
 		this.rating = rating;
+		this.ageMin = ageMin;
 	}
 
 	public UserFilterDto() {
@@ -62,14 +64,22 @@ public class UserFilterDto {
 	}
 
 	public boolean hasFields() {
-		return distance != null || sexPreferences != null || sex != null || rating != null;
+		return distance != null || sexPreferences != null || sex != null || rating != null || ageMax != null || ageMin != null;
 	}
 
-	public Integer getAge() {
-		return age;
+	public Integer getAgeMax() {
+		return ageMax;
 	}
 
-	public void setAge(Integer age) {
-		this.age = age;
+	public void setAgeMax(Integer ageMax) {
+		this.ageMax = ageMax;
+	}
+
+	public Integer getAgeMin() {
+		return ageMin;
+	}
+
+	public void setAgeMin(Integer ageMin) {
+		this.ageMin = ageMin;
 	}
 }

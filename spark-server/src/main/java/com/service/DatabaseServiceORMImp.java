@@ -8,12 +8,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.EntityDataHelper;
 import com.helper.Password;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,7 +33,11 @@ public class DatabaseServiceORMImp implements DatabaseService {
 
 	@Override
 	public List<UserProfileDto> getAllUsers(String login) throws JsonProcessingException {
-		return getUsersWithFilter(null, login);
+		List<UserProfileDto> result = getUsersWithFilter(null, login);
+		if (login != null) {
+			result.add(getUserProfileForLogin(login));
+		}
+		return result;
 	}
 
 	@Override
@@ -122,23 +129,33 @@ public class DatabaseServiceORMImp implements DatabaseService {
 
 	@Override
 	public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login) throws JsonProcessingException {
-		logger.info(String.format("getUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), login));
+		logger.info(String.format("getUserWithFilter(%s, %s)", mapper.writeValueAsString(filter), login));
 		List<UserProfileDto> profiles = new ArrayList<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<TUserProfileEntity> cQuery = cb.createQuery(TUserProfileEntity.class);
 		Root<TUserProfileEntity> c = cQuery.from(TUserProfileEntity.class);
-		if (filter != null && filter.hasFields()) {
+		//Если есть фильтр, то
+		if (!StringUtils.isEmpty(login)) {
 			cQuery.where(cb.notEqual(c.get("login"), login));
+		}
+		if (filter != null && filter.hasFields()) {
+			List<Predicate> predicates = new ArrayList<>();
 //			if (filter.getDistance() != null)
 //				cQuery.where(cb.equal(c.get("wsg84_check_distance()"), filter.getDistance()));
 			if (filter.getSexPreferences() != null)
-				cQuery.where(cb.equal(c.get("sexPreferences"), Sex.convertStringToCode(filter.getSexPreferences())));
+				predicates.add(cb.equal(c.get("sexPreferences"), Sex.convertStringToCode(filter.getSexPreferences())));
 			if (filter.getSex() != null)
-				cQuery.where(cb.equal(c.get("sex"), Sex.convertStringToCode(filter.getSex())));
+				predicates.add(cb.equal(c.get("sex"), Sex.convertStringToCode(filter.getSex())));
 			if (filter.getRating() != null)
-				cQuery.where(cb.greaterThanOrEqualTo(c.get("rating"), filter.getRating()));
-			if (filter.getAge() != null)
-				cQuery.where(cb.greaterThanOrEqualTo(c.get("age"), filter.getAge()));
+				predicates.add(cb.greaterThanOrEqualTo(c.get("rating"), filter.getRating()));
+			if (filter.getAgeMax() != null)
+				predicates.add(cb.lessThanOrEqualTo(c.get("age"), filter.getAgeMax()));
+			if (filter.getAgeMin() != null)
+				predicates.add(cb.greaterThanOrEqualTo(c.get("age"), filter.getAgeMin()));
+			if (predicates.size() > 0) {
+				cQuery.where(cb.and(predicates.toArray(new Predicate[0])));
+			}
+
 		}
 		for (TUserProfileEntity entity : em.createQuery(cQuery).getResultList()) {
 			profiles.add(EntityDataHelper.toDto(entity));
