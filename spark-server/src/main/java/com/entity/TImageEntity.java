@@ -12,6 +12,7 @@ public class TImageEntity {
 
 	@Id
 	@Column(name = "id_image")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getIdImage() {
 		return idImage;
 	}

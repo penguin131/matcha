@@ -31,7 +31,7 @@ public class EntityDataHelperTest {
 	private static final int RATING = 666;
 	private static final int AGE = 123;
 
-	//проверяю заполнение полей
+	//проверяю заполнение полей и конвертацию
 	@Test
 	public void userProfileTest() {
 		TUserProfileEntity user = new TUserProfileEntity();

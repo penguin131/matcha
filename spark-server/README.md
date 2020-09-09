@@ -1,3 +1,6 @@
+For start:
+install two postgresql databases for prod and test
+
 
 Service for working with the base
 API: https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#

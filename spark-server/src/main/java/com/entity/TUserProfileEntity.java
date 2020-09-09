@@ -30,6 +30,7 @@ public class TUserProfileEntity {
 
 	@Id
 	@Column(name = "user_profile_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getUserProfileId() {
 		return userProfileId;
 	}

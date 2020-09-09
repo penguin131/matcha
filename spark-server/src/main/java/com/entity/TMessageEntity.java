@@ -14,6 +14,7 @@ public class TMessageEntity {
 
 	@Id
 	@Column(name = "id_message")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getIdMessage() {
 		return idMessage;
 	}
@@ -43,7 +44,7 @@ public class TMessageEntity {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "from", referencedColumnName = "user_profile_id")
+	@JoinColumn(name = "\"from\"", referencedColumnName = "user_profile_id")
 	public TUserProfileEntity getFrom() {
 		return from;
 	}
@@ -53,7 +54,7 @@ public class TMessageEntity {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "to", referencedColumnName = "user_profile_id")
+	@JoinColumn(name = "\"to\"", referencedColumnName = "user_profile_id")
 	public TUserProfileEntity getTo() {
 		return to;
 	}

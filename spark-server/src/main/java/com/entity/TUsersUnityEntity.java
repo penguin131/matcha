@@ -11,6 +11,7 @@ public class TUsersUnityEntity {
 
 	@Id
 	@Column(name = "t_users_unity_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int gettUsersUnityId() {
 		return tUsersUnityId;
 	}

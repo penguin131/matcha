@@ -1,9 +1,6 @@
 package com.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +10,7 @@ public class TComplaintEntity {
 
 	@Id
 	@Column(name = "id_complaint")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int getIdComplaint() {
 		return idComplaint;
 	}
