@@ -16,3 +16,5 @@ mvn exec:java
 возраст в фильтры. нижняя и верхняя границы
 
 бонусы, которые можно сделать: OAUTH2, Google+ or another clouds image import
+
+

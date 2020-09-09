@@ -11,7 +11,6 @@ import com.helper.Password;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,9 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseServiceORMImp implements DatabaseService {
-	private EntityManager em = Persistence.createEntityManagerFactory("Model").createEntityManager();
+	private EntityManager em;
 	private final Logger logger = Logger.getLogger(DatabaseServiceORMImp.class);
 	private final ObjectMapper mapper = new ObjectMapper();
+
+	public DatabaseServiceORMImp(EntityManager em) {
+		this.em = em;
+	}
 
 	@Override
 	public List<UserProfileDto> getAllUsers(String login) throws JsonProcessingException {
@@ -119,21 +122,24 @@ public class DatabaseServiceORMImp implements DatabaseService {
 
 	@Override
 	public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login) throws JsonProcessingException {
-		logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
+		logger.info(String.format("getUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), login));
 		List<UserProfileDto> profiles = new ArrayList<>();
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<TUserProfileEntity> cQuery = cb.createQuery(TUserProfileEntity.class);
 		Root<TUserProfileEntity> c = cQuery.from(TUserProfileEntity.class);
-		if (filter != null && filter.getDistance() != null)
-			cQuery.where(cb.equal(c.get("wsg84_check_distance()"), filter.getDistance()));
-		if (filter != null && filter.getSexPreferences() != null)
-			cQuery.where(cb.equal(c.get("sexPreferences"), Sex.convertStringToCode(filter.getSexPreferences())));
-		if (filter != null && filter.getSex() != null)
-			cQuery.where(cb.equal(c.get("sex"), Sex.convertStringToCode(filter.getSex())));
-		if (filter != null && filter.getRating() != null)
-			cQuery.where(cb.greaterThanOrEqualTo(c.get("rating"), filter.getRating()));
-		if (filter != null && filter.getAge() != null)
-			cQuery.where(cb.greaterThanOrEqualTo(c.get("age"), filter.getAge()));
+		if (filter != null && filter.hasFields()) {
+			cQuery.where(cb.notEqual(c.get("login"), login));
+//			if (filter.getDistance() != null)
+//				cQuery.where(cb.equal(c.get("wsg84_check_distance()"), filter.getDistance()));
+			if (filter.getSexPreferences() != null)
+				cQuery.where(cb.equal(c.get("sexPreferences"), Sex.convertStringToCode(filter.getSexPreferences())));
+			if (filter.getSex() != null)
+				cQuery.where(cb.equal(c.get("sex"), Sex.convertStringToCode(filter.getSex())));
+			if (filter.getRating() != null)
+				cQuery.where(cb.greaterThanOrEqualTo(c.get("rating"), filter.getRating()));
+			if (filter.getAge() != null)
+				cQuery.where(cb.greaterThanOrEqualTo(c.get("age"), filter.getAge()));
+		}
 		for (TUserProfileEntity entity : em.createQuery(cQuery).getResultList()) {
 			profiles.add(EntityDataHelper.toDto(entity));
 		}
