@@ -142,7 +142,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "location_1")
+	@Column(name = "location_1", precision=25, scale=15)
 	public BigDecimal getLocation1() {
 		return location1;
 	}
@@ -152,7 +152,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "location_2")
+	@Column(name = "location_2", precision=25, scale=15)
 	public BigDecimal getLocation2() {
 		return location2;
 	}

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
+import java.math.BigDecimal;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -21,13 +22,13 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
-public class DatabaseServiceORMImpTest {
+public class DatabaseServiceTest {
 
 	//Подключаю тестовую БД, прописанную в persistence.xml
-	private EntityManager em = Persistence.createEntityManagerFactory("TestModel").createEntityManager();
+	private static EntityManager em = Persistence.createEntityManagerFactory("TestModel").createEntityManager();
 	private DatabaseService service;
 
-	public DatabaseServiceORMImpTest(DatabaseService service) {
+	public DatabaseServiceTest(DatabaseService service) {
 		super();
 		this.service = service;
 	}
@@ -37,7 +38,7 @@ public class DatabaseServiceORMImpTest {
 	public static List<DatabaseService> input() throws SQLException {
 		return Arrays.asList(
 				new DatabaseServiceSQLImpl(DriverManager.getConnection(TestConfig.getUrl(), TestConfig.getTestConfig())),
-				new DatabaseServiceORMImp(Persistence.createEntityManagerFactory("TestModel").createEntityManager()));
+				new DatabaseServiceORMImp(em));
 	}
 
 	@Test
@@ -54,6 +55,8 @@ public class DatabaseServiceORMImpTest {
 		user.setRating(-1);
 		user.setSex(1);
 		user.setSexPreferences(1);
+		user.setLocation1(new BigDecimal("55.752220000000000"));
+		user.setLocation2(new BigDecimal("37.615560000000000"));
 		persistEntity(CloneHelper.simpleClone(user));
 		persistEntity(CloneHelper.simpleClone(user));
 		persistEntity(CloneHelper.simpleClone(user));
@@ -62,6 +65,8 @@ public class DatabaseServiceORMImpTest {
 		user2.setAge(2);
 		user2.setRating(2);
 		user2.setSex(0);
+		user2.setLocation1(new BigDecimal("55.739300000000000"));
+		user2.setLocation2(new BigDecimal("49.161400000000000"));
 		persistEntity(user2);
 		//Тесты
 		assertEquals(service.getUsersWithFilter(null, null).size(), 4);
@@ -97,6 +102,16 @@ public class DatabaseServiceORMImpTest {
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 0);
 		filter.setSexPreferences("female");
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 3);
+		filter.setSexPreferences(null);
+		assertEquals(service.getUsersWithFilter(filter, null).size(), 4);
+		//Расстояние (между москвой и Казанью, там чуть меньше 800км)
+		filter.setDistance(800);
+		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 3);
+		assertEquals(service.getUsersWithFilter(filter, "123").size(), 1);
+		assertEquals(service.getUsersWithFilter(filter, null).size(), 0);
+		filter.setDistance(700);
+		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 0);
+		assertEquals(service.getUsersWithFilter(filter, "123").size(), 0);
 	}
 
 	@Test

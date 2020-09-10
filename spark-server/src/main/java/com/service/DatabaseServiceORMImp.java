@@ -10,13 +10,16 @@ import com.helper.EntityDataHelper;
 import com.helper.Password;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OrderBy;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,8 +142,18 @@ public class DatabaseServiceORMImp implements DatabaseService {
 			predicates.add(cb.notEqual(c.get("login"), login));
 		}
 		if (filter != null && filter.hasFields()) {
-//			if (filter.getDistance() != null)
-//				cQuery.where(cb.equal(c.get("wsg84_check_distance()"), filter.getDistance()));
+			if (filter.getDistance() != null) {
+				//Дистанцию считаю функцией sql, в нее отправляю координаты текущего юзера, вытащенные подзапросами...
+				predicates.add(cb.equal(
+						cb.function("wsg84_check_distance",
+								Boolean.class,
+								locationSubQuery("location1", login, cb, cQuery).getSelection(),
+								locationSubQuery("location2", login, cb, cQuery).getSelection(),
+								c.get("location1"),
+								c.get("location2"),
+								cb.literal(filter.getDistance())),
+						true));
+			}
 			if (filter.getSexPreferences() != null)
 				predicates.add(cb.equal(c.get("sexPreferences"), Sex.convertStringToCode(filter.getSexPreferences())));
 			if (filter.getSex() != null)
@@ -155,10 +168,20 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		if (predicates.size() > 0) {
 			cQuery.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
+		cQuery.orderBy(cb.desc(c.get("rating")));
 		for (TUserProfileEntity entity : em.createQuery(cQuery).getResultList()) {
 			profiles.add(EntityDataHelper.toDto(entity));
 		}
 		logger.info("getUsersWithFilter() result:\n" + mapper.writeValueAsString(profiles));
 		return profiles;
+	}
+
+	private Subquery<BigDecimal> locationSubQuery(String locationType, String login, CriteriaBuilder cb, CriteriaQuery<TUserProfileEntity> cQuery) {
+		Subquery<BigDecimal> sqSent = cQuery.subquery(BigDecimal.class);
+		Root<TUserProfileEntity> sqRoot = sqSent.from(TUserProfileEntity.class);
+		sqSent.select(sqRoot.get(locationType));
+		sqSent.where(cb.equal(sqRoot.get("login"), login));
+		sqSent.distinct(true);
+		return sqSent;
 	}
 }
