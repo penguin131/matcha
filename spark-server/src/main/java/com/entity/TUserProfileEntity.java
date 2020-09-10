@@ -40,7 +40,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "\"login\"")
+	@Column(name = "\"login\"", nullable = false)
 	public String getLogin() {
 		return login;
 	}
@@ -50,7 +50,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "\"password\"")
+	@Column(name = "\"password\"", nullable = false)
 	public String getPassword() {
 		return password;
 	}
@@ -90,7 +90,9 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "confirmed")
+	@Column(name = "confirmed",
+			nullable = false,
+			columnDefinition="boolean default true")
 	public boolean isConfirmed() {
 		return confirmed;
 	}
@@ -110,7 +112,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "sex")
+	@Column(name = "sex", nullable = false)
 	public Integer getSex() {
 		return sex;
 	}
@@ -160,7 +162,7 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "rating")
+	@Column(name = "rating", columnDefinition="integer default 0")
 	public Integer getRating() {
 		return rating;
 	}

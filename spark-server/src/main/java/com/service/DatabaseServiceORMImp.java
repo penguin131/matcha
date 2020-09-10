@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.EntityDataHelper;
 import com.helper.Password;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -134,12 +133,12 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<TUserProfileEntity> cQuery = cb.createQuery(TUserProfileEntity.class);
 		Root<TUserProfileEntity> c = cQuery.from(TUserProfileEntity.class);
-		//Если есть фильтр, то
+		List<Predicate> predicates = new ArrayList<>();
+		//Если передан логин, то исключаю его из поиска
 		if (!StringUtils.isEmpty(login)) {
-			cQuery.where(cb.notEqual(c.get("login"), login));
+			predicates.add(cb.notEqual(c.get("login"), login));
 		}
 		if (filter != null && filter.hasFields()) {
-			List<Predicate> predicates = new ArrayList<>();
 //			if (filter.getDistance() != null)
 //				cQuery.where(cb.equal(c.get("wsg84_check_distance()"), filter.getDistance()));
 			if (filter.getSexPreferences() != null)
@@ -152,10 +151,9 @@ public class DatabaseServiceORMImp implements DatabaseService {
 				predicates.add(cb.lessThanOrEqualTo(c.get("age"), filter.getAgeMax()));
 			if (filter.getAgeMin() != null)
 				predicates.add(cb.greaterThanOrEqualTo(c.get("age"), filter.getAgeMin()));
-			if (predicates.size() > 0) {
-				cQuery.where(cb.and(predicates.toArray(new Predicate[0])));
-			}
-
+		}
+		if (predicates.size() > 0) {
+			cQuery.where(cb.and(predicates.toArray(new Predicate[0])));
 		}
 		for (TUserProfileEntity entity : em.createQuery(cQuery).getResultList()) {
 			profiles.add(EntityDataHelper.toDto(entity));

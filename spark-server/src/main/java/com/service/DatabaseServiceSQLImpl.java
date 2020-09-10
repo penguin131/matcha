@@ -7,7 +7,6 @@ import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helper.Config;
 import com.helper.Password;
 import org.apache.log4j.Logger;
 
@@ -15,15 +14,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.helper.SQLRequestGenerationHelper.*;
+import static com.helper.SQLRequestGenerationHelper.addValuesToPreparedStatement;
+import static com.helper.SQLRequestGenerationHelper.generateUserSearchRequest;
 
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
     private final ObjectMapper mapper = new ObjectMapper();
     private Connection connection;
 
-    public DatabaseServiceSQLImpl() throws SQLException {
-        connection = DriverManager.getConnection(Config.getUrl(), Config.getConfig());
+    public DatabaseServiceSQLImpl(Connection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -381,7 +381,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         List<UserProfileDto> profiles = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(generateUserSearchRequest(filter, login));
-            addValuesToPreparedStatement(preparedStatement, filter);
+            addValuesToPreparedStatement(preparedStatement, filter, login);
             preparedStatement.execute();
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {

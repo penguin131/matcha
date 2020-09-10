@@ -19,6 +19,8 @@
             <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="hibernate.connection.username" value="sammy"/>
             <property name="hibernate.connection.password" value="123"/>
+<!--            Раскомментить для создания схемы БД         -->
+<!--            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
         </properties>
     </persistence-unit>
 <!--        For unit tests      -->
@@ -40,8 +42,7 @@
             <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="hibernate.connection.username" value="data"/>
 <!--            Раскомментить для создания схемы БД         -->
-<!--            <property name="javax.persistence.schema-generation.database.action"-->
-<!--                      value="create"/>-->
+<!--            <property name="javax.persistence.schema-generation.database.action" value="create"/>-->
         </properties>
     </persistence-unit>
 </persistence>
