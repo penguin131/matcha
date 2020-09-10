@@ -1,7 +1,6 @@
 package com.entity;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -142,7 +141,10 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "location_1", precision=25, scale=15)
+	@Column(name = "location_1",
+			precision=25,
+			scale=15,
+			columnDefinition="numeric(25,15) default 0")
 	public BigDecimal getLocation1() {
 		return location1;
 	}
@@ -152,7 +154,10 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "location_2", precision=25, scale=15)
+	@Column(name = "location_2",
+			precision=25,
+			scale=15,
+			columnDefinition="numeric(25,15) default 0")
 	public BigDecimal getLocation2() {
 		return location2;
 	}
@@ -218,8 +223,9 @@ public class TUserProfileEntity {
 		return Objects.hash(userProfileId, login, password, email, firstName, lastName, confirmed, biography, sex, sexPreferences, confirmedToken, location1, location2, rating, age);
 	}
 
+	//todo разобраться почему когда перзистится, не вставляет 0
 	public TUserProfileEntity() {
-		location1 = new BigDecimal(0);
-		location2 = new BigDecimal(0);
+		this.location1 = new BigDecimal(0);
+		this.location2 = new BigDecimal(0);
 	}
 }

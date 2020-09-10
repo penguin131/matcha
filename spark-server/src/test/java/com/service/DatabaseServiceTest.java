@@ -33,7 +33,7 @@ public class DatabaseServiceTest {
 		this.service = service;
 	}
 
-	//Тестирую обе имплементации
+	//Тестирую обе имплементации. Одна берется из persistence.xml, вторая из application.properties. todo прикрепить все к persistence.xml
 	@Parameterized.Parameters
 	public static List<DatabaseService> input() throws SQLException {
 		return Arrays.asList(
@@ -47,24 +47,13 @@ public class DatabaseServiceTest {
 		truncateTable(TUserProfileEntity.class);
 		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
 		UserFilterDto filter = new UserFilterDto();
-		TUserProfileEntity user = new TUserProfileEntity();
-		TUserProfileEntity user2 = new TUserProfileEntity();
-		user.setLogin("123");
-		user.setPassword("");
-		user.setAge(0);
-		user.setRating(-1);
-		user.setSex(1);
-		user.setSexPreferences(1);
+		TUserProfileEntity user = createUserProfileDto("123", "123", 0, -1, 1, 1);
+		TUserProfileEntity user2 = createUserProfileDto("smight", "222", 2, 2, 0, null);
 		user.setLocation1(new BigDecimal("55.752220000000000"));
 		user.setLocation2(new BigDecimal("37.615560000000000"));
 		persistEntity(CloneHelper.simpleClone(user));
 		persistEntity(CloneHelper.simpleClone(user));
 		persistEntity(CloneHelper.simpleClone(user));
-		user2.setLogin("smight");
-		user2.setPassword("");
-		user2.setAge(2);
-		user2.setRating(2);
-		user2.setSex(0);
 		user2.setLocation1(new BigDecimal("55.739300000000000"));
 		user2.setLocation2(new BigDecimal("49.161400000000000"));
 		persistEntity(user2);
@@ -73,7 +62,7 @@ public class DatabaseServiceTest {
 		assertEquals(service.getUsersWithFilter(null, "smight").size(), 3);
 		assertEquals(service.getUsersWithFilter(filter, "").size(), 4);
 		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 3);
-		//Не должен найтись smight, так как есть фильтр
+		//Не должен найтись smight
 		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 3);
 		assertEquals(service.getUsersWithFilter(filter, "lalal").size(), 4);
 		//максимальный и минимальный возраст
@@ -85,7 +74,7 @@ public class DatabaseServiceTest {
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 1);
 		filter.setAgeMin(0);
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 4);
-		//минимальный ретинг. Верхнего фильтра нет
+		//минимальный рейтинг. Верхнего фильтра нет
 		filter.setRating(0);
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 1);
 		filter.setRating(null);
@@ -112,6 +101,18 @@ public class DatabaseServiceTest {
 		filter.setDistance(700);
 		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 0);
 		assertEquals(service.getUsersWithFilter(filter, "123").size(), 0);
+	}
+
+	@Test
+	public void testUsersWithFilterOrder() throws SQLException, JsonProcessingException {
+		//Чищу таблицу t_user_profile перед тестами
+		truncateTable(TUserProfileEntity.class);
+		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
+		TUserProfileEntity user = new TUserProfileEntity();
+		user.setLogin("1");
+		user.setRating(-1);
+		user.setPassword("");
+		user.setAge(0);
 	}
 
 	@Test
@@ -143,5 +144,21 @@ public class DatabaseServiceTest {
 		em.getTransaction().begin();
 		em.persist(entity);
 		em.getTransaction().commit();
+	}
+
+	private TUserProfileEntity createUserProfileDto(String login,
+													String password,
+													int age,
+													int rating,
+													int sex,
+													Integer sexPreferences) {
+		TUserProfileEntity user = new TUserProfileEntity();
+		user.setLogin(login);
+		user.setPassword(password);
+		user.setAge(age);
+		user.setRating(rating);
+		user.setSex(sex);
+		user.setSexPreferences(sexPreferences);
+		return user;
 	}
 }
