@@ -1,23 +1,14 @@
-For start:
-install two postgresql databases for prod and test
+<b>For start:</b><br>
 
-
-Service for working with the base
-API: https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#
-
-mvn clean package
-mvn exec:java
-
-{"login":"smight","password":"smight", "email":"zininlol@rambler.ru", "sex":0}
-
-последний патч -
-/protected/setComplaint/{to}
-добавил рейтинг
-добавил поиск по фильтрам. Пока только 4 параметра, в том числе GPS координаты
-
-//todo хэштеги, уведомления
-возраст в фильтры. нижняя и верхняя границы
-
+1)install two postgresql databases for prod and test <br>
+2)Configure test/resources/application.properties, src/main/resources/application.properties and src/main/resources/META-INF/persistence.xml <br>
+3)run src/main/resources/database_schema/wsg84_check_distance.sql in other databases <br>
+4)run mvn clean package <br>
+5)run mvn exec:java <br>
+<br><br><br>
+API https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#<br>
+<br><br><br>
+todo:<br>
 бонусы, которые можно сделать: OAUTH2, Google+ or another clouds image import
 
 

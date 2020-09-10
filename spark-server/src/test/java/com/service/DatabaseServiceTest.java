@@ -33,7 +33,7 @@ public class DatabaseServiceTest {
 		this.service = service;
 	}
 
-	//Тестирую обе имплементации. Одна берется из persistence.xml, вторая из application.properties. todo прикрепить все к persistence.xml
+	//Тестирую обе имплементации. Одна берется из persistence.xml, вторая из application.properties(в тестовых ресурсах)
 	@Parameterized.Parameters
 	public static List<DatabaseService> input() throws SQLException {
 		return Arrays.asList(
@@ -44,7 +44,7 @@ public class DatabaseServiceTest {
 	@Test
 	public void getUsersWithFilter() throws JsonProcessingException, SQLException {
 		//Чищу таблицу t_user_profile перед тестами. Инициализация обьектов.
-		truncateTable(TUserProfileEntity.class);
+		truncateUserTable();
 		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
 		UserFilterDto filter = new UserFilterDto();
 		TUserProfileEntity user = createUserProfileDto("123", "123", 0, -1, 1, 1);
@@ -106,7 +106,7 @@ public class DatabaseServiceTest {
 	@Test
 	public void testUsersWithFilterOrder() throws SQLException, JsonProcessingException {
 		//Чищу таблицу t_user_profile перед тестами
-		truncateTable(TUserProfileEntity.class);
+		truncateUserTable();
 		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
 		TUserProfileEntity user = new TUserProfileEntity();
 		user.setLogin("1");
@@ -118,7 +118,7 @@ public class DatabaseServiceTest {
 	@Test
 	public void getUserProfileForLogin() throws JsonProcessingException, SQLException {
 		//Чищу таблицу t_user_profile перед тестами
-		truncateTable(TUserProfileEntity.class);
+		truncateUserTable();
 		assertNull(service.getUserProfileForLogin("kkk"));
 		TUserProfileEntity newUser = new TUserProfileEntity();
 		newUser.setLogin("lll");
@@ -131,11 +131,11 @@ public class DatabaseServiceTest {
 
 	//todo найти способ избавиться от повторения с транзакциями
 	//Чищу за собой
-	private <T> void truncateTable(Class<T> entityType) {
+	private void truncateUserTable() {
 		em.getTransaction().begin();
 		CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaDelete<T> query = builder.createCriteriaDelete(entityType);
-		query.from(entityType);
+		CriteriaDelete<TUserProfileEntity> query = builder.createCriteriaDelete(TUserProfileEntity.class);
+		query.from(TUserProfileEntity.class);
 		em.createQuery(query).executeUpdate();
 		em.getTransaction().commit();
 	}
