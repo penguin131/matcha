@@ -1,5 +1,6 @@
 package com.helper;
 
+import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.entity.TUserProfileEntity;
 import org.junit.Test;
@@ -9,8 +10,7 @@ import org.junit.runners.JUnit4;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class EntityDataHelperTest {
@@ -33,7 +33,7 @@ public class EntityDataHelperTest {
 
 	//проверяю заполнение полей и конвертацию
 	@Test
-	public void userProfileTest() {
+	public void userProfileToDtoTest() {
 		TUserProfileEntity user = new TUserProfileEntity();
 		UserProfileDto dto1 = EntityDataHelper.toDto(user);
 		UserProfileDto dto2 = new UserProfileDto();
@@ -98,4 +98,29 @@ public class EntityDataHelperTest {
 		dto2.setAge(AGE);
 		assertEquals(dto1, dto2);
 	}
+
+	@Test
+	public void baseUserProfileToEntity() {
+		BaseUserProfileDto dto1 = new BaseUserProfileDto();
+		TUserProfileEntity entity1 = new TUserProfileEntity();
+		dto1.setLogin(LOGIN);
+		assertNotEquals(entity1, EntityDataHelper.toEntity(dto1));
+		entity1.setLogin(LOGIN);
+		assertEquals(entity1, EntityDataHelper.toEntity(dto1));
+		dto1.setPassword(PASSWORD);
+		assertNotEquals(entity1, EntityDataHelper.toEntity(dto1));
+		entity1.setPassword(PASSWORD);
+		assertEquals(entity1, EntityDataHelper.toEntity(dto1));
+		dto1.setEmail(EMAIL);
+		assertNotEquals(entity1, EntityDataHelper.toEntity(dto1));
+		entity1.setEmail(EMAIL);
+		assertEquals(entity1, EntityDataHelper.toEntity(dto1));
+		dto1.setSex("male");
+		assertNotEquals(entity1, EntityDataHelper.toEntity(dto1));
+		entity1.setSex(0);
+		assertEquals(entity1, EntityDataHelper.toEntity(dto1));
+		//exceptions
+		assertNull(EntityDataHelper.toEntity(null));
+	}
+
 }

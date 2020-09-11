@@ -4,22 +4,18 @@ import com.dictionary.Sex;
 import com.dto.*;
 import com.entity.TUserProfileEntity;
 import com.exceptions.AccessDeniedException;
+import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.EntityDataHelper;
 import com.helper.Password;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.jdbc.ReturningWork;
 
 import javax.persistence.EntityManager;
-import javax.persistence.OrderBy;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +39,13 @@ public class DatabaseServiceORMImp implements DatabaseService {
 	}
 
 	@Override
-	public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmed_token) throws Exception {
-
+	public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws Exception {
+		logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
+		em.getTransaction().begin();
+		TUserProfileEntity user = EntityDataHelper.toEntity(userProfileDto);
+		user.setConfirmedToken(confirmedToken);
+		em.persist(user);
+		em.getTransaction().commit();
 	}
 
 	@Override
@@ -60,7 +61,8 @@ public class DatabaseServiceORMImp implements DatabaseService {
 	}
 
 	@Override
-	public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
+	public List<FriendDto> getAllFriendsForLogin(String login) {
+		//todo
 		return null;
 	}
 
@@ -143,7 +145,7 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		}
 		if (filter != null && filter.hasFields()) {
 			if (filter.getDistance() != null) {
-				//Дистанцию считаю функцией sql, в нее отправляю координаты текущего юзера, вытащенные подзапросами...
+				//Дистанцию считаю функцией sql, в нее отправляю координаты текущего юзера, вытащенные подзапросами... SQL вариант тут выглядит получше
 				predicates.add(cb.equal(
 						cb.function("wsg84_check_distance",
 								Boolean.class,
@@ -176,6 +178,7 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		return profiles;
 	}
 
+	//Криво, но limit 1 тут нельзя делать, поэтому distinct. Конечно же упадет, если будут юзеры с одинаковыми логинами и разным рейтингом
 	private Subquery<BigDecimal> locationSubQuery(String locationType, String login, CriteriaBuilder cb, CriteriaQuery<TUserProfileEntity> cQuery) {
 		Subquery<BigDecimal> sqSent = cQuery.subquery(BigDecimal.class);
 		Root<TUserProfileEntity> sqRoot = sqSent.from(TUserProfileEntity.class);
@@ -183,5 +186,16 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		sqSent.where(cb.equal(sqRoot.get("login"), login));
 		sqSent.distinct(true);
 		return sqSent;
+	}
+
+	@Override
+	public boolean checkEmailExist(String email) {
+		logger.info("checkEmailExist(), email: " + email);
+		TypedQuery<TUserProfileEntity> q = em.createQuery(
+				"SELECT c from TUserProfileEntity c where c.email=:email", TUserProfileEntity.class).
+				setParameter("email", email);
+		boolean result = q.getResultList().size() > 0;
+		logger.info("checkEmailExist() result: " + result);
+		return result;
 	}
 }

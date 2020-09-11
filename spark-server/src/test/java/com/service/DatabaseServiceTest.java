@@ -1,16 +1,19 @@
 package com.service;
 
 import com.TestConfig;
+import com.dictionary.Sex;
+import com.dto.BaseUserProfileDto;
 import com.dto.UserFilterDto;
-import com.entity.TUserProfileEntity;
+import com.entity.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.helper.CloneHelper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import java.math.BigDecimal;
@@ -41,22 +44,36 @@ public class DatabaseServiceTest {
 				new DatabaseServiceORMImp(em));
 	}
 
+	//Чищу все таблицы перед каждым тестом.
+	@Before
+	public void before() {
+		truncateUserTable(TComplaintEntity.class);
+		truncateUserTable(TImageEntity.class);
+		truncateUserTable(TMessageEntity.class);
+		truncateUserTable(TUserProfileEntity.class);
+		truncateUserTable(TUsersUnityEntity.class);
+	}
+
 	@Test
-	public void getUsersWithFilter() throws JsonProcessingException, SQLException {
-		//Чищу таблицу t_user_profile перед тестами. Инициализация обьектов.
-		truncateUserTable();
+	public void getUsersWithFilterTest() throws JsonProcessingException, SQLException {
 		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
 		UserFilterDto filter = new UserFilterDto();
-		TUserProfileEntity user = createUserProfileDto("123", "123", 0, -1, 1, 1);
-		TUserProfileEntity user2 = createUserProfileDto("smight", "222", 2, 2, 0, null);
-		user.setLocation1(new BigDecimal("55.752220000000000"));
-		user.setLocation2(new BigDecimal("37.615560000000000"));
-		persistEntity(CloneHelper.simpleClone(user));
-		persistEntity(CloneHelper.simpleClone(user));
-		persistEntity(CloneHelper.simpleClone(user));
-		user2.setLocation1(new BigDecimal("55.739300000000000"));
-		user2.setLocation2(new BigDecimal("49.161400000000000"));
+		TUserProfileEntity user0 = createUserProfileDto("1", "1", 0, -1, 1, 1);
+		TUserProfileEntity user1 = createUserProfileDto("2", "3", 0, -1, 1, 1);
+		TUserProfileEntity user2 = createUserProfileDto("3", "3", 0, -1, 1, 1);
+		TUserProfileEntity smight = createUserProfileDto("smight", "222", 2, 2, 0, null);
+		user0.setLocation1(new BigDecimal("55.752220000000000"));
+		user0.setLocation2(new BigDecimal("37.615560000000000"));
+		user1.setLocation1(new BigDecimal("55.752220000000000"));
+		user1.setLocation2(new BigDecimal("37.615560000000000"));
+		user2.setLocation1(new BigDecimal("55.752220000000000"));
+		user2.setLocation2(new BigDecimal("37.615560000000000"));
+		persistEntity(user0);
+		persistEntity(user1);
 		persistEntity(user2);
+		smight.setLocation1(new BigDecimal("55.739300000000000"));
+		smight.setLocation2(new BigDecimal("49.161400000000000"));
+		persistEntity(smight);
 		//Тесты
 		assertEquals(service.getUsersWithFilter(null, null).size(), 4);
 		assertEquals(service.getUsersWithFilter(null, "smight").size(), 3);
@@ -96,7 +113,7 @@ public class DatabaseServiceTest {
 		//Расстояние (между москвой и Казанью, там чуть меньше 800км)
 		filter.setDistance(800);
 		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 3);
-		assertEquals(service.getUsersWithFilter(filter, "123").size(), 1);
+		assertEquals(service.getUsersWithFilter(filter, "1").size(), 3);
 		assertEquals(service.getUsersWithFilter(filter, null).size(), 0);
 		filter.setDistance(700);
 		assertEquals(service.getUsersWithFilter(filter, "smight").size(), 0);
@@ -104,9 +121,7 @@ public class DatabaseServiceTest {
 	}
 
 	@Test
-	public void testUsersWithFilterOrder() throws SQLException, JsonProcessingException {
-		//Чищу таблицу t_user_profile перед тестами
-		truncateUserTable();
+	public void usersWithFilterOrderTest() throws SQLException, JsonProcessingException {
 		assertEquals(service.getUsersWithFilter(null, null).size(), 0);
 		TUserProfileEntity user = new TUserProfileEntity();
 		user.setLogin("1");
@@ -116,26 +131,67 @@ public class DatabaseServiceTest {
 	}
 
 	@Test
-	public void getUserProfileForLogin() throws JsonProcessingException, SQLException {
-		//Чищу таблицу t_user_profile перед тестами
-		truncateUserTable();
+	public void getUserProfileForLoginTest() throws JsonProcessingException, SQLException {
 		assertNull(service.getUserProfileForLogin("kkk"));
-		TUserProfileEntity newUser = new TUserProfileEntity();
-		newUser.setLogin("lll");
-		newUser.setPassword("lll");
-		newUser.setSex(1);
-		persistEntity(newUser);
+		persistEntity(createUserProfileDto("lll", "lll", 0, 0, 1, null));
 		assertNull(service.getUserProfileForLogin("kkk"));
 		assertNotNull(service.getUserProfileForLogin("lll"));
 	}
 
-	//todo найти способ избавиться от повторения с транзакциями
+	@Test
+	public void checkEmailExistTest() throws SQLException {
+		assertFalse(service.checkEmailExist("kkk"));
+		TUserProfileEntity user = createUserProfileDto("lll", "lll", 0, 0, 1, null);
+		user.setEmail("aaaaa");
+		persistEntity(user);
+		assertTrue(service.checkEmailExist("aaaaa"));
+		assertFalse(service.checkEmailExist("kkk"));
+	}
+
+	@Test
+	public void createUserProfileTest() throws Exception {
+		BaseUserProfileDto user = new BaseUserProfileDto();
+		user.setLogin("smight");
+		user.setPassword("123");
+		user.setEmail("aaa@sss.ru");
+		user.setSex("male");
+		service.createUserProfile(user, null);
+		TypedQuery<TUserProfileEntity> q = em.createQuery(
+				"SELECT c FROM TUserProfileEntity c where c.login=:login", TUserProfileEntity.class)
+				.setParameter("login", user.getLogin());
+		TUserProfileEntity entity = q.getResultList().stream().findFirst().orElse(null);
+		assertNotNull(entity);
+		assertEquals(entity.getLogin(), user.getLogin());
+		assertEquals(entity.getPassword(), user.getPassword());
+		assertEquals(entity.getEmail(), user.getEmail());
+		assertEquals(Sex.convertStringToCode(user.getSex()), entity.getSex() == null ? -1 : entity.getSex());
+		//invalid sex. Если получаю что-то кроме male или female, сохраняю в базюке -1.
+		user.setLogin("smight2");
+		user.setSex("1");
+		service.createUserProfile(user, null);
+		q = em.createQuery(
+				"SELECT c FROM TUserProfileEntity c where c.login=:login", TUserProfileEntity.class)
+				.setParameter("login", user.getLogin());
+		entity = q.getResultList().stream().findFirst().orElse(null);
+		assertNotNull(entity);
+		assertEquals(entity.getLogin(), user.getLogin());
+		assertEquals(Sex.convertStringToCode(user.getSex()), entity.getSex() == null ? -1 : entity.getSex());
+	}
+
+	@Test
+	public void getAllFriendsForLoginTest() {
+
+	}
+
+
+
+
 	//Чищу за собой
-	private void truncateUserTable() {
+	private <T>void truncateUserTable(Class<T> c) {
 		em.getTransaction().begin();
 		CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaDelete<TUserProfileEntity> query = builder.createCriteriaDelete(TUserProfileEntity.class);
-		query.from(TUserProfileEntity.class);
+		CriteriaDelete<T> query = builder.createCriteriaDelete(c);
+		query.from(c);
 		em.createQuery(query).executeUpdate();
 		em.getTransaction().commit();
 	}

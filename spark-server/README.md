@@ -7,7 +7,7 @@
 5)run mvn exec:java <br>
 <br><br><br>
 API https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#<br>
-<br><br><br>
+<br>
 todo:<br>
 бонусы, которые можно сделать: OAUTH2, Google+ or another clouds image import
 

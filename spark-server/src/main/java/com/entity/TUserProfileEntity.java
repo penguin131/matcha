@@ -39,7 +39,9 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "\"login\"", nullable = false)
+	@Column(name = "\"login\"",
+			nullable = false,
+			unique = true)
 	public String getLogin() {
 		return login;
 	}
@@ -49,7 +51,8 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "\"password\"", nullable = false)
+	@Column(name = "\"password\"",
+			nullable = false)
 	public String getPassword() {
 		return password;
 	}
@@ -143,8 +146,7 @@ public class TUserProfileEntity {
 	@Basic
 	@Column(name = "location_1",
 			precision=25,
-			scale=15,
-			columnDefinition="numeric(25,15) default 0")
+			scale=15)
 	public BigDecimal getLocation1() {
 		return location1;
 	}
@@ -156,8 +158,7 @@ public class TUserProfileEntity {
 	@Basic
 	@Column(name = "location_2",
 			precision=25,
-			scale=15,
-			columnDefinition="numeric(25,15) default 0")
+			scale=15)
 	public BigDecimal getLocation2() {
 		return location2;
 	}
@@ -202,7 +203,7 @@ public class TUserProfileEntity {
 		TUserProfileEntity that = (TUserProfileEntity) o;
 		return userProfileId == that.userProfileId &&
 				confirmed == that.confirmed &&
-				sex.equals(that.sex) &&
+				Objects.equals(sex, that.sex) &&
 				Objects.equals(login, that.login) &&
 				Objects.equals(password, that.password) &&
 				Objects.equals(email, that.email) &&
@@ -223,7 +224,6 @@ public class TUserProfileEntity {
 		return Objects.hash(userProfileId, login, password, email, firstName, lastName, confirmed, biography, sex, sexPreferences, confirmedToken, location1, location2, rating, age);
 	}
 
-	//todo разобраться почему когда перзистится, не вставляет 0
 	public TUserProfileEntity() {
 		this.location1 = new BigDecimal(0);
 		this.location2 = new BigDecimal(0);

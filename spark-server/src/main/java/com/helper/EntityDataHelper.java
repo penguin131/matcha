@@ -1,5 +1,7 @@
 package com.helper;
 
+import com.dictionary.Sex;
+import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.entity.TUserProfileEntity;
 
@@ -24,6 +26,18 @@ public class EntityDataHelper {
 		result.setRating(entity.getRating());
 		result.setAge(entity.getAge());
 		return result;
+	}
+
+	public static TUserProfileEntity toEntity(BaseUserProfileDto dto) {
+		if (dto == null)
+			return null;
+		TUserProfileEntity entity = new TUserProfileEntity();
+		entity.setLogin(dto.getLogin());
+		entity.setPassword(dto.getPassword());
+		entity.setEmail(dto.getEmail());
+		if (dto.getSex() != null)
+			entity.setSex(Sex.convertStringToCode(dto.getSex()));
+		return entity;
 	}
 
 	private static String toStringBoolean(Integer i) {

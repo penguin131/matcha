@@ -5,6 +5,7 @@ import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Config;
 import com.helper.DatabaseServiceHelper;
+import com.helper.Password;
 import com.helper.ValidateHelper;
 import com.images.ImageManager;
 import com.images.ImageManagerImpl;
@@ -53,6 +54,7 @@ public class MajorEndpoint {
 			try {
 				BaseUserProfileDto user = mapper.readValue(req.body(), BaseUserProfileDto.class);
 				ValidateHelper.validateBaseUserProfile(user);
+				user.setPassword(Password.getSaltedHash(user.getPassword()));
 				String hash = SecurityHelper.generateHash();
 				databaseService.createUserProfile(user, hash);
 				MailService.sendConfirmationEmail(user.getEmail(), hash);

@@ -26,31 +26,15 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         this.connection = connection;
     }
 
-    /**
-     * Вернет массив всех профилей. Временная шняга
-     * @return List<UserProfileDto>
-     */
+    @Override
     public List<UserProfileDto> getAllUsers(String login) throws SQLException, JsonProcessingException {
         return getUsersWithFilter(null, login);
     }
 
-    /**
-     * Добавление нового пользовательского профиля
-     */
-    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmed_token) throws Exception {
-        logger.info("createUserProfile()");
-        if (userProfileDto == null) {
-            processException(new ValidateException("userProfileDto is null!"));
-        }
-        assert userProfileDto != null;
-        if (getUserProfileForLogin(userProfileDto.getLogin()) != null) {
-            processException(new ValidateException("Login already exists!"));
-        }
-        if (checkEmailExist(userProfileDto.getEmail())) {
-            processException(new ValidateException("Email is already in use"));
-        }
+    @Override
+    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws Exception {
+        logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
         try {
-            userProfileDto.setPassword(Password.getSaltedHash(userProfileDto.getPassword()));
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark_db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
                             "VALUES (?, ?, ?, ?, ?, false )");
@@ -58,7 +42,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(2, userProfileDto.getPassword());
             preparedStatement.setString(3, userProfileDto.getEmail());
             preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
-            preparedStatement.setString(5, confirmed_token);
+            preparedStatement.setString(5, confirmedToken);
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(userProfileDto));
         } catch (SQLException ex) {
@@ -67,25 +51,24 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    private boolean checkEmailExist(String email) throws SQLException {
+    @Override
+    public boolean checkEmailExist(String email) throws SQLException {
         logger.info("checkEmailExist(), email: " + email);
         try  {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select * from \"spark_db\".t_user_profile where email=?");
             preparedStatement.setString(1, email);
             ResultSet rs = preparedStatement.executeQuery();
-            return rs.next();
+            boolean result = rs.next();
+            logger.info("checkEmailExist() result: " + result);
+            return result;
         } catch (SQLException ex) {
             logger.info("checkEmailExist() exception:\n" + ex.getMessage());
             throw ex;
         }
     }
 
-    /**
-     * Вернет первый профиль юзера по login
-     * @param login login in PathVariable
-     * @return UserProfileDto
-     */
+    @Override
     public UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException {
         logger.info("getUserProfileForLogin() login: " + login);
         UserProfileDto userProfile = null;
@@ -109,11 +92,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return userProfile;
     }
 
-    /**
-     * Вернет всех друзей с последним сообщением
-     * @param login login
-     * @return List<FriendDto>
-     */
+    @Override
     public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
         logger.info("getAllFriendsForLogin() login: " + login);
         List<FriendDto> friendList = new ArrayList<>();
@@ -143,9 +122,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return friendList;
     }
 
-    /**
-     * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.
-     */
+    @Override
     public void setLike(String from, String to) throws Exception {
         logger.info("setLike() from: " + from);
         if (from.equals(to))
@@ -164,6 +141,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public void setComplaint(String from, String to) throws SQLException {
         logger.info(String.format("setComplaint(%s, %s)", from, to));
         try {
@@ -178,10 +156,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    /**
-     * Удаляет профиль юзера по login
-     * @param login login in PathVariable
-     */
+    @Override
     public void deleteUserProfileForLogin(String login) throws SQLException {
         logger.info("deleteUserProfileForLogin() login: " + login);
         try {
@@ -195,9 +170,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    /**
-     * Обновляет пользовательский профиль
-     */
+    @Override
     public void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
         logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
         try {
@@ -215,9 +188,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    /**
-     * Проверка совпадения пароля и логина
-     */
+    @Override
     public boolean checkPassword(String login, String password) throws Exception {
         logger.info(String.format("checkPassword() login: %s, password: %s", login, password));
         UserProfileDto user = getUserProfileForLogin(login);
@@ -227,9 +198,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return Password.check(password, user.getPassword());
     }
 
-    /**
-     * Проставит подтвержденную почту пользователю по его токену
-     */
+    @Override
     public void confirmUserForToken(String token) throws SQLException {
         logger.info("confirmUserForToken() token: " + token);
         try {
@@ -243,6 +212,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public List<MessageDto> getChatHistory(String user1, String user2) throws SQLException {
         logger.info(String.format("getChatHistory() user1: %s, user2: %s", user1, user2));
         List<MessageDto> messages = new ArrayList<>();
@@ -272,6 +242,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return messages;
     }
 
+    @Override
     public void saveChatMessage(MessageDto messageDto) throws Exception {
         logger.info("saveChatMessage()");
         try {
@@ -293,6 +264,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public String saveImage(String user) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
         try {
@@ -309,6 +281,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public void deleteImage(String user, String id) throws SQLException, AccessDeniedException {
         logger.info(String.format("deleteImage(%s, %s)", id, user));
         try {
@@ -326,7 +299,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    public void deleteImage(String id) throws SQLException {
+    private void deleteImage(String id) throws SQLException {
         logger.info(String.format("deleteImage(%s)", id));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -339,6 +312,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public void setMainImage(String imageId, String userLogin) throws SQLException {
         logger.info(String.format("setMainImage(%s)", imageId));
         try {
@@ -356,6 +330,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    @Override
     public List<UserPhotoDto> getUserPhotos(String user) throws SQLException {
         logger.info(String.format("getUserPhotos(%s)", user));
         List<UserPhotoDto> photos = new ArrayList<>();
@@ -375,6 +350,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return photos;
     }
 
+    @Override
     public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login)
             throws SQLException, JsonProcessingException {
         logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
@@ -394,10 +370,5 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             throw ex;
         }
         return profiles;
-    }
-
-    private void processException(Exception ex) throws Exception {
-        logger.info(ex.getMessage());
-        throw ex;
     }
 }
