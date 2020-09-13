@@ -93,13 +93,12 @@ export const setLikeDislike = async (login, payload) => {
   }
 }
 
-export const getGeolocation = async (setGeolocation) => {
+export const getGeolocation = async () => {
   try {
     await axios.get(`${proxy}https://ipinfo.io?token=${ipInfoToken}`, (res) => {}, "jsonp")
       .then(res => {
         const data = res.data.loc.split(',')
-
-        setGeolocation({
+        updateProfile({
           latitude: data[0],
           longitude: data[1],
         })
@@ -111,17 +110,12 @@ export const getGeolocation = async (setGeolocation) => {
 
 export const updateProfile = async (values, setIsLoading) => {
   try {
-    setIsLoading(true)
     await axios.post(`${url}/protected/updateUserProfile`, values, {
       headers: {
         'Authorization': `${token}`
       }
     })
-      .then(res => {
-        setIsLoading(false)
-      })
   } catch(e) {
-    setIsLoading(false)
     console.log(e)
   }
 }

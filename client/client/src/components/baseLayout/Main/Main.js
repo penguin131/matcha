@@ -21,7 +21,7 @@ const Main = () => {
   const isAuth = true
   const [isLoading, setIsLoading] = useState(false)
   const [userProfile, setUserProfile] = useState({})
-  const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
+ // const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
   const [userPhotos, setUserPhotos] = useState([])
   const user = localStorage.currentUser
 
@@ -48,14 +48,14 @@ const Main = () => {
 
     const success = (pos) => {
       const crd = pos.coords;
-      setGeolocation({
+      services.updateProfile({
         latitude: crd.latitude,
         longitude: crd.longitude
       })
     };
     
     const error = async (err) => {
-      services.getGeolocation(setGeolocation)
+      services.getGeolocation()
     };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
