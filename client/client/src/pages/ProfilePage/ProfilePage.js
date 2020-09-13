@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Carousel from '../../components/Carousel/Carousel'
 import * as services from '../../services/services.js'
 import css from './ProfilePage.module.less'
+import {ReactComponent as LikeLogo} from '../../imgs/like.svg'
+import {ReactComponent as DislikeLogo} from '../../imgs/dislike.svg'
 import axios from 'axios'
 
 const ProfilePage = ({match}) => {
@@ -23,18 +25,21 @@ const ProfilePage = ({match}) => {
     };
   }, [user])
 
-  const {
-    first_name,
-    last_name,
-    login,
-    biography
-  } = userProfile
+  const {first_name, last_name, login, biography, rating, sex} = userProfile
 
   return (
     <div className={css.mainSectionContainer}>
       <div className={css.userName}>{`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}</div>
-        <Carousel photos={userPhotos}/>  
+      <div>rating: {rating}</div>
+      <div>sex: {sex}</div>
+      {/* <Carousel photos={userPhotos}/>   */}
       <div className={css.userInfo}>{`${biography || '-'}`}</div>
+      <div className={css.likePanel}>
+        <div  className={`${css.likeElement} ${css.like}`}
+              onClick={() => services.setLike(user)}><LikeLogo/></div>
+        <div  className={`${css.likeElement} ${css.dislike}`}
+              onClick={() => console.log('dislike')}><DislikeLogo/></div>
+      </div>
     </div>
   );
 }

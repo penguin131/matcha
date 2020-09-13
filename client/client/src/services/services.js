@@ -37,7 +37,6 @@ export const join = async (values, setIsLoading) => {
         setIsLoading(false)
       })
   } catch(e) {
-    
     console.log(e)
   }
 }
@@ -70,10 +69,10 @@ export const getAllFriends = async (setIsLoading, setFriendsList) => {
     await axios.get(`${url}protected/getAllFriends`, {
         headers: {
           'Authorization': `${token}`
-        } } )
+        }
+      })
       .then(res => {
         setIsLoading(false) 
-        console.log(res.data)
         setFriendsList(res.data)
       })
     } catch(e) {
@@ -81,3 +80,15 @@ export const getAllFriends = async (setIsLoading, setFriendsList) => {
       console.log(e)
     }
 }
+
+export const setLike = async (login) => {
+  try {
+    await axios.get(`${url}protected/setLike/${login}`, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    })
+  } catch(e) {
+    console.log(e)
+  }
+} 
