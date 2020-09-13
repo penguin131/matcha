@@ -31,7 +31,8 @@ const Main = () => {
 
     Promise.all([
       services.fetchData(setIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
-      services.fetchData(setIsLoading, setUserPhotos, 'getUserPhotos', user, source)
+      services.fetchData(setIsLoading, setUserPhotos, 'getUserPhotos', user, source),
+      
     ])
     return () => {
       source.cancel();
@@ -53,13 +54,16 @@ const Main = () => {
       })
     };
     
-    const error = (err) => {
-      console.warn(`ERROR(${err.code}): ${err.message}`);
+    const error = async (err) => {
+      services.getGeolocation(setGeolocation)
     };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, [])
 
+  useEffect(() => {
+    services.updateProfile()
+  }, )
   return (
     <div className={css.appContainer}>
       <Header data={{userProfile, userPhotos}}/>

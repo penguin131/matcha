@@ -36,9 +36,9 @@ const ProfilePage = ({match}) => {
       <div className={css.userInfo}>{`${biography || '-'}`}</div>
       <div className={css.likePanel}>
         <div  className={`${css.likeElement} ${css.like}`}
-              onClick={() => services.setLike(user)}><LikeLogo/></div>
+              onClick={() => services.setLikeDislike(user, 'setLike')}><LikeLogo/></div>
         <div  className={`${css.likeElement} ${css.dislike}`}
-              onClick={() => console.log('dislike')}><DislikeLogo/></div>
+              onClick={() => services.setLikeDislike(user, 'setComplaint')}><DislikeLogo/></div>
       </div>
     </div>
   );

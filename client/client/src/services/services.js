@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { url } from './backendUrl'
+import { url, proxy, ipInfoToken } from './backendUrl'
 
 const token = localStorage.token
 
@@ -81,9 +81,9 @@ export const getAllFriends = async (setIsLoading, setFriendsList) => {
     }
 }
 
-export const setLike = async (login) => {
+export const setLikeDislike = async (login, payload) => {
   try {
-    await axios.get(`${url}protected/setLike/${login}`, {
+    await axios.get(`${url}protected/${payload}/${login}`, {
       headers: {
         'Authorization': `${token}`
       }
@@ -91,4 +91,37 @@ export const setLike = async (login) => {
   } catch(e) {
     console.log(e)
   }
-} 
+}
+
+export const getGeolocation = async (setGeolocation) => {
+  try {
+    await axios.get(`${proxy}https://ipinfo.io?token=${ipInfoToken}`, (res) => {}, "jsonp")
+      .then(res => {
+        const data = res.data.loc.split(',')
+
+        setGeolocation({
+          latitude: data[0],
+          longitude: data[1],
+        })
+      });
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+export const updateProfile = async (values, setIsLoading) => {
+  try {
+    setIsLoading(true)
+    await axios.post(`${url}/protected/updateUserProfile`, values, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    })
+      .then(res => {
+        setIsLoading(false)
+      })
+  } catch(e) {
+    setIsLoading(false)
+    console.log(e)
+  }
+}
