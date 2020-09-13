@@ -1,6 +1,6 @@
 package com.dto;
 
-public class UserPhotoDto {
+public class UserPhotoDto implements BaseDto {
     private int imageId;
     private boolean isMain;
 

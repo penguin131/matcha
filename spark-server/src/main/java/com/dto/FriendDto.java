@@ -1,6 +1,6 @@
 package com.dto;
 
-public class FriendDto {
+public class FriendDto implements BaseDto {
     private String login;
     private String lastMessage;
     private long date;
@@ -25,6 +25,9 @@ public class FriendDto {
         this.login = login;
         this.lastMessage = lastMessage;
         this.date = date;
+    }
+
+    public FriendDto() {
     }
 
     public long getDate() {

@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserProfileDto extends BaseUserProfileDto {
+public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")

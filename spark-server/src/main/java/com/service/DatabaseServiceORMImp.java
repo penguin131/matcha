@@ -3,16 +3,19 @@ package com.service;
 import com.dictionary.Sex;
 import com.dto.*;
 import com.entity.TUserProfileEntity;
+import com.entity.TUsersUnityEntity;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.EntityDataHelper;
 import com.helper.Password;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
@@ -60,10 +63,17 @@ public class DatabaseServiceORMImp implements DatabaseService {
 		return user;
 	}
 
+	//впадлу писать через орм, тупо копирнул из скуля
 	@Override
 	public List<FriendDto> getAllFriendsForLogin(String login) {
 		//todo
-		return null;
+		logger.info("getAllFriendsForLogin() login: " + login);
+		List<FriendDto> result = new ArrayList<>();
+		TypedQuery<TUserProfileEntity> q = em.createQuery(
+				"SELECT c FROM TUserProfileEntity c where c.login=:login", TUserProfileEntity.class)
+				.setParameter("login", login);
+		TUserProfileEntity first = q.getResultList().stream().findFirst().orElse(null);
+		return result;
 	}
 
 	@Override

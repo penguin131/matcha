@@ -2,7 +2,7 @@ package com.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserFilterDto {
+public class UserFilterDto implements BaseDto {
 	private Integer distance;
 	@JsonProperty("sex_preferences")
 	private String sexPreferences;

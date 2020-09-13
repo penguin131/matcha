@@ -1,14 +1,15 @@
 package com.entity;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "t_user_profile", schema = "spark_db", catalog = "postgres")
+@Table(name = "t_user_profile",
+		schema = "spark_db",
+		catalog = "postgres")
 public class TUserProfileEntity {
 	private int userProfileId;
 	private String login;
@@ -26,6 +27,7 @@ public class TUserProfileEntity {
 	private Integer rating;
 	private Integer age;
 	private List<TImageEntity> photos;
+	private Set<TUserProfileEntity> friends;
 
 	@Id
 	@Column(name = "user_profile_id")
@@ -168,7 +170,8 @@ public class TUserProfileEntity {
 	}
 
 	@Basic
-	@Column(name = "rating", columnDefinition="integer default 0")
+	@Column(name = "rating",
+			columnDefinition="integer default 0")
 	public Integer getRating() {
 		return rating;
 	}
@@ -187,7 +190,10 @@ public class TUserProfileEntity {
 		this.age = age;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY, mappedBy="user")
+	@OneToMany(cascade=CascadeType.ALL,
+			orphanRemoval = true,
+			fetch=FetchType.LAZY,
+			mappedBy="user")
 	public List<TImageEntity> getPhotos() {
 		return photos;
 	}
@@ -215,8 +221,7 @@ public class TUserProfileEntity {
 				Objects.equals(location1, that.location1) &&
 				Objects.equals(location2, that.location2) &&
 				Objects.equals(rating, that.rating) &&
-				Objects.equals(age, that.age) &&
-				ArrayUtils.isEquals(photos, that.getPhotos());
+				Objects.equals(age, that.age);
 	}
 
 	@Override
@@ -227,5 +232,18 @@ public class TUserProfileEntity {
 	public TUserProfileEntity() {
 		this.location1 = new BigDecimal(0);
 		this.location2 = new BigDecimal(0);
+	}
+
+	@ManyToMany
+	@JoinTable(
+			name = "t_users_unity",
+			joinColumns = @JoinColumn(name = "user1_id"),
+			inverseJoinColumns = @JoinColumn(name = "user2_id"))
+	public Set<TUserProfileEntity> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(Set<TUserProfileEntity> friends) {
+		this.friends = friends;
 	}
 }

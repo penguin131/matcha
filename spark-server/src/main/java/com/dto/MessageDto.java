@@ -2,7 +2,7 @@ package com.dto;
 
 import com.dictionary.MessageType;
 
-public class MessageDto {
+public class MessageDto implements BaseDto {
     private MessageType type;
     private String msgText;
     private String from;

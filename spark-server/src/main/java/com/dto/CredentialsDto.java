@@ -2,7 +2,7 @@ package com.dto;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CredentialsDto {
+public class CredentialsDto implements BaseDto {
     private String login;
     private String password;
 
