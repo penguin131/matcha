@@ -133,6 +133,17 @@ public class MajorEndpoint {
 			return "";
 		});
 
+		post("/protected/updateCoordinates", (req, res) -> {
+			try {
+				CoordinateDto coordinates = mapper.readValue(req.body(), CoordinateDto.class);
+				String login = getUserNameFromToken(req.headers("Authorization"));
+				databaseService.updateUserCoordinates(coordinates, login);
+			} catch (Exception ex) {
+				return processException(ex);
+			}
+			return "";
+		});
+
 		get("/sendMail/:email/:hash", (req, res) -> {
 			try {
 				MailService.sendConfirmationEmail(req.params(":email"), req.params(":hash"));

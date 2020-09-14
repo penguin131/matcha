@@ -1,6 +1,6 @@
 package com.dto;
 
-public class FriendDto implements BaseDto {
+public class FriendDto {
     private String login;
     private String lastMessage;
     private long date;

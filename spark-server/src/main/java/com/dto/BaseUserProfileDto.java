@@ -2,7 +2,7 @@ package com.dto;
 
 import org.apache.commons.lang.StringUtils;
 
-public class BaseUserProfileDto extends CredentialsDto implements BaseDto {
+public class BaseUserProfileDto extends CredentialsDto {
 
     private String email;
     private String sex;

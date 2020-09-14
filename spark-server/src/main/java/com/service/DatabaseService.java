@@ -56,6 +56,11 @@ public interface DatabaseService {
     void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException;
 
     /**
+     * Обновляет пользовательский профиль
+     */
+    void updateUserCoordinates(CoordinateDto coordinates, String login) throws SQLException, JsonProcessingException;
+
+    /**
      * Проверка совпадения пароля и логина
      */
     boolean checkPassword(String login, String password) throws Exception;

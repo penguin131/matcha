@@ -97,6 +97,11 @@ public class DatabaseServiceORMImp implements DatabaseService {
 	}
 
 	@Override
+	public void updateUserCoordinates(CoordinateDto coordinates, String login) throws SQLException, JsonProcessingException {
+
+	}
+
+	@Override
 	public boolean checkPassword(String login, String password) throws Exception {
 		logger.info(String.format("checkPassword() login: %s, password: %s", login, password));
 		UserProfileDto user = getUserProfileForLogin(login);

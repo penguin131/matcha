@@ -172,7 +172,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
 
     @Override
     public void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
-        logger.info("updateUserProfile() :\n" + mapper.writeValueAsString(userProfileDto));
+        logger.info("updateUserProfile(): " + mapper.writeValueAsString(userProfileDto));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark_db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
@@ -184,6 +184,22 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
+            throw ex;
+        }
+    }
+
+    @Override
+    public void updateUserCoordinates(CoordinateDto coordinates, String login) throws JsonProcessingException, SQLException {
+        logger.info("updateUserCoordinates(): " + mapper.writeValueAsString(coordinates));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "update \"spark_db\".t_user_profile set location_1=?, location_2=? where login=?");
+            preparedStatement.setFloat(1, coordinates.getLatitude());
+            preparedStatement.setFloat(2, coordinates.getLongitude());
+            preparedStatement.setString(3, login);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            logger.info("updateUserCoordinates() exception:\n" + ex.getMessage());
             throw ex;
         }
     }
