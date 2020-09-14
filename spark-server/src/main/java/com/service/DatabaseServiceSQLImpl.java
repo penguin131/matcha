@@ -190,7 +190,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
 
     @Override
     public void updateUserCoordinates(CoordinateDto coordinates, String login) throws JsonProcessingException, SQLException {
-        logger.info("updateUserCoordinates(): " + mapper.writeValueAsString(coordinates));
+        logger.info(String.format("updateUserCoordinates(%s, %s): ", mapper.writeValueAsString(coordinates), login));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update \"spark_db\".t_user_profile set location_1=?, location_2=? where login=?");
