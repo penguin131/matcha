@@ -80,7 +80,9 @@ public class EntityDataHelperTest {
 		user.setLocation2(COORDINATE);
 		dto1 = EntityDataHelper.toDto(user);
 		assertNotEquals(dto1, dto2);
-		dto2.setLocation(new float[] {COORDINATE.floatValue(), COORDINATE.floatValue()});
+//		dto2.setLocation(new float[] {COORDINATE.floatValue(), COORDINATE.floatValue()});
+		dto2.setLatitude(COORDINATE.floatValue());
+		dto2.setLongitude(COORDINATE.floatValue());
 		assertEquals(dto1, dto2);
 		//photo
 		user.setPhotos(new ArrayList<>());

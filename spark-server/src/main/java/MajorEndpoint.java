@@ -124,7 +124,6 @@ public class MajorEndpoint {
 
 		post("/protected/updateUserProfile", (req, res) -> {
 			try {
-				logger.info("updateUserProfile body: " + mapper.writeValueAsString(req.body()));
 				UserProfileDto user = mapper.readValue(req.body(), UserProfileDto.class);
 				ValidateHelper.validateUserProfile(user);
 				databaseService.updateUserProfile(user);

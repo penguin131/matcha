@@ -2,7 +2,6 @@ package com.dto;
 
 import com.dictionary.Sex;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
@@ -19,7 +18,8 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
     private String sexPreferences;
     @JsonProperty("confirmed_token")
     private String confirmedToken;
-    private float[] location;
+    private Float latitude;
+    private Float longitude;
     private Integer photo;
     private Integer rating;
     private Integer age;
@@ -64,56 +64,12 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
         this.lastName = lastName;
     }
 
-    public UserProfileDto(String firstName,
-                          String lastName,
-                          String login,
-                          String password,
-                          String sex,
-                          String sexPreferences,
-                          String biography,
-                          String email,
-                          Boolean confirmed,
-                          String confirmedToken,
-                          float[] location,
-                          Integer photo,
-                          Integer rating,
-                          Integer age) {
-        this.setSex(sex);
-        this.setSexPreferences(sexPreferences);
-        this.setBiography(biography);
-        this.setPassword(password);
-        this.setLogin(login);
-        this.setEmail(email);
-        this.setConfirmed(confirmed);
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
-        this.setConfirmedToken(confirmedToken);
-        this.setLocation(location);
-        this.photo = photo;
-        this.rating = rating;
-        this.age = age;
-    }
-
-    public UserProfileDto() {
-        location = new float[] {0, 0};
-        photo = -1;
-        confirmed = false;
-    }
-
     public String getConfirmedToken() {
         return confirmedToken;
     }
 
     public void setConfirmedToken(String confirmedToken) {
         this.confirmedToken = confirmedToken;
-    }
-
-    public float[] getLocation() {
-        return location;
-    }
-
-    public void setLocation(float[] location) {
-        this.location = location;
     }
 
     public Integer getPhoto() {
@@ -140,6 +96,22 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
         this.age = age;
     }
 
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
+    }
+
     public static UserProfileDto getInstance(ResultSet rs) throws SQLException {
         return new UserProfileDto(
                 rs.getString("first_name"),
@@ -152,10 +124,11 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
                 rs.getString("email"),
                 rs.getBoolean("confirmed"),
                 rs.getString("confirmed_token"),
-                new float[] {rs.getFloat("latitude"), rs.getFloat("longitude")},
                 rs.getInt("photo"),
                 rs.getInt("rating"),
-                rs.getInt("age"));
+                rs.getInt("age"),
+                rs.getFloat("location_1"),
+                rs.getFloat("location_2"));
     }
 
     @Override
@@ -169,7 +142,6 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
                 StringUtils.equals(biography, other.getBiography()) &&
                 StringUtils.equals(sexPreferences, other.getSexPreferences()) &&
                 StringUtils.equals(confirmedToken, other.getConfirmedToken()) &&
-                ArrayUtils.isEquals(location, other.getLocation()) &&
                 integerEquals(photo, other.getPhoto()) &&
                 integerEquals(rating, other.getRating()) &&
                 integerEquals(age, other.getAge());
@@ -180,5 +152,44 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
             return b1.equals(b2);
         }
         return b2 == null;
+    }
+
+    public UserProfileDto(String firstName,
+                          String lastName,
+                          String login,
+                          String password,
+                          String sex,
+                          String sexPreferences,
+                          String biography,
+                          String email,
+                          Boolean confirmed,
+                          String confirmedToken,
+                          Integer photo,
+                          Integer rating,
+                          Integer age,
+                          Float latitude,
+                          Float longitude) {
+        this.setSex(sex);
+        this.setSexPreferences(sexPreferences);
+        this.setBiography(biography);
+        this.setPassword(password);
+        this.setLogin(login);
+        this.setEmail(email);
+        this.setConfirmed(confirmed);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setConfirmedToken(confirmedToken);
+        this.photo = photo;
+        this.rating = rating;
+        this.age = age;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public UserProfileDto() {
+        latitude = (float) 0;
+        longitude = (float) 0;
+        photo = -1;
+        confirmed = false;
     }
 }

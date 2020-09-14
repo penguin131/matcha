@@ -26,10 +26,11 @@ public class EntityDataHelper {
 		result.setEmail(entity.getEmail());
 		result.setConfirmed(entity.isConfirmed());
 		result.setConfirmedToken(entity.getConfirmedToken());
-		result.setLocation(new float[] {entity.getLocation1().floatValue(), entity.getLocation2().floatValue()});
 		result.setPhoto(-1);
 		result.setRating(entity.getRating());
 		result.setAge(entity.getAge());
+		result.setLatitude(entity.getLocation1().floatValue());
+		result.setLongitude(entity.getLocation2().floatValue());
 		return result;
 	}
 
