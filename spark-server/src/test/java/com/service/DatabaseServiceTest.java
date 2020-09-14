@@ -178,7 +178,7 @@ public class DatabaseServiceTest {
 		assertEquals(Sex.convertStringToCode(user.getSex()), entity.getSex() == null ? -1 : entity.getSex());
 	}
 
-//	@Test
+//	@Test //todo asd
 //	public void getAllFriendsForLoginTest() {
 //
 //	}

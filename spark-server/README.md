@@ -12,3 +12,5 @@ todo:<br>
 бонусы, которые можно сделать: OAUTH2, Google+ or another clouds image import
 
 
+//todo дублирование лайка, возвращение лайка и дазлайка в списке юзеров
+короче, надо нормально оттестить setLike6 setComplaint, getAllFriendsForLogin

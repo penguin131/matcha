@@ -234,14 +234,14 @@ public class TUserProfileEntity {
 		this.location2 = new BigDecimal(0);
 	}
 
-	@ManyToMany
-	@JoinTable(
-			name = "t_users_unity",
-			joinColumns = @JoinColumn(name = "user1_id"),
-			inverseJoinColumns = @JoinColumn(name = "user2_id"))
-	public Set<TUserProfileEntity> getFriends() {
-		return friends;
-	}
+//	@ManyToMany
+//	@JoinTable(
+//			name = "t_users_unity",
+//			joinColumns = @JoinColumn(name = "user1_id"),
+//			inverseJoinColumns = @JoinColumn(name = "user2_id"))
+//	public Set<TUserProfileEntity> getFriends() {
+//		return friends;
+//	}
 
 	public void setFriends(Set<TUserProfileEntity> friends) {
 		this.friends = friends;

@@ -152,7 +152,7 @@ public class UserProfileDto extends BaseUserProfileDto implements BaseDto {
                 rs.getString("email"),
                 rs.getBoolean("confirmed"),
                 rs.getString("confirmed_token"),
-                new float[] {rs.getFloat("location_1"), rs.getFloat("location_2")},
+                new float[] {rs.getFloat("latitude"), rs.getFloat("longitude")},
                 rs.getInt("photo"),
                 rs.getInt("rating"),
                 rs.getInt("age"));
