@@ -1,18 +1,20 @@
 package com.mail;
 
-import com.helper.Config;
 import org.apache.log4j.Logger;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
 
 public class MailService {
     private final static Logger logger = Logger.getLogger(MailService.class);
 
-    public static void sendConfirmationEmail(String to, String hash) throws UnsupportedEncodingException, MessagingException {
+    public static void sendConfirmationEmail(String to, String hash) throws UnsupportedEncodingException, MessagingException, UnknownHostException {
         logger.info(String.format("==>  sendConfirmationEmail(%s, %s)", to, hash));
         final String fromEmail = "smight.matcha@rambler.ru";
         final String password = "HBj41TFQ";
@@ -32,8 +34,8 @@ public class MailService {
         logger.info("<==    sendConfirmationEmail()");
     }
 
-    private static String getUrlToText() {
-        return "To confirm the account click on the link:\nhttp://" + System.getenv("OPENSHIFT_APP_DNS") +":8080/verification/";
+    private static String getUrlToText() throws UnknownHostException {
+        return "To confirm the account click on the link:\nhttp://" + InetAddress.getByName("8.8.8.8") +":8080/verification/";
     }
 
     public static void sendEmail(Session session, String toEmail, String subject, String body) throws UnsupportedEncodingException, MessagingException {
