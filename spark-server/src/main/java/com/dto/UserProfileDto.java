@@ -148,7 +148,10 @@ public class UserProfileDto extends BaseUserProfileDto {
                 rs.getInt("rating"),
                 rs.getInt("age"),
                 rs.getFloat("location_1"),
-                rs.getFloat("location_2"));
+                rs.getFloat("location_2"),
+                rs.getInt("has_like") > 0,
+                rs.getInt("has_dislike") > 0
+                );
     }
 
     @Override
@@ -188,7 +191,9 @@ public class UserProfileDto extends BaseUserProfileDto {
                           Integer rating,
                           Integer age,
                           Float latitude,
-                          Float longitude) {
+                          Float longitude,
+                          Boolean hasLike,
+                          Boolean hasDislike) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -204,6 +209,8 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.age = age;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.hasLike = hasLike;
+        this.hasDislike = hasDislike;
     }
 
     public UserProfileDto() {
