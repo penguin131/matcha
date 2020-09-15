@@ -16,7 +16,7 @@ public class Password {
 
     public static String getSaltedHash(String password) throws Exception {
         logger.info(String.format("==>  getSaltedHash(%s)", password));
-        byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
+        byte[] salt = Config.getJWTKey().getBytes();
         logger.info("salt: " + new String(salt));
         String hash = Base64.encodeBase64String(salt) + "$" + hash(password, salt);
         logger.info("<==    getSaltedHash(): " + hash);
