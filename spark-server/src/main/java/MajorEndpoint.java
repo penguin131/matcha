@@ -57,7 +57,7 @@ public class MajorEndpoint {
 				user.setPassword(Password.getSaltedHash(user.getPassword()));
 				String hash = SecurityHelper.generateHash();
 				databaseService.createUserProfile(user, hash);
-				MailService.sendConfirmationEmail(user.getEmail(), hash);
+				MailService.sendConfirmationEmail(user.getEmail(), hash, req.url().substring(0, req.url().indexOf("createUserProfile")));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
@@ -146,7 +146,7 @@ public class MajorEndpoint {
 
 		get("/sendMail/:email/:hash", (req, res) -> {
 			try {
-				MailService.sendConfirmationEmail(req.params(":email"), req.params(":hash"));
+				MailService.sendConfirmationEmail(req.params(":email"), req.params(":hash"), req.url().substring(0, req.url().indexOf("createUserProfile")));
 			} catch (Exception ex) {
 				return processException(ex);
 			}
