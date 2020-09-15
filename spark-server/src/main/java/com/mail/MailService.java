@@ -34,6 +34,9 @@ public class MailService {
     }
 
     private static String getUrlToText(String reqUrl) {
+        if ("https".equals(reqUrl.substring(0, 4))) {
+            reqUrl = "http" + reqUrl.substring(4);
+        }
         String text = "To confirm the account click on the link:\n" + reqUrl +"verification/";
         logger.info("Email text: " + text);
         return text;
