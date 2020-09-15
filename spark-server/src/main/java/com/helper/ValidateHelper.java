@@ -23,8 +23,8 @@ public class ValidateHelper {
             throw new ValidateException("Login size must be between 5 and 256");
         if (StringUtils.isEmpty(baseUserProfile.getPassword()))
             throw new ValidateException("Password cannot be empty");
-        if (Sex.containsCode(baseUserProfile.getSex()))
-            throw new ValidateException("Non-existent gender");
+//        if (Sex.containsCode(baseUserProfile.getSex()))
+//            throw new ValidateException("Non-existent gender");
         validateEmail(baseUserProfile.getEmail());
         if (service.getUserProfileForLogin(baseUserProfile.getLogin()) != null) {
             throw new ValidateException("Login already exists!");
@@ -43,7 +43,7 @@ public class ValidateHelper {
 
     public static void validateUserProfile(UserProfileDto userProfileDto) throws ValidateException, AddressException, SQLException, JsonProcessingException {
         validateBaseUserProfile(userProfileDto);
-        if (userProfileDto.getSexPreferences() != null && Sex.containsCode(userProfileDto.getSexPreferences()))
-            throw new ValidateException("Non-existent gender in sex preferences");
+//        if (userProfileDto.getSexPreferences() != null && Sex.containsCode(userProfileDto.getSexPreferences()))
+//            throw new ValidateException("Non-existent gender in sex preferences");
     }
 }

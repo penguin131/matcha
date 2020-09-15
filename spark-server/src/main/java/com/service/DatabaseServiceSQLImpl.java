@@ -8,6 +8,7 @@ import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -125,7 +126,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     @Override
     public void setLike(String from, String to) throws Exception {
         logger.info("setLike() from: " + from);
-        if (from.equals(to))
+        if (StringUtils.equals(from, to))
             throw new ValidateException("User cannot be friends with himself");
         if (getUserProfileForLogin(to) == null)
             throw new ValidateException(String.format("User %s does not exists", to));

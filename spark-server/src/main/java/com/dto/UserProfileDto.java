@@ -23,6 +23,10 @@ public class UserProfileDto extends BaseUserProfileDto {
     private Integer photo;
     private Integer rating;
     private Integer age;
+    @JsonProperty("has_like")
+    private Boolean hasLike;
+    @JsonProperty("has_dislike")
+    private Boolean hasDislike;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -110,6 +114,22 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setLongitude(Float longitude) {
         this.longitude = longitude;
+    }
+
+    public Boolean getHasLike() {
+        return hasLike;
+    }
+
+    public void setHasLike(Boolean hasLike) {
+        this.hasLike = hasLike;
+    }
+
+    public Boolean getHasDislike() {
+        return hasDislike;
+    }
+
+    public void setHasDislike(Boolean hasDislike) {
+        this.hasDislike = hasDislike;
     }
 
     public static UserProfileDto getInstance(ResultSet rs) throws SQLException {
