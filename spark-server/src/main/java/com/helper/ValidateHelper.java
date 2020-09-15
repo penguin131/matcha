@@ -1,11 +1,12 @@
 package com.helper;
 
-import com.dictionary.Sex;
 import com.dto.BaseUserProfileDto;
 import com.dto.UserProfileDto;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.DatabaseService;
+import org.apache.log4j.Logger;
 import spark.utils.StringUtils;
 
 import javax.mail.internet.AddressException;
@@ -13,9 +14,13 @@ import javax.mail.internet.InternetAddress;
 import java.sql.SQLException;
 
 public class ValidateHelper {
+    private static Logger logger = Logger.getLogger(ValidateHelper.class);
+    private static ObjectMapper mapper = new ObjectMapper();
     private static DatabaseService service = DatabaseServiceHelper.getDatabaseService();
 
-    public static void validateBaseUserProfile(BaseUserProfileDto baseUserProfile) throws ValidateException, AddressException, SQLException, JsonProcessingException {
+    public static void validateBaseUserProfile(BaseUserProfileDto baseUserProfile)
+            throws ValidateException, AddressException, SQLException, JsonProcessingException {
+        logger.info(String.format("==>  validateBaseUserProfile(%s)", mapper.writeValueAsString(baseUserProfile)));
         if (baseUserProfile == null)
             throw new ValidateException("Null user profile");
         if (baseUserProfile.getLogin() == null ||
@@ -23,8 +28,6 @@ public class ValidateHelper {
             throw new ValidateException("Login size must be between 5 and 256");
         if (StringUtils.isEmpty(baseUserProfile.getPassword()))
             throw new ValidateException("Password cannot be empty");
-//        if (Sex.containsCode(baseUserProfile.getSex()))
-//            throw new ValidateException("Non-existent gender");
         validateEmail(baseUserProfile.getEmail());
         if (service.getUserProfileForLogin(baseUserProfile.getLogin()) != null) {
             throw new ValidateException("Login already exists!");
@@ -32,6 +35,7 @@ public class ValidateHelper {
         if (service.checkEmailExist(baseUserProfile.getEmail())) {
             throw new ValidateException("Email is already in use");
         }
+        logger.info("<==    validateBaseUserProfile(): success");
     }
 
     private static void validateEmail(String email) throws ValidateException, AddressException {
@@ -43,7 +47,5 @@ public class ValidateHelper {
 
     public static void validateUserProfile(UserProfileDto userProfileDto) throws ValidateException, AddressException, SQLException, JsonProcessingException {
         validateBaseUserProfile(userProfileDto);
-//        if (userProfileDto.getSexPreferences() != null && Sex.containsCode(userProfileDto.getSexPreferences()))
-//            throw new ValidateException("Non-existent gender in sex preferences");
     }
 }
