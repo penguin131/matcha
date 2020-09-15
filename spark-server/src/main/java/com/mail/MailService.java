@@ -34,7 +34,9 @@ public class MailService {
     }
 
     private static String getUrlToText(String reqUrl) {
-        return "To confirm the account click on the link:\n" + reqUrl +"verification/";
+        String text = "To confirm the account click on the link:\n" + reqUrl +"verification/";
+        logger.info("Email text: " + text);
+        return text;
     }
 
     public static void sendEmail(Session session, String toEmail, String subject, String body) throws UnsupportedEncodingException, MessagingException {
