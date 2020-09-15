@@ -7,8 +7,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class Password {
+    private static final Random RANDOM = new SecureRandom();
     private static final int iterations = 20*1000;
     private static final int saltLen = 32;
     private static final int desiredKeyLen = 256;
@@ -16,7 +18,8 @@ public class Password {
 
     public static String getSaltedHash(String password) throws Exception {
         logger.info(String.format("==>  getSaltedHash(%s)", password));
-        byte[] salt = Config.getJWTKey().getBytes();
+        byte[] salt = new byte[saltLen];
+        RANDOM.nextBytes(salt);
         logger.info("salt: " + new String(salt));
         String hash = Base64.encodeBase64String(salt) + "$" + hash(password, salt);
         logger.info("<==    getSaltedHash(): " + hash);
