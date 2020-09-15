@@ -1,0 +1,534 @@
+﻿Ace
+Agent
+Alias
+Alpha
+Black Diamond
+Black Magic
+Black Pearl
+Black Widow
+Blade
+Blaze
+Bombshell
+Buckwild
+Butterfly
+Cadillac
+Captain Marvel
+Champ
+Charlie’s Angel
+Claws
+Countess
+Cutlass
+Dollface
+Dragonfly
+Duchess
+Dynamo
+Eclipse
+Empress
+Energizer
+Fighter
+Firey
+Heat
+Hela
+Heroine
+Hoops
+Hottie
+Hurricane
+Jessica Rabbit
+Katniss
+Lady Luck
+Lava
+Lightning
+Lioness
+Marvel
+Mayhem
+Mighty
+Mustang
+Ninja
+Onyx
+Queen
+Radar
+Rebel
+Riot
+Shadow
+Slayer
+Sparrow
+Sphinx
+Spike
+Tailor Made
+The Evil Queen
+Thunder
+Tick Tock
+Trinity
+Twister
+Venus
+Vicious
+Warrior Princess
+Wonder Woman
+Xena
+Your Highness
+Zelda
+Alfalfa
+Bambi
+Beanstalk
+Beefy
+BFG – For Big Friendly Giant
+Boots
+Catnip
+Cheeseball
+Chewbacca
+Chipmunk
+Chirp
+Class Clown
+Comedy Central
+Coo Coo
+Corny
+Crazy Queen
+Curly Q
+Dimples
+Doofy
+Duck
+Energizer Bunny
+Foodie
+Four Eyes
+Fun Size
+Funny Girl
+Fuzzy Wuzzy
+Giggles
+Goofball
+Gopher
+Hangry
+Hobbit
+Itty Bitty
+Joker
+Meatball
+Mittens
+Monkey
+Mother of Dragons
+Mouse
+Noodles
+Panda
+Paws
+Pigtails
+Pip Squeak
+Pork Chop
+Princess Peach
+Pumpkin
+Punk
+Quack
+Rabbit Ears
+Silly Goof
+Slim Thick
+Spaghetti
+Spanky
+Squints
+Squirrel
+Squishy
+Stinker
+String bean
+Sugar Mama
+Tater Tot
+Thick Thighs
+Tiny
+Troublemaker
+Turtle
+Unburnt
+Whiskers
+Amor
+Angel Eyes
+Aphrodite
+Awesome Blossom
+Babe
+Baby Face
+Babyschka
+Bae-ritto
+Barbie
+Barbie Doll
+Bear
+Belle
+Blondie
+Boo Boo Bear
+Bright Light
+Brown eyes
+Bumble Bee
+Buttons
+Care Bear
+Cutie
+Cutie Patootie
+Cutie Pie
+Doll Face
+Dream Girl
+Dumpling
+Firefly
+Flawless
+Genuine
+Goldie
+Heavenly
+Jasmine
+Kissy Face
+Kitten
+Ladybug
+Light of my life
+Living Angel
+Lotus
+Love bug
+Lovey Dovey
+Lovie
+Luscious
+Mon Cheri
+Mulan
+My All
+My Beloved
+Peachy Keen
+Perfect 10
+Pretty
+Rainbow
+Rolly Polly
+Sexy
+Shorty
+Shy
+Smiley
+Smitten Kitten
+Sparkles
+Sparky
+Sunshine
+Sweetheart
+Sweetness
+Sweetums
+Tea Cup
+Tiger
+Twinkle
+Twinkly
+Almond Joy
+Apple
+Apple Pie
+Aqua
+Baby Cake
+Banana Bread
+Banana Muffin
+Banana Pie
+Banana Split
+Biscuit
+Blackberry
+Bloomer
+Blossom
+Blueberry
+Bonbon
+Bourbon
+Brandy
+Brown Sugar
+Brownie
+Bun Bun
+Buttercup
+Butterfingers
+Cake
+Cake Face
+Candy Cane
+Candy Corn
+Caramel
+Cattail
+Cayenne
+Champagne
+Chardonnay
+Charm
+Charming
+Cherry
+Cherry Pie
+Chocolate
+Chocolate Chip
+Chrysanthemum
+Cinnamon
+Cookie
+Cupcake
+Daffodil
+Dahlia
+Daisy
+Dandelion
+Delicious
+Delight
+Donut
+Dottie
+Doughnut
+Fennel
+Fresh
+Frosting
+Ginger
+Ginger Spice
+Gingersnap
+Good ‘n Plenty
+Gummy Bear
+Hershey Kiss
+Honey
+Hot Cocoa
+Icee
+Ice Pop
+Iris
+Jelly Bean
+Jolly
+Juice
+Juicy
+Junior Mint
+Kit-Kat
+Leaf
+Lemon
+Lifesaver
+Lilac
+Manhattan
+Maple
+Marigold
+Marshmallow
+Martini
+Merlot
+Moonflower
+Moonshine
+Moscato
+Muffin
+Mulberry
+Munchkin
+Mushroom
+Oreo
+Peaches
+Pecan
+Pecan Pie
+Peep
+Peppermint
+Petal
+Petunia
+Pie
+Pixie
+Plum
+Pocky
+Polka-Dot
+Pop Rock
+Pop Tart
+Poppy
+Popsicle
+Protein
+Red Velvet
+Red Vine
+Reed
+Rose
+Rosie
+Rum Punch
+Rummy
+S’Mores
+Sherry
+Shortbread
+Shortcake
+Sienna
+Sierra
+Skittle
+Smartie
+Snapdragon
+Snappie
+Snapple
+Snickerdoodle
+Snickers
+Snowdrop
+Soda Pop
+Starburst
+Stem
+Strawberry
+Sugar
+Sugar Pie
+Sugar Plum
+Sugar Rush
+Sunflower
+Susie Q
+Sweet Tooth
+Sweetie
+Sweetie Pie
+Taffy
+Tansy
+Tart
+Tequila
+Thumbprint
+Tootsie
+Tootsie Pop
+Tootsie Roll
+Tulip
+Twix
+Twizzler
+Vanilla Bean
+Vitamin C
+Whirly
+Wild Rose
+Wildberry
+Willow
+Wonka
+Chikoo
+Pihu
+Golu
+Kanha
+Guddu
+Gudiya
+Misht
+Shree
+Piya
+Adi
+Kuhu
+Pooh
+Brishti
+Nutz
+Shinoo
+Chintu
+Chimpu
+Piku
+Pappu
+Chikki
+Raja
+Rani
+Dimple
+Dimpy
+Proshu
+Prishu
+Chinu
+Babloo
+Babli
+Akki
+Amu
+Sunny
+Raj
+Raji
+Rishu
+Rosy
+June
+Ria
+Riva
+Cashew
+Benu
+Betoo
+Oshu
+Rick
+Vini
+Luv
+Rini
+Tuli
+Joy
+Aashi
+Bao
+Cuckoo
+Echo
+Fifi
+Lala
+Ricky
+Shoona
+Tolu
+Aaru
+Abhi
+Ani
+Anu
+Ajju
+Anju
+Anshu
+Appu
+Babai
+Babun
+Bibhu
+Bela
+Binny
+Charu
+Chhoti
+Chhotu
+Dicki
+Dipu
+Dolly
+Dola
+Dona
+Dushtu
+Gopi
+Gitu
+Goli
+Hari
+Ishu
+Janu
+Laado
+Lolo
+Laajo
+Lalli
+Mili
+Mitu
+Nilu
+Niru
+Rinky
+Pinky
+Vinu
+Vishu
+Veeru
+Vicky
+Sanju
+Sonu
+Tasu
+Tubl
+Vasu
+Viju
+Bittu
+Aaradhya
+Ayaan
+Drishti
+Ishita
+Kabir
+Laksh
+Mishka
+Ranbir
+Rudra
+Shanaya
+Alee
+Coco
+Kiku
+Bunz
+Mandy
+Maddy
+Sophie
+Bebo
+Amee
+Nikki
+Tim
+Tisca
+Toshi
+Sandy
+Alia
+Arya
+Sonam
+Pari
+Yuri
+Yug
+Yudi
+Veda
+Mahi
+Asmi
+Avni
+Aroo
+Duggu
+Bella
+Sush
+Dino
+Arshi
+Sammy
+Sam
+Sally
+Vihaan
+Rio
+Riju
+Nyasa
+Aarav
+Ahil
+Nitara
+Rene
+Misha
+Roohi
+Tia
+Pakhi
+Piu
+Panchi
+Palak
+Amy
+Abe
+Addey
+Archie
+Ben
+Cindy
+Dora
+Freddie
+Gina
+Lilly
+Princess
