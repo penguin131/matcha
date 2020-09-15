@@ -1,5 +1,6 @@
 package com.mail;
 
+import com.helper.Config;
 import org.apache.log4j.Logger;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -12,7 +13,7 @@ public class MailService {
     private final static Logger logger = Logger.getLogger(MailService.class);
 
     public static void sendConfirmationEmail(String to, String hash) throws UnsupportedEncodingException, MessagingException {
-        logger.info(String.format("sendConfirmationEmail() to: %s, hash: %s", to, hash));
+        logger.info(String.format("==>  sendConfirmationEmail(%s, %s)", to, hash));
         final String fromEmail = "smight.matcha@rambler.ru";
         final String password = "HBj41TFQ";
         Properties props = new Properties();
@@ -28,15 +29,16 @@ public class MailService {
         };
         Session session = Session.getDefaultInstance(props, auth);
         sendEmail(session, to,"Account confirmation", getUrlToText() + hash);
+        logger.info("<==    sendConfirmationEmail()");
     }
 
     private static String getUrlToText() {
-        return "To confirm the account click on the link:\nhttp://84.38.183.163:8080/spark-server-1.0/verification/";
+        return "To confirm the account click on the link:\nhttp://" + System.getenv("OPENSHIFT_APP_DNS") +":8080/verification/";
     }
 
     public static void sendEmail(Session session, String toEmail, String subject, String body) throws UnsupportedEncodingException, MessagingException {
         try {
-            logger.info("Message body: " + body);
+            logger.info(String.format("==>    sendEmail(session, %s, subject, %s)", toEmail, body));
             MimeMessage msg = new MimeMessage(session);
             msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
             msg.addHeader("format", "flowed");
@@ -53,5 +55,6 @@ public class MailService {
             logger.info("Send mail error: " + e.getMessage());
             throw e;
         }
+        logger.info("<==    sendEmail()");
     }
 }
