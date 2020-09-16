@@ -4,7 +4,7 @@ import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.security.JWTHelper;
 import com.service.DatabaseService;
-import com.helper.DatabaseServiceHelper;
+import com.helper.ServiceHelper;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -17,7 +17,7 @@ import spark.utils.StringUtils;
 public class ChatWebSocketHandler {
     private final static Logger logger = Logger.getLogger(ChatWebSocketHandler.class);
     private static ObjectMapper mapper = new ObjectMapper();
-    private static final DatabaseService databaseService = DatabaseServiceHelper.getDatabaseService();
+    private static final DatabaseService databaseService = ServiceHelper.getDatabaseService();
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {

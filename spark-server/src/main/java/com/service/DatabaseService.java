@@ -18,7 +18,7 @@ public interface DatabaseService {
     /**
      * Добавление нового пользовательского профиля
      */
-    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws Exception;
+    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws JsonProcessingException, SQLException;
 
     /**
      * Вернет первый профиль юзера по login

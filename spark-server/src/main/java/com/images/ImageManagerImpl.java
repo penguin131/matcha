@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.helper.DatabaseServiceHelper.getDatabaseService;
+import static com.helper.ServiceHelper.getDatabaseService;
 
 public class ImageManagerImpl implements ImageManager{
     private final static Logger logger = Logger.getLogger(ImageManagerImpl.class);
@@ -38,27 +38,40 @@ public class ImageManagerImpl implements ImageManager{
             images.addAll(Arrays.asList(files));
     }
 
-    public void saveImage(String from, byte[] data) throws Exception {
-        logger.info(String.format("saveImage(%s, bytes...)", from));
-        String imageId = databaseService.saveImage(from);
-        File newFile = new File(getImagesDir() + imageId);
-        FileUtils.writeByteArrayToFile(newFile, data);
-        images.add(newFile);
-        logger.info("image saved");
+    public void saveImage(String from, byte[] data) {
+        try {
+            logger.info(String.format("saveImage(%s, bytes...)", from));
+            String imageId = databaseService.saveImage(from);
+            File newFile = new File(getImagesDir() + imageId);
+            FileUtils.writeByteArrayToFile(newFile, data);
+            images.add(newFile);
+            logger.info("image saved");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
-    public void deleteImage(String from, String id) throws AccessDeniedException, SQLException {
-        logger.info(String.format("deleteImage(%s, %s)", from, id));
-        databaseService.deleteImage(id, from);
-        images.removeIf(file -> id.equals(file.getName()));
-        logger.info("image deleted");
+    public void deleteImage(String from, String id) throws AccessDeniedException {
+        try {
+            logger.info(String.format("deleteImage(%s, %s)", from, id));
+            databaseService.deleteImage(id, from);
+            images.removeIf(file -> id.equals(file.getName()));
+            logger.info("image deleted");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    public byte[] getImage(String name) throws IOException {
-        logger.info(String.format("getImage(%s)", name));
-        File image = images.stream().
-                filter(file -> name.equals(file.getName())).findFirst().orElse(null);
-        if (image == null) return null;
-        return FileUtils.readFileToByteArray(image);
+    public byte[] getImage(String name) {
+        try {
+            logger.info(String.format("getImage(%s)", name));
+            File image = images.stream().
+                    filter(file -> name.equals(file.getName())).findFirst().orElse(null);
+            if (image == null) return null;
+            return FileUtils.readFileToByteArray(image);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }

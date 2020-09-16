@@ -33,7 +33,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws Exception {
+    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws JsonProcessingException, SQLException {
         logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -46,7 +46,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(5, confirmedToken);
             preparedStatement.execute();
             logger.info(mapper.writeValueAsString(userProfileDto));
-        } catch (SQLException ex) {
+        } catch (SQLException | JsonProcessingException ex) {
             logger.info("createUserProfile() exception:\n" + ex.getMessage());
             throw ex;
         }
@@ -127,7 +127,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void setLike(String from, String to) throws Exception {
+    public void setLike(String from, String to) throws ValidateException, SQLException, JsonProcessingException {
         logger.info("setLike() from: " + from);
         if (StringUtils.equals(from, to))
             throw new ValidateException("User cannot be friends with himself");

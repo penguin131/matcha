@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Random;
 
 public class Password {
@@ -16,7 +18,7 @@ public class Password {
     private static final int desiredKeyLen = 256;
     private static Logger logger = Logger.getLogger(Password.class);
 
-    public static String getSaltedHash(String password) throws Exception {
+    public static String getSaltedHash(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         logger.info(String.format("==>  getSaltedHash(%s)", password));
         byte[] salt = new byte[saltLen];
         RANDOM.nextBytes(salt);
@@ -37,7 +39,7 @@ public class Password {
         return hashOfInput.equals(saltAndHash[1]);
     }
 
-    private static String hash(String password, byte[] salt) throws Exception {
+    private static String hash(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         logger.info(String.format("==>  hash(%s, salt)", password));
         if (password == null || password.length() == 0)
             throw new IllegalArgumentException("Empty passwords are not supported.");

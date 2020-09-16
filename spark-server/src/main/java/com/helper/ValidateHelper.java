@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class ValidateHelper {
     private static Logger logger = Logger.getLogger(ValidateHelper.class);
     private static ObjectMapper mapper = new ObjectMapper();
-    private static DatabaseService service = DatabaseServiceHelper.getDatabaseService();
+    private static DatabaseService service = ServiceHelper.getDatabaseService();
 
     public static void validateBaseUserProfile(BaseUserProfileDto baseUserProfile)
             throws ValidateException, AddressException, SQLException, JsonProcessingException {
