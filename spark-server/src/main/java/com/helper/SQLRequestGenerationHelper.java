@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 public class SQLRequestGenerationHelper {
 
+	//todo переделать через рефлекшены
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
 		StringBuilder sb = new StringBuilder(
 				"with CTE as (\n" +
