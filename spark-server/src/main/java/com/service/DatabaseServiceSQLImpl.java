@@ -89,6 +89,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 logger.info("No user profile with login: " + login);
             }
         } catch (JsonProcessingException | SQLException ex) {
+            ex.printStackTrace();
             logger.info("getUserProfileForLogin() exception:\n" + ex.getMessage());
             throw ex;
         }
@@ -363,6 +364,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main")));
             }
         } catch (SQLException ex) {
+            ex.printStackTrace();
             logger.info("setMainImage() exception:\n" + ex.getMessage());
             throw ex;
         }
