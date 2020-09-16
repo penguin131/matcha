@@ -84,11 +84,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 userProfile = UserProfileDto.getInstance(rs);
-//                logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
+                logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
             } else {
                 logger.info("No user profile with login: " + login);
             }
-        } catch (SQLException ex) {
+        } catch (JsonProcessingException | SQLException ex) {
             ex.printStackTrace();
             logger.info("getUserProfileForLogin() exception:\n" + ex.getMessage());
             throw ex;
