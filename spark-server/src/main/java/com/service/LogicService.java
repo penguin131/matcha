@@ -1,6 +1,5 @@
 package com.service;
 
-import com.dto.*;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,7 +7,6 @@ import spark.Request;
 
 import javax.mail.internet.AddressException;
 import java.sql.SQLException;
-import java.util.List;
 
 public interface LogicService {
 	/**
@@ -76,16 +74,15 @@ public interface LogicService {
 
 	/**
 	 * Сохранит сообщение, все данные о нем в DTO
-	 * @param messageDto сообщение
 	 */
 	void saveChatMessage(String requestBody);
 
 	/**
-	 * Сохраняет в БД запись о картинке, прикрепляется к пользователю
-	 * @param user Логин, к которому прикрепится картинка
-	 * @return номер картинки в БД
+	 * Сохраняет в БД запись о картинке, прикрепляется к пользователю. Сохраняет картинку на сервере.
 	 */
-	String saveImage(String user) throws SQLException;
+	void downloadImage(String login, byte[] image);
+
+	byte[] getImage(String name);
 
 	/**
 	 * Удалит запись о картинке в БД
@@ -93,7 +90,7 @@ public interface LogicService {
 	 * @param id ID картинки
 	 * @throws AccessDeniedException Нельзя удалять чужие картинки
 	 */
-	void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
+	void deleteImage(String user, String id) throws AccessDeniedException;
 
 	/**
 	 * Отметит картинку как аватарку

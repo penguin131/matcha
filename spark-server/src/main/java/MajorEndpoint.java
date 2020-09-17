@@ -3,8 +3,6 @@ import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
 import com.helper.ServiceHelper;
-import com.images.ImageManager;
-import com.images.ImageManagerImpl;
 import com.service.LogicService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
@@ -22,7 +20,6 @@ public class MajorEndpoint {
 		//Инициализация стартовых обьектов
 		Logger logger = Logger.getLogger(MajorEndpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
-		ImageManager imageManager = new ImageManagerImpl();
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", ChatWebSocketHandler.class);
@@ -113,17 +110,16 @@ public class MajorEndpoint {
 			}
 		});
 
-		//Images todo добавить в логик сервис
 		post("/protected/downloadImage", ((req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));
-			imageManager.saveImage(login, req.bodyAsBytes());
+			logicService.downloadImage(login, req.bodyAsBytes());
 			return "";
 		}));
 
 		get("/protected/deleteImage/:id", ((req, res) -> {
 			try {
 				String login = getUserNameFromToken(req.headers("Authorization"));
-				imageManager.deleteImage(login, req.params(":id"));
+				logicService.deleteImage(login, req.params(":id"));
 			} catch (AccessDeniedException ex) {
 				res.status(404);
 			}
@@ -132,7 +128,7 @@ public class MajorEndpoint {
 
 		get("/image/:id", ((request, response) -> {
 			response.type("image/jpeg");
-			return imageManager.getImage(request.params(":id"));
+			return logicService.getImage(request.params(":id"));
 		}));
 
 		get("/protected/setAvatar/:imageId", (request, response) -> {

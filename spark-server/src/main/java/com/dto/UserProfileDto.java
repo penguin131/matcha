@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class UserProfileDto extends BaseUserProfileDto {
     @JsonProperty("first_name")
@@ -27,6 +28,7 @@ public class UserProfileDto extends BaseUserProfileDto {
     private Boolean hasLike;
     @JsonProperty("has_dislike")
     private Boolean hasDislike;
+    private List<String> hashTags;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -218,5 +220,13 @@ public class UserProfileDto extends BaseUserProfileDto {
         longitude = (float) 0;
         photo = -1;
         confirmed = false;
+    }
+
+    public List<String> getHashTags() {
+        return hashTags;
+    }
+
+    public void setHashTags(List<String> hashTags) {
+        this.hashTags = hashTags;
     }
 }

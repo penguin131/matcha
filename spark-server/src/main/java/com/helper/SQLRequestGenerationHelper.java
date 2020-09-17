@@ -8,7 +8,6 @@ import java.sql.SQLException;
 
 public class SQLRequestGenerationHelper {
 
-	//todo переделать через рефлекшены
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
 		StringBuilder sb = new StringBuilder(
 				"with CTE as (\n" +
@@ -18,7 +17,7 @@ public class SQLRequestGenerationHelper {
 				" (select id_image from \"spark_db\".t_image " +
 				" where user_profile_id=user_id and is_main=true limit 1) as photo " +
 				" ,(select  count(*) from spark_db.t_users_unity where user_profile_id=user2_id or (user_profile_id=user1_id and t_user_profile.confirmed=true)) as has_like" +
-				" ,(select  count(*) from spark_db.t_complaint where user_profile_id=to_user or (user_profile_id=from_user and t_user_profile.confirmed=true)) as has_dislike" +
+				" ,(select  count(*) from spark_db.t_complaint where user_profile_id=to_user) as has_dislike" +
 				" from \"spark_db\".t_user_profile");
 		boolean hasCondition = false;
 		if (login != null) {
@@ -35,7 +34,7 @@ public class SQLRequestGenerationHelper {
 				hasCondition = true;
 			}
 			if (filter.getSexPreferences() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" sex_preferences=?");
+				sb.append(hasCondition ? " and" : " where").append(" (sex_preferences=? or sex_preferences is null)");
 				hasCondition = true;
 			}
 			if (filter.getSex() != null) {
@@ -54,7 +53,9 @@ public class SQLRequestGenerationHelper {
 				sb.append(hasCondition ? " and" : " where").append(" age>=?");
 			}
 		}
-		sb.append(" order by rating desc");
+		sb.append(" order by rating desc\n" +
+				",(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
+				" where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name)");
 		return sb.toString();
 	}
 

@@ -1,23 +1,17 @@
 package com.images;
 
-import com.exceptions.AccessDeniedException;
 import com.helper.Config;
-import com.service.DatabaseService;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.helper.ServiceHelper.getDatabaseService;
-
 public class ImageManagerImpl implements ImageManager{
     private final static Logger logger = Logger.getLogger(ImageManagerImpl.class);
-    private static DatabaseService databaseService = getDatabaseService();
     private final String IMAGES_DIR_PROD;
     private final String IMAGES_DIR;
     private boolean isProd;
@@ -38,10 +32,9 @@ public class ImageManagerImpl implements ImageManager{
             images.addAll(Arrays.asList(files));
     }
 
-    public void saveImage(String from, byte[] data) {
+    public void saveImage(String from, byte[] data, String imageId) {
         try {
             logger.info(String.format("saveImage(%s, bytes...)", from));
-            String imageId = databaseService.saveImage(from);
             File newFile = new File(getImagesDir() + imageId);
             FileUtils.writeByteArrayToFile(newFile, data);
             images.add(newFile);
@@ -51,15 +44,10 @@ public class ImageManagerImpl implements ImageManager{
         }
     }
 
-    public void deleteImage(String from, String id) throws AccessDeniedException {
-        try {
-            logger.info(String.format("deleteImage(%s, %s)", from, id));
-            databaseService.deleteImage(id, from);
-            images.removeIf(file -> id.equals(file.getName()));
-            logger.info("image deleted");
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+    public void deleteImage(String from, String id) {
+        logger.info(String.format("deleteImage(%s, %s)", from, id));
+        images.removeIf(file -> id.equals(file.getName()));
+        logger.info("image deleted");
     }
 
     public byte[] getImage(String name) {

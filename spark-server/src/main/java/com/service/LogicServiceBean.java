@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
 import com.helper.ServiceHelper;
 import com.helper.ValidateHelper;
+import com.images.ImageManager;
+import com.images.ImageManagerImpl;
 import com.mail.MailService;
 import com.security.SecurityHelper;
 import spark.Request;
@@ -26,6 +28,7 @@ public class LogicServiceBean implements LogicService {
 	private DatabaseService databaseService = ServiceHelper.getDatabaseService();
 	private ObjectMapper mapper = new ObjectMapper();
 	private static final long TTL = 1000000000;
+	private ImageManager imageManager = new ImageManagerImpl();
 
 	@Override
 	public String getAllUsers(String login) {
@@ -184,14 +187,23 @@ public class LogicServiceBean implements LogicService {
 		}
 	}
 
-	@Override
-	public String saveImage(String user) throws SQLException {
-		return databaseService.saveImage(user);
+	public void downloadImage(String login, byte[] image) {
+		try {
+			String imageId = databaseService.saveImage(login);
+			imageManager.saveImage(login, image, imageId);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
-	public void deleteImage(String user, String id) throws SQLException, AccessDeniedException {
-		databaseService.deleteImage(user, id);
+	public void deleteImage(String user, String id) throws AccessDeniedException {
+		try {
+			databaseService.deleteImage(user, id);
+			imageManager.deleteImage(user, id);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -230,5 +242,10 @@ public class LogicServiceBean implements LogicService {
 	@Override
 	public boolean checkEmailExist(String email) throws SQLException {
 		return databaseService.checkEmailExist(email);
+	}
+
+	@Override
+	public byte[] getImage(String name) {
+		return imageManager.getImage(name);
 	}
 }
