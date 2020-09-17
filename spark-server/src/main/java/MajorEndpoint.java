@@ -41,7 +41,7 @@ public class MajorEndpoint {
 			} catch (ValidateException ex) {
 				return ex.getMessage();
 			}
-			return null;
+			return "";
 		});
 
 		get("/protected/getUserProfileForLogin/:login", (req, res) -> logicService.getUserProfileForLogin(req.params(":login")));
@@ -61,7 +61,7 @@ public class MajorEndpoint {
 				String from = getUserNameFromToken(req.headers("Authorization"));
 				String to = req.params(":to");
 				logicService.setLike(from, to);
-				return null;
+				return "";
 			} catch (ValidateException ex) {
 				return ex.getMessage();
 			}
@@ -71,18 +71,18 @@ public class MajorEndpoint {
 			String from = getUserNameFromToken(req.headers("Authorization"));
 			String to = req.params(":to");
 			logicService.setComplaint(from, to);
-			return null;
+			return "";
 		});
 
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			logicService.deleteUserProfileForLogin(req.params(":login"));
-			return null;
+			return "";
 		});
 
 		post("/protected/updateUserProfile", (req, res) -> {
 			try {
 				logicService.updateUserProfile(req.body());
-				return null;
+				return "";
 			} catch (ValidateException | AddressException ex) {
 				return ex.getMessage();
 			}
@@ -91,7 +91,7 @@ public class MajorEndpoint {
 		post("/protected/updateCoordinates", (req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			logicService.updateUserCoordinates(req.body(), login);
-			return null;
+			return "";
 		});
 
 		get("/verification/:hash", (req, res) -> {
@@ -113,11 +113,11 @@ public class MajorEndpoint {
 			}
 		});
 
-		//Images
+		//Images todo добавить в логик сервис
 		post("/protected/downloadImage", ((req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			imageManager.saveImage(login, req.bodyAsBytes());
-			return null;
+			return "";
 		}));
 
 		get("/protected/deleteImage/:id", ((req, res) -> {
@@ -127,7 +127,7 @@ public class MajorEndpoint {
 			} catch (AccessDeniedException ex) {
 				res.status(404);
 			}
-			return null;
+			return "";
 		}));
 
 		get("/image/:id", ((request, response) -> {
@@ -138,14 +138,14 @@ public class MajorEndpoint {
 		get("/protected/setAvatar/:imageId", (request, response) -> {
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			logicService.setMainImage(request.params(":imageId"), login);
-			return null;
+			return "";
 		});
 
 		get("/protected/getUserPhotos/:login", (request, response) -> logicService.getUserPhotos(request.params(":login")));
 
 		post("/saveMessage", (req, res) -> {
 			logicService.saveChatMessage(req.body());
-			return null;
+			return "";
 		});
 
 		//Filters

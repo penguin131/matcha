@@ -32,13 +32,13 @@ public class LogicServiceBean implements LogicService {
 		try {
 			List<UserProfileDto> users = databaseService.getAllUsers(login);
 			if (users.size() == 0) {
-				return null;
+				return "";
 			} else {
 				return mapper.writeValueAsString(users);
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 
@@ -65,7 +65,7 @@ public class LogicServiceBean implements LogicService {
 			return mapper.writeValueAsString(databaseService.getUserProfileForLogin(login));
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 
@@ -74,13 +74,13 @@ public class LogicServiceBean implements LogicService {
 		try {
 			List<FriendDto> friendList = databaseService.getAllFriendsForLogin(login);
 			if (friendList.size() == 0) {
-				return null;
+				return "";
 			} else {
 				return mapper.writeValueAsString(friendList);
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 
@@ -149,7 +149,7 @@ public class LogicServiceBean implements LogicService {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 		throw new AccessDeniedException("Invalid login/password");
 	}
@@ -170,7 +170,7 @@ public class LogicServiceBean implements LogicService {
 			return mapper.writeValueAsString(messages);
 		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 
@@ -213,7 +213,7 @@ public class LogicServiceBean implements LogicService {
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return "";
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class LogicServiceBean implements LogicService {
 			return mapper.writeValueAsString(databaseService.getUsersWithFilter(filterDto, login));
 		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 
