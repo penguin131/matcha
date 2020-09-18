@@ -10,20 +10,19 @@ public class UserFilterDto {
 	private Integer rating;
 	private Integer ageMax;
 	private Integer ageMin;
+	private String sortType;
 
-	public UserFilterDto(Integer distance,
-						 String sexPreferences,
-						 String sex,
-						 Integer rating, Integer ageMin) {
+	public UserFilterDto(Integer distance, String sexPreferences, String sex, Integer rating, Integer ageMax, Integer ageMin, String sortType) {
 		this.distance = distance;
 		this.sexPreferences = sexPreferences;
 		this.sex = sex;
 		this.rating = rating;
+		this.ageMax = ageMax;
 		this.ageMin = ageMin;
+		this.sortType = sortType;
 	}
 
 	public UserFilterDto() {
-
 	}
 
 	public Integer getDistance() {
@@ -81,5 +80,13 @@ public class UserFilterDto {
 
 	public void setAgeMin(Integer ageMin) {
 		this.ageMin = ageMin;
+	}
+
+	public String getSortType() {
+		return sortType;
+	}
+
+	public void setSortType(String sortType) {
+		this.sortType = sortType;
 	}
 }
