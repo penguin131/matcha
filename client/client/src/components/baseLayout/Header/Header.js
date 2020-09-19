@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom'
 import css from './Header.module.less'
 
 const Header = ({ data }) => {
-	const { userProfile, userPhotos } = data
-	const mainPhoto = userPhotos.find(photo => photo.main)
+  const { userProfile, userPhotos } = data
+	const mainPhoto = userPhotos.length > 0 ? userPhotos.find(photo => photo.main) : null
 
 	return (
 		<header className={css.headerContainer}>

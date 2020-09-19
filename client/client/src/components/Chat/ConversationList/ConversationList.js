@@ -27,14 +27,14 @@ const ConversationList = ({ data = [], setCurrentChat, isLoading }) => {
   return (
     <div className={css.conversationList}>
       {!isLoading ? (
-        data.map((element, i) => (
+        data.length > 1 ? data.map((element, i) => (
           <Conversation
             key={i}
             index={i}
             data={element}
             setCurrentChat={setCurrentChat}
           />
-        ))
+        )) : 'No chats'
       ) : <Loader/>}
     </div>
   )
