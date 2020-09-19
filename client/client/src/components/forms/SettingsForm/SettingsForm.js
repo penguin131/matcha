@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
+import Loader from '../../Loader/Loader'
 import css from '../authForms.module.less'
 import settingsCss from './SettingsForm.module.less'
 
@@ -128,6 +129,7 @@ const SettingsForm = ({ onSubmit, data, isLoading, geolocation }) => {
                   Save
                 </button>
               </div>
+              {isFormLoading && <div><Loader/></div>}
             </form>
           )}/>
         </>
