@@ -28,6 +28,7 @@ public class UserProfileDto extends BaseUserProfileDto {
     private Boolean hasLike;
     @JsonProperty("has_dislike")
     private Boolean hasDislike;
+    @JsonProperty("tags")
     private List<String> hashTags;
 
     public String getSexPreferences() {
