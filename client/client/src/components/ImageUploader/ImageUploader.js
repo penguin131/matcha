@@ -1,17 +1,23 @@
 import React, {useState} from 'react'
 import ImageUploading from "react-images-uploading"
+import * as services from '../../services/services'
 /* import css from './ImageUploader.module.less' */
+import ImageItem from '../ImageItem/ImageItem'
 
 const ImageUploader = () => {
 
   const [images, setImages] = useState([])
   const maxNumber = 5
   const acceptType = ['jpg', 'png']
-  const maxFileSize = 5 * 2048
+  const maxFileSize = 5 * 1024 * 1024
 
   const onChange = (imageList, addUpdateIndex) => {
-    console.log(imageList[0].data_url)
     setImages(imageList)
+  }
+
+  const uploadImages = (imageList) => {
+    const urlsList = imageList.map(image => image.data_url)
+    services.uploadImages(urlsList)
   }
 
   return (
@@ -23,22 +29,15 @@ const ImageUploader = () => {
                       acceptType={acceptType}
                       maxFileSize={maxFileSize}
                       dataURLKey="data_url"
-      >{({imageList, onImageUpload, onImageRemoveAll, onImageRemove, isDragging, dragProps, errors}) => {
-        console.log(imageList)
+      >{({imageList, onImageUpload, onImageRemove, isDragging, dragProps, errors}) => {
         return (
           <div>
             <button style={isDragging ? {color: 'red'} : null}
                     onClick={onImageUpload}
                     {...dragProps}
             >Click or Drop</button>
-            <button onClick={onImageRemoveAll}>Remove all</button>
             {imageList.map((image, i) => (
-              <div key={i}>
-                <img src={image.data_url} alt='uploading img' width='100'/>
-                <div>
-                  <button onClick={() => onImageRemove(i)}>Remove</button>
-                </div>
-              </div>
+              <ImageItem key={i} dataUrl={image.data_url} onClick={() => onImageRemove(i)}/>
             ))}
             <div>
               {errors.maxNumber && <span>
@@ -51,6 +50,7 @@ const ImageUploader = () => {
                 {`Selected file size exceed ${maxFileSize / 2048} mb`}
               </span>}
             </div>
+            {imageList.length > 1 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
           </div>
         )}}
       </ImageUploading>
