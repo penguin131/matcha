@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
 import Navigation from '../Navigation/Navigation'
 import Aside from '../Aside/Aside'
 import MainPage from '../../../pages/MainPage/MainPage'
@@ -21,7 +20,7 @@ const Main = () => {
   const isAuth = true
   const [isLoading, setIsLoading] = useState(false)
   const [userProfile, setUserProfile] = useState({})
- // const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
+  const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
   const [userPhotos, setUserPhotos] = useState([])
   const user = localStorage.currentUser
 
@@ -32,8 +31,8 @@ const Main = () => {
     Promise.all([
       services.fetchData(setIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
       services.fetchData(setIsLoading, setUserPhotos, 'getUserPhotos', user, source),
-      
     ])
+  
     return () => {
       source.cancel();
     };
@@ -61,9 +60,6 @@ const Main = () => {
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, [])
 
-  useEffect(() => {
-    services.updateProfile()
-  }, )
   return (
     <div className={css.appContainer}>
       <Header data={{userProfile, userPhotos}}/>
@@ -84,7 +80,6 @@ const Main = () => {
           )} 
           <Aside/>
         </main>
-      <Footer/>
     </div>
   )
 }
