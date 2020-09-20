@@ -26,12 +26,14 @@ begin
             update spark_db.t_users_unity set confirmed=false
             where (select user_profile_id from spark_db.t_user_profile where login="from")=postgres.spark_db.t_users_unity.user2_id
             and (select user_profile_id from spark_db.t_user_profile where login="to")=postgres.spark_db.t_users_unity.user1_id;
+            update spark_db.t_user_profile set rating=rating-1 where login="to";
         else if (simple>0 and reverse=0)
         then
 --             Лайк в одну сторону
             delete from spark_db.t_users_unity
             where postgres.spark_db.t_users_unity.user1_id=(select user_profile_id from spark_db.t_user_profile where login="from")
             and postgres.spark_db.t_users_unity.user2_id=(select user_profile_id from spark_db.t_user_profile where login="to");
+            update spark_db.t_user_profile set rating=rating-1 where login="to";
         --     Если еще нет лайков
         else IF simple=0 and reverse=0
         then

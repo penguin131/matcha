@@ -79,7 +79,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                     "select *" +
                     " ,(select id_image from \"spark_db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
                     " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user1_id or user_profile_id=user2_id and t_users_unity.confirmed=true) as has_like" +
-                    " ,(select count(*) from spark_db.t_complaint where user_profile_id=from_user) as has_dislike" +
+                    " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user) as has_dislike" +
                     " from \"spark_db\".t_user_profile where login=?");
             preparedStatement.setString(1, login);
             ResultSet rs = preparedStatement.executeQuery();
@@ -130,8 +130,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             while (rs.next()) {
                 friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getLong("date")));
             }
-            logger.info("result: " + mapper.writeValueAsString(friendList));
-            logger.info("friends count: " + friendList.size());
+            logger.info("getAllFriendsForLogin() result: " + mapper.writeValueAsString(friendList));
         } catch (SQLException | JsonProcessingException ex) {
             logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
             throw ex;
