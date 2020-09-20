@@ -295,13 +295,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     @Override
     public String saveImage(String user, byte[] image) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
-        logger.info("Body: " + new String(image));
+//        logger.info("Body: " + new String(image));
 //        String ss = new String(image);
 //        String[] sss = ss.split("\"");
 //        logger.info("COUNT:" + sss.length);
 
         String[] dataArray = new String(image).split("\"");
-        for (int i = 0; i < dataArray.length; i+= 2) {
+        for (int i = 1; i < dataArray.length; i+= 2) {
             logger.info("IMAGE: " + dataArray[i]);
         }
         try {
