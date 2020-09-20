@@ -1,19 +1,20 @@
 package com.dto;
 
 public class UserPhotoDto {
-    private String imageId;
+    private int imageId;
     private boolean isMain;
+    private String url;
 
-    public UserPhotoDto(String imageId, boolean isMain) {
+    public UserPhotoDto(int imageId, boolean isMain) {
         this.imageId = imageId;
         this.isMain = isMain;
     }
 
-    public String getImageId() {
+    public int getImageId() {
         return imageId;
     }
 
-    public void setImageId(String imageId) {
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
 
@@ -23,5 +24,13 @@ public class UserPhotoDto {
 
     public void setMain(boolean main) {
         isMain = main;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

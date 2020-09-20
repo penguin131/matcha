@@ -361,7 +361,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, user);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                photos.add(new UserPhotoDto(String.valueOf(rs.getInt("id_image")), rs.getBoolean("is_main")));
+                photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main")));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -220,7 +220,7 @@ public class LogicServiceBean implements LogicService {
 		try {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
 			for (UserPhotoDto photo : photos) {
-				photo.setImageId(req.url().substring(0, req.url().indexOf("/", 21)) + "/image/" + photo.getImageId());
+				photo.setUrl(req.url().substring(0, req.url().indexOf("/", 21)) + "/image/" + photo.getImageId());
 			}
  			if (photos.size() > 0) {
 				return mapper.writeValueAsString(photos);
