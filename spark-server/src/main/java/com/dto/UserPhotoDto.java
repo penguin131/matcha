@@ -3,7 +3,13 @@ package com.dto;
 public class UserPhotoDto {
     private int imageId;
     private boolean isMain;
-    private String url;
+    private String data;
+
+    public UserPhotoDto(int imageId, boolean isMain, String data) {
+        this.imageId = imageId;
+        this.isMain = isMain;
+        this.data = data;
+    }
 
     public UserPhotoDto(int imageId, boolean isMain) {
         this.imageId = imageId;
@@ -26,11 +32,11 @@ public class UserPhotoDto {
         isMain = main;
     }
 
-    public String getUrl() {
-        return url;
+    public String getData() {
+        return data;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setData(String data) {
+        this.data = data;
     }
 }

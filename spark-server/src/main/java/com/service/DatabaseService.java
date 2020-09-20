@@ -89,7 +89,7 @@ public interface DatabaseService {
      * @param user Логин, к которому прикрепится картинка
      * @return номер картинки в БД
      */
-    String saveImage(String user) throws SQLException;
+    String saveImage(String user, byte[] image) throws SQLException;
 
     /**
      * Удалит запись о картинке в БД

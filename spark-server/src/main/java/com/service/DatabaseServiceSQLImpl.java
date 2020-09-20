@@ -293,13 +293,14 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public String saveImage(String user) throws SQLException {
+    public String saveImage(String user, byte[] image) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark_db\".t_image (user_id) values" +
                     " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)) returning id_image");
             preparedStatement.setString(1, user);
+            preparedStatement.setString(2, new String(image));
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return resultSet.getString("id_image");
@@ -369,7 +370,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, user);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main")));
+                photos.add(new UserPhotoDto(rs.getInt("id_image"), rs.getBoolean("is_main"), rs.getString("bytes")));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

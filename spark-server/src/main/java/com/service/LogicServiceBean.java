@@ -188,7 +188,7 @@ public class LogicServiceBean implements LogicService {
 
 	public void downloadImage(String login, byte[] image) {
 		try {
-			String imageId = databaseService.saveImage(login);
+			String imageId = databaseService.saveImage(login, image);
 			imageManager.saveImage(login, image, imageId);
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -218,9 +218,6 @@ public class LogicServiceBean implements LogicService {
 	public String getUserPhotos(String user, Request req) {
 		try {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
-			for (UserPhotoDto photo : photos) {
-				photo.setUrl(req.url().substring(0, req.url().indexOf("/", 21)) + "/image/" + photo.getImageId());
-			}
  			if (photos.size() > 0) {
 				return mapper.writeValueAsString(photos);
 			}
