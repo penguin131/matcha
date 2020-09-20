@@ -78,7 +78,8 @@ public class MajorEndpoint {
 
 		post("/protected/updateUserProfile", (req, res) -> {
 			try {
-				logicService.updateUserProfile(req.body());
+				String from = getUserNameFromToken(req.headers("Authorization"));
+				logicService.updateUserProfile(req.body(), from);
 				return "";
 			} catch (ValidateException | AddressException ex) {
 				return ex.getMessage();

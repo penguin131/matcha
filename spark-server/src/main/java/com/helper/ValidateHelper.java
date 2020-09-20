@@ -1,7 +1,7 @@
 package com.helper;
 
 import com.dto.BaseUserProfileDto;
-import com.dto.UserProfileDto;
+import com.dto.InnerProfileDto;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,19 @@ public class ValidateHelper {
         emailAddr.validate();
     }
 
-    public static void validateUserProfile(UserProfileDto userProfileDto) throws ValidateException, AddressException, SQLException, JsonProcessingException {
-        validateBaseUserProfile(userProfileDto);
+    public static void validateUserProfile(InnerProfileDto userProfileDto) throws ValidateException, SQLException, JsonProcessingException {
+        logger.info(String.format("==>  validateUserProfile(%s)", mapper.writeValueAsString(userProfileDto)));
+        if (userProfileDto == null)
+            throw new ValidateException("Null user profile");
+        if (userProfileDto.getLogin() != null &&
+                userProfileDto.getLogin().length() < 5 && userProfileDto.getLogin().length() > 256)
+            throw new ValidateException("Login size must be between 5 and 256");
+        if (service.getUserProfileForLogin(userProfileDto.getLogin()) != null) {
+            throw new ValidateException("Login already exists!");
+        }
+        if (service.checkEmailExist(userProfileDto.getEmail())) {
+            throw new ValidateException("Email is already in use");
+        }
+        logger.info("<==    validateUserProfile(): success");
     }
 }

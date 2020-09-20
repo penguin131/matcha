@@ -8,6 +8,7 @@ import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
+import com.helper.SQLRequestGenerationHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -96,6 +97,17 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         return userProfile;
     }
 
+    private String getUserPassword(String login) throws SQLException {
+        logger.info("getUserPassword() login: " + login);
+        PreparedStatement preparedStatement = connection.prepareStatement("select password from \"spark_db\".t_user_profile where login=?");
+        preparedStatement.setString(1, login);
+        ResultSet rs = preparedStatement.executeQuery();
+        if (rs.next()) {
+            return rs.getString("password");
+        }
+        return null;
+    }
+
     @Override
     public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
         logger.info("getAllFriendsForLogin() login: " + login);
@@ -174,19 +186,15 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    @Override
-    public void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException {
+    @Override//todo asd
+    public void updateUserProfile(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException, IllegalAccessException {
         logger.info("updateUserProfile(): " + mapper.writeValueAsString(userProfileDto));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark_db\".t_user_profile set first_name=?, last_name=?, sex_preferences=?, biography=? where login=?");
-            preparedStatement.setString(1, userProfileDto.getFirstName());
-            preparedStatement.setString(2, userProfileDto.getLastName());
-            preparedStatement.setInt(3, Sex.convertStringToCode(userProfileDto.getSexPreferences()));
-            preparedStatement.setString(4, userProfileDto.getBiography());
-            preparedStatement.setString(5, userProfileDto.getLogin());
+                    SQLRequestGenerationHelper.generateUpdateUserRequest(userProfileDto));
+            SQLRequestGenerationHelper.addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
             preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
+        } catch (SQLException | IllegalAccessException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
             throw ex;
         }
@@ -211,11 +219,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     @Override
     public boolean checkPassword(String login, String password) throws Exception {
         logger.info(String.format("checkPassword() login: %s, password: %s", login, password));
-        UserProfileDto user = getUserProfileForLogin(login);
-        if (user == null) {
+        String dbPassword = getUserPassword(login);
+        if (dbPassword == null) {
             throw new Exception("Invalid login + password");
         }
-        return Password.check(password, user.getPassword());
+        return Password.check(password, dbPassword);
     }
 
     @Override

@@ -53,7 +53,7 @@ public interface DatabaseService {
     /**
      * Обновляет пользовательский профиль
      */
-    void updateUserProfile(UserProfileDto userProfileDto) throws SQLException, JsonProcessingException;
+    void updateUserProfile(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException, IllegalAccessException;
 
     /**
      * Обновляет пользовательский профиль

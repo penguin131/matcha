@@ -8,7 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class UserProfileDto extends BaseUserProfileDto {
+public class UserProfileDto {
+    private String login;
+    private String email;
+    private String sex;
     @JsonProperty("first_name")
     private String firstName;
     @JsonProperty("last_name")
@@ -140,7 +143,6 @@ public class UserProfileDto extends BaseUserProfileDto {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("login"),
-                rs.getString("password"),
                 Sex.convertCodeToString(rs.getInt("sex")),
                 Sex.convertCodeToString(rs.getInt("sex_preferences")),
                 rs.getString("biography"),
@@ -183,7 +185,6 @@ public class UserProfileDto extends BaseUserProfileDto {
     public UserProfileDto(String firstName,
                           String lastName,
                           String login,
-                          String password,
                           String sex,
                           String sexPreferences,
                           String biography,
@@ -200,7 +201,6 @@ public class UserProfileDto extends BaseUserProfileDto {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
-        this.setPassword(password);
         this.setLogin(login);
         this.setEmail(email);
         this.setConfirmed(confirmed);
@@ -229,5 +229,29 @@ public class UserProfileDto extends BaseUserProfileDto {
 
     public void setHashTags(List<String> hashTags) {
         this.hashTags = hashTags;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }

@@ -15,7 +15,6 @@ import com.security.SecurityHelper;
 import spark.Request;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -118,14 +117,14 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public void updateUserProfile(String requestBody) throws ValidateException, AddressException {
+	public void updateUserProfile(String requestBody, String login) throws ValidateException {
 		try {
-			UserProfileDto user = mapper.readValue(requestBody, UserProfileDto.class);
+			InnerProfileDto user = mapper.readValue(requestBody, InnerProfileDto.class);
 			ValidateHelper.validateUserProfile(user);
-			databaseService.updateUserProfile(user);
-		} catch (SQLException | IOException ex) {
+			databaseService.updateUserProfile(user, login);
+		} catch (SQLException | IOException | IllegalAccessException ex) {
 			ex.printStackTrace();
-		} catch (ValidateException | AddressException ex) {
+		} catch (ValidateException ex) {
 			ex.printStackTrace();
 			throw ex;
 		}

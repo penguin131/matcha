@@ -1,8 +1,10 @@
 package com.helper;
 
 import com.dictionary.Sex;
+import com.dto.InnerProfileDto;
 import com.dto.UserFilterDto;
 
+import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -73,5 +75,51 @@ public class SQLRequestGenerationHelper {
 		if (filter.getRating() != null) statement.setInt(counter++, filter.getRating());
 		if (filter.getAgeMax() != null) statement.setInt(counter++, filter.getAgeMax());
 		if (filter.getAgeMin() != null) statement.setInt(counter, filter.getAgeMin());
+	}
+
+	public static String generateUpdateUserRequest(InnerProfileDto userProfile) throws IllegalAccessException {
+		StringBuilder sb = new StringBuilder("update \"spark_db\".t_user_profile");
+		boolean comma = false;
+
+		Field[] fields = userProfile.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			if (field.get(userProfile) != null) {
+				if (!comma) {
+				 	sb.append(" set");
+				 	comma = true;
+				} else {
+					sb.append(",");
+				}
+				sb.append(field.getName()).append("=?");
+			}
+		}
+
+		sb.append(" where login=?");
+		return sb.toString();
+	}
+
+	public static void addValuesToPreparedStatement(PreparedStatement statement, InnerProfileDto userProfile, String login)
+			throws IllegalAccessException, SQLException {
+		Field[] fields = userProfile.getClass().getDeclaredFields();
+		int counter = 1;
+		for (Field field : fields) {
+			field.setAccessible(true);
+			if (field.get(userProfile) != null) {
+				if (field.getType().equals(String.class)) {
+					statement.setString(counter, (String) field.get(userProfile));
+				} else if (field.getType().equals(Integer.class)) {
+					statement.setInt(counter, (Integer) field.get(userProfile));
+				} else if (field.getType().equals(Boolean.class)) {
+					statement.setBoolean(counter, (Boolean) field.get(userProfile));
+				} else if (field.getType().equals(Float.class)) {
+					statement.setFloat(counter, (Float) field.get(userProfile));
+				} else {
+					continue;
+				}
+				counter++;
+			}
+		}
+		statement.setString(counter, login);
 	}
 }
