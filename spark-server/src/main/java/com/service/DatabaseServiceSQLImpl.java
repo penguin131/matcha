@@ -71,7 +71,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
 
     @Override
     public UserProfileDto getUserProfileForLogin(String login, String from) throws SQLException, JsonProcessingException {
-        logger.info("getUserProfileForLogin() login: " + login);
+        logger.info(String.format("getUserProfileForLogin(%s, %s)", login, from));
         UserProfileDto userProfile = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
