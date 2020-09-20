@@ -297,8 +297,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("saveImage(%s)", user));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into \"spark_db\".t_image (user_id) values" +
-                    " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)) returning id_image");
+                    "insert into \"spark_db\".t_image (user_id, bytes) values" +
+                    " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?) returning id_image");
             preparedStatement.setString(1, user);
             preparedStatement.setString(2, new String(image));
             ResultSet resultSet = preparedStatement.executeQuery();

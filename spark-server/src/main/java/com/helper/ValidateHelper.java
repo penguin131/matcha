@@ -45,17 +45,18 @@ public class ValidateHelper {
         emailAddr.validate();
     }
 
-    public static void validateUserProfile(InnerProfileDto userProfileDto) throws ValidateException, SQLException, JsonProcessingException {
+    public static void validateUserProfile(InnerProfileDto userProfileDto)
+            throws ValidateException, SQLException, JsonProcessingException {
         logger.info(String.format("==>  validateUserProfile(%s)", mapper.writeValueAsString(userProfileDto)));
         if (userProfileDto == null)
             throw new ValidateException("Null user profile");
         if (userProfileDto.getLogin() != null &&
                 userProfileDto.getLogin().length() < 5 && userProfileDto.getLogin().length() > 256)
             throw new ValidateException("Login size must be between 5 and 256");
-        if (service.getUserProfileForLogin(userProfileDto.getLogin()) != null) {
+        if (userProfileDto.getLogin() != null && service.getUserProfileForLogin(userProfileDto.getLogin()) != null) {
             throw new ValidateException("Login already exists!");
         }
-        if (service.checkEmailExist(userProfileDto.getEmail())) {
+        if (userProfileDto.getEmail() != null && service.checkEmailExist(userProfileDto.getEmail())) {
             throw new ValidateException("Email is already in use");
         }
         logger.info("<==    validateUserProfile(): success");
