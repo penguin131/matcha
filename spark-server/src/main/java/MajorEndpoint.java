@@ -138,7 +138,7 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		get("/protected/getUserPhotos/:login", (request, response) -> logicService.getUserPhotos(request.params(":login"), request));
+		get("/protected/getUserPhotos/:login", (request, response) -> logicService.getUserPhotos(request.params(":login")));
 
 		post("/saveMessage", (req, res) -> {
 			logicService.saveChatMessage(req.body());
