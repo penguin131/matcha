@@ -50,7 +50,7 @@ const ImageUploader = () => {
                 {`Selected file size exceed ${maxFileSize / 2048} mb`}
               </span>}
             </div>
-            {imageList.length > 1 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
+            {imageList.length > 0 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
           </div>
         )}}
       </ImageUploading>
