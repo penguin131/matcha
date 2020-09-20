@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfileDto {
@@ -139,7 +140,7 @@ public class UserProfileDto {
     }
 
     public static UserProfileDto getInstance(ResultSet rs) throws SQLException {
-        return new UserProfileDto(
+        UserProfileDto user = new UserProfileDto(
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("login"),
@@ -156,7 +157,13 @@ public class UserProfileDto {
                 rs.getFloat("longitude"),
                 rs.getInt("has_like") > 0,
                 rs.getInt("has_dislike") > 0
-                );
+        );
+        List<String> tags = new ArrayList<>();
+        tags.add("music");
+        tags.add("dance");
+        tags.add("drink vodka");
+        user.setHashTags(tags);
+        return user;
     }
 
     @Override
