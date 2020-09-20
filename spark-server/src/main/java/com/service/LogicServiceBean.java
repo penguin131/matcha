@@ -186,12 +186,12 @@ public class LogicServiceBean implements LogicService {
 		}
 	}
 
-	public void downloadImage(String login, byte[] image) {
+	public void downloadImage(String login, byte[] data) {
 		try {
-
-
-			String imageId = databaseService.saveImage(login, image);
-			imageManager.saveImage(login, image, imageId);
+			String[] dataArray = new String(data).split("\"");
+			for (int i = 2; i < dataArray.length; i+= 2) {
+				databaseService.saveImage(login, dataArray[i]);
+			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}

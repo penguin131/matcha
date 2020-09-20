@@ -293,26 +293,15 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public String saveImage(String user, byte[] image) throws SQLException {
+    public void saveImage(String user, String image) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
-//        logger.info("Body: " + new String(image));
-//        String ss = new String(image);
-//        String[] sss = ss.split("\"");
-//        logger.info("COUNT:" + sss.length);
-
-        String[] dataArray = new String(image).split("\"");
-        for (int i = 1; i < dataArray.length; i+= 2) {
-            logger.info("IMAGE: " + dataArray[i]);
-        }
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark_db\".t_image (user_id, bytes) values" +
-                    " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?) returning id_image");
+                    " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?)");
             preparedStatement.setString(1, user);
-            preparedStatement.setString(2, new String(image));
-            ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getString("id_image");
+            preparedStatement.setString(2, image);
+            preparedStatement.executeQuery();
         } catch (SQLException ex) {
             logger.info("saveImage() exception:\n" + ex.getMessage());
             throw ex;
