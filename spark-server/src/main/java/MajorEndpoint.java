@@ -146,9 +146,17 @@ public class MajorEndpoint {
 		});
 
 		//Filters
-		before((request, response) -> logger.info("==> Request start: " + request.url()));
+		before((request, response) -> {
+			if (request.url().contains("/chat")) {
+				logger.info("==> Request start: " + request.url());
+			}
+		});
 
-		afterAfter((request, response) -> logger.info("<== Request end: " + request.url()));
+		afterAfter((request, response) -> {
+			if (request.url().contains("/chat")) {
+				logger.info("<== Request end: " + request.url());
+			}
+		});
 
 		before("/protected/*", (request, response) -> {
 			Claims claims = null;
