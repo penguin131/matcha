@@ -16,6 +16,7 @@ const ProfilePage = ({match}) => {
   const user = match.params.login.substring(1, match.params.login.length)
   const images = userPhotos.map(photo => ({original: photo.data, thumbnail: photo.data})) 
 
+  console.log(userProfile)
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source()

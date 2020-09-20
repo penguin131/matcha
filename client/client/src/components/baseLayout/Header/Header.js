@@ -10,7 +10,7 @@ import css from './Header.module.less'
 const Header = ({ data, isLoading }) => {
   const { userProfile, userPhotos } = data
 	const mainPhoto = userPhotos.length > 0 ? userPhotos.find(photo => photo.main) : null
-console.log(mainPhoto)
+
 	return (
 		<header className={css.headerContainer}>
 			<div className={css.logo}>
