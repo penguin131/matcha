@@ -41,7 +41,10 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		get("/protected/getUserProfileForLogin/:login", (req, res) -> logicService.getUserProfileForLogin(req.params(":login")));
+		get("/protected/getUserProfileForLogin/:login", (req, res) -> {
+			String login = getUserNameFromToken(req.headers("Authorization"));
+			return logicService.getUserProfileForLogin(req.params(":login"), login);
+		});
 
 		get("/protected/getAllFriends", (req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));

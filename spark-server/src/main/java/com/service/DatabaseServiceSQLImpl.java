@@ -3,7 +3,6 @@ package com.service;
 import com.dictionary.MessageType;
 import com.dictionary.Sex;
 import com.dto.*;
-import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,17 +70,21 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException {
+    public UserProfileDto getUserProfileForLogin(String login, String from) throws SQLException, JsonProcessingException {
         logger.info("getUserProfileForLogin() login: " + login);
         UserProfileDto userProfile = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "select *" +
                     " ,(select id_image from \"spark_db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
-                    " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user2_id or user_profile_id=user1_id and t_users_unity.confirmed=true) as has_like" +
-                    " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user) as has_dislike" +
+                    " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)" +
+                            "or user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?) and t_users_unity.confirmed=true) as has_like" +
+                    " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)) as has_dislike" +
                     " from \"spark_db\".t_user_profile where login=?");
-            preparedStatement.setString(1, login);
+            preparedStatement.setString(1, from);
+            preparedStatement.setString(2, from);
+            preparedStatement.setString(3, from);
+            preparedStatement.setString(4, login);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 userProfile = UserProfileDto.getInstance(rs);
@@ -143,7 +146,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("setLike() from: " + from);
         if (StringUtils.equals(from, to))
             throw new ValidateException("User cannot be friends with himself");
-        if (getUserProfileForLogin(to) == null)
+        if (getUserProfileForLogin(to, from) == null)
             throw new ValidateException(String.format("User %s does not exists", to));
         try {
             CallableStatement preparedStatement = connection.prepareCall("{CALL set_like(?,?)}");

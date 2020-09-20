@@ -25,7 +25,7 @@ public interface DatabaseService {
      * @param login login in PathVariable
      * @return UserProfileDto
      */
-    UserProfileDto getUserProfileForLogin(String login) throws SQLException, JsonProcessingException;
+    UserProfileDto getUserProfileForLogin(String login, String from) throws SQLException, JsonProcessingException;
 
     /**
      * Вернет всех друзей с последним сообщением

@@ -43,14 +43,14 @@ public class DatabaseServiceTest {
 		createUserProfile(login2, "2", 0);
 		createUserProfile(login3, "3", 0);
 		service.setLike(login1, login2);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(1));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(1));
 		service.setLike(login1, login2);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(1));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(1));
 		service.setLike(login2, login1);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(1));
-		assertEquals(service.getUserProfileForLogin(login1).getRating(), new Integer(1));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(1));
+		assertEquals(service.getUserProfileForLogin(login1, null).getRating(), new Integer(1));
 		service.setLike(login3, login2);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(2));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(2));
 	}
 
 	@Test
@@ -60,12 +60,12 @@ public class DatabaseServiceTest {
 		createUserProfile(login1, "1", 1);
 		createUserProfile(login2, "2", 0);
 		service.setComplaint(login1, login2);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(-5));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(-5));
 		service.setComplaint(login1, login2);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(-5));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(-5));
 		service.setComplaint(login2, login1);
-		assertEquals(service.getUserProfileForLogin(login2).getRating(), new Integer(-5));
-		assertEquals(service.getUserProfileForLogin(login1).getRating(), new Integer(-5));
+		assertEquals(service.getUserProfileForLogin(login2, null).getRating(), new Integer(-5));
+		assertEquals(service.getUserProfileForLogin(login1, null).getRating(), new Integer(-5));
 	}
 
 	private void createUserProfile(String login,

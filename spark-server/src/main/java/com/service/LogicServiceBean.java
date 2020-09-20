@@ -63,9 +63,9 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public String getUserProfileForLogin(String login) {
+	public String getUserProfileForLogin(String login, String from) {
 		try {
-			return mapper.writeValueAsString(databaseService.getUserProfileForLogin(login));
+			return mapper.writeValueAsString(databaseService.getUserProfileForLogin(login, from));
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
 			return "";

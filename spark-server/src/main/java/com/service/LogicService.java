@@ -22,7 +22,7 @@ public interface LogicService {
 	/**
 	 * Вернет первый профиль юзера по login
 	 */
-	String getUserProfileForLogin(String login);
+	String getUserProfileForLogin(String login, String from);
 
 	/**
 	 * Вернет всех друзей с последним сообщением

@@ -29,7 +29,7 @@ public class ValidateHelper {
         if (StringUtils.isEmpty(baseUserProfile.getPassword()))
             throw new ValidateException("Password cannot be empty");
         validateEmail(baseUserProfile.getEmail());
-        if (service.getUserProfileForLogin(baseUserProfile.getLogin()) != null) {
+        if (service.getUserProfileForLogin(baseUserProfile.getLogin(), null) != null) {
             throw new ValidateException("Login already exists!");
         }
         if (service.checkEmailExist(baseUserProfile.getEmail())) {
@@ -53,7 +53,7 @@ public class ValidateHelper {
         if (userProfileDto.getLogin() != null &&
                 userProfileDto.getLogin().length() < 5 && userProfileDto.getLogin().length() > 256)
             throw new ValidateException("Login size must be between 5 and 256");
-        if (userProfileDto.getLogin() != null && service.getUserProfileForLogin(userProfileDto.getLogin()) != null) {
+        if (userProfileDto.getLogin() != null && service.getUserProfileForLogin(userProfileDto.getLogin(), null) != null) {
             throw new ValidateException("Login already exists!");
         }
         if (userProfileDto.getEmail() != null && service.checkEmailExist(userProfileDto.getEmail())) {
