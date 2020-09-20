@@ -202,7 +202,6 @@ public class LogicServiceBean implements LogicService {
 	public void deleteImage(String user, String id) throws AccessDeniedException {
 		try {
 			databaseService.deleteImage(user, id);
-			imageManager.deleteImage(user, id);
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
