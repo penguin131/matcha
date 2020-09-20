@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Header from '../Header/Header'
 import Navigation from '../Navigation/Navigation'
 import Aside from '../Aside/Aside'
@@ -11,12 +11,9 @@ import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import * as services from '../../../services/services'
 import axios from 'axios'
-/* import { AuthContext } from '../../context/AuthContext' */
 import css from './Main.module.css'
 
-const Main = () => {
-  /* const { isAuth } = useContext(AuthContext) */
-  const isAuth = true
+const Main = ({isAuth, setIsAuth}) => {
   const [isLoading, setIsLoading] = useState(false)
   const [userProfile, setUserProfile] = useState({})
   const [userPhotos, setUserPhotos] = useState([])
@@ -60,7 +57,7 @@ const Main = () => {
 
   return (
     <div className={css.appContainer}>
-      <Header data={{userProfile, userPhotos}} isLoading={isLoading}/>
+      <Header data={{userProfile, userPhotos}} isLoading={isLoading} setIsAuth={setIsAuth}/>
         <main className={css.mainContainer}>
           <Navigation/>
             <Switch>

@@ -1,9 +1,10 @@
 import React from 'react'
-/* import { WithContext as ReactTags } from 'react-tag-input'; */
+import Chip from '@material-ui/core/Chip';
 
 const TagsInput = () => {
   return (
     <>
+    <Chip variant="outlined" size="small" label="Basic" />
     </>
   )
 }
