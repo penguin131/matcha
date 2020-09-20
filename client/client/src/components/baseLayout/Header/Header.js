@@ -10,7 +10,7 @@ import css from './Header.module.less'
 const Header = ({ data, isLoading }) => {
   const { userProfile, userPhotos } = data
 	const mainPhoto = userPhotos.length > 0 ? userPhotos.find(photo => photo.main) : null
-
+console.log(mainPhoto)
 	return (
 		<header className={css.headerContainer}>
 			<div className={css.logo}>
@@ -26,7 +26,7 @@ const Header = ({ data, isLoading }) => {
 						<Link to='/settings'>
 							<img	className={css.userAva}
 										alt=""
-										src={mainPhoto?.imageId ? `http://${ip}/image/${mainPhoto?.imageId}` : defaultAva}
+										src={mainPhoto ? mainPhoto.data : defaultAva}
 							/>
 						</Link>
 					</div>

@@ -4,7 +4,7 @@ import * as services from '../../services/services'
 /* import css from './ImageUploader.module.less' */
 import ImageItem from '../ImageItem/ImageItem'
 
-const ImageUploader = () => {
+const ImageUploader = ({imgsCount}) => {
 
   const [images, setImages] = useState([])
   const maxNumber = 5
@@ -30,6 +30,8 @@ const ImageUploader = () => {
                       maxFileSize={maxFileSize}
                       dataURLKey="data_url"
       >{({imageList, onImageUpload, onImageRemove, isDragging, dragProps, errors}) => {
+        const count = (imageList.length + imgsCount) > maxNumber
+
         return (
           <div>
             <button style={isDragging ? {color: 'red'} : null}
@@ -37,7 +39,11 @@ const ImageUploader = () => {
                     {...dragProps}
             >Click or Drop</button>
             {imageList.map((image, i) => (
-              <ImageItem key={i} dataUrl={image.data_url} onClick={() => onImageRemove(i)}/>
+              <ImageItem
+                key={i}
+                dataUrl={image.data_url}
+                onClick={() => onImageRemove(i)}
+              />
             ))}
             <div>
               {errors.maxNumber && <span>
@@ -49,8 +55,11 @@ const ImageUploader = () => {
               {errors.maxFileSize && <span>
                 {`Selected file size exceed ${maxFileSize / 3145728} mb`}
               </span>}
+              {count && <span>
+                {`Can store maximum ${maxNumber} images`}
+              </span>}
             </div>
-            {imageList.length > 0 && imageList.length <= 5 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
+            {imageList.length > 0 && imageList.length + imgsCount <= 5 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
           </div>
         )}}
       </ImageUploading>

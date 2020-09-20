@@ -18,9 +18,17 @@ const SettingsPage = ({data}) => {
           {`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}
         </div>
         <div className={css.imagesBlock}>
-          {userPhotos.map((photo, i) => <ImageItem key={i} dataUrl={photo.data} onClick={() => services.deleteImage(photo.imageId)}/>)}
+          {userPhotos.map((photo, i) => (
+            <ImageItem
+              key={i}
+              dataUrl={photo.data}
+              onClick={() => services.deleteImage(photo.imageId)}
+              withMainSelect
+              imageId={photo.imageId}
+            />)
+          )}
         </div>
-        <ImageUploader/>
+        <ImageUploader imgsCount={userPhotos.length}/>
         <SettingsForm
           onSubmit={services.updateProfile}
           data={userProfile}

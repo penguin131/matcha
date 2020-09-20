@@ -41,10 +41,14 @@ const ProfilePage = ({match}) => {
           <div>sex: {sex}</div>
           <div className={css.userInfo}>{`${biography || '-'}`}</div>
           <div className={css.likePanel}>
-            <div  className={`${css.likeElement} ${css.like}`}
-                  onClick={() => services.setLikeDislike(user, 'setLike')}><LikeLogo/></div>
-            <div  className={`${css.likeElement} ${css.dislike}`}
-                  onClick={() => services.setLikeDislike(user, 'setComplaint')}><DislikeLogo/></div>
+            <div  className={`${css.likeElement} ${has_like ? css.activeLike : css.like}`}
+                  onClick={() => (
+                    has_like ? () => {} : services.setLikeDislike(user, 'setLike'))
+                  }><LikeLogo/></div>
+            <div  className={`${css.likeElement} ${has_dislike ? css.activeDislike : css.dislike}`}
+                  onClick={() => (
+                    has_dislike ? () => {} : services.setLikeDislike(user, 'setComplaint')
+                  )}><DislikeLogo/></div>
           </div>
         </> }
       </div>

@@ -144,3 +144,15 @@ export const deleteImage = async (id) => {
     console.log(e)
   }
 }
+
+export const setAvatar = async (id) => {
+  try {
+    await axios.get(`${url}protected/setAvatar/${id}`, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    })
+  } catch(e) {
+    console.log(e)
+  }
+}
