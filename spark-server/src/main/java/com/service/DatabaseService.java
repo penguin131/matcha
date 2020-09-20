@@ -32,7 +32,7 @@ public interface DatabaseService {
      * @param login login
      * @return List<FriendDto>
      */
-    List<FriendDto> getAllFriendsForLogin(String login) throws SQLException;
+    List<FriendDto> getAllFriendsForLogin(String login) throws SQLException, JsonProcessingException;
 
     /**
      * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.

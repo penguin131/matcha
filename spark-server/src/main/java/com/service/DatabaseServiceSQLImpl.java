@@ -109,7 +109,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException {
+    public List<FriendDto> getAllFriendsForLogin(String login) throws SQLException, JsonProcessingException {
         logger.info("getAllFriendsForLogin() login: " + login);
         List<FriendDto> friendList = new ArrayList<>();
         try {
@@ -130,8 +130,9 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             while (rs.next()) {
                 friendList.add(new FriendDto(rs.getString("login"), rs.getString("text"), rs.getLong("date")));
             }
+            logger.info("result: " + mapper.writeValueAsString(friendList));
             logger.info("friends count: " + friendList.size());
-        } catch (SQLException ex) {
+        } catch (SQLException | JsonProcessingException ex) {
             logger.info("getAllFriendsForLogin() exception:\n" + ex.getMessage());
             throw ex;
         }
