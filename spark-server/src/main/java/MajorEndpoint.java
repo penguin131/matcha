@@ -147,13 +147,13 @@ public class MajorEndpoint {
 
 		//Filters
 		before((request, response) -> {
-			if (request.url().contains("/chat")) {
+			if (!request.url().contains("/chat")) {
 				logger.info("==> Request start: " + request.url());
 			}
 		});
 
 		afterAfter((request, response) -> {
-			if (request.url().contains("/chat")) {
+			if (!request.url().contains("/chat")) {
 				logger.info("<== Request end: " + request.url());
 			}
 		});
