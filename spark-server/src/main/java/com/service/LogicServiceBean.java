@@ -188,6 +188,8 @@ public class LogicServiceBean implements LogicService {
 
 	public void downloadImage(String login, byte[] image) {
 		try {
+
+
 			String imageId = databaseService.saveImage(login, image);
 			imageManager.saveImage(login, image, imageId);
 		} catch (SQLException ex) {
