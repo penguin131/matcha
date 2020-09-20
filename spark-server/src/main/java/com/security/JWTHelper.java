@@ -67,7 +67,6 @@ public class JWTHelper {
     }
 
     public static Claims decodeJWT(String jwt) throws Exception {
-        logger.info("decodeJWT() jwt string: " + jwt);
         if (jwt == null) {
             throw new Exception("jwt string is null.");
         }
