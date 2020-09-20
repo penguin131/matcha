@@ -14,8 +14,8 @@ create table t_user_profile
     sex             integer                       not null,
     sex_preferences integer,
     confirmed_token varchar(40),
-    location_1      numeric(25, 15) default 0.0,
-    location_2      numeric(25, 15) default 0.0,
+    latitude      numeric(25, 15) default 0.0,
+    longitude      numeric(25, 15) default 0.0,
     rating          integer         default 0
 );
 

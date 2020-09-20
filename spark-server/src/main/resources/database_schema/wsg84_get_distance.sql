@@ -1,10 +1,10 @@
 with CTE as (
-    select user_profile_id, location_1, location_2 from "spark_db".t_user_profile where login='smight'
+    select user_profile_id, latitude, longitude from "spark_db".t_user_profile where login='smight'
 )
    , CTE2 as (
     select
         user_profile_id
-         ,wsg84_get_distance( (select CTE.location_1 from CTE limit 1), (select CTE.location_2 from CTE limit 1), location_1, location_2) as distance
+         ,wsg84_get_distance( (select CTE.latitude from CTE limit 1), (select CTE.longitude from CTE limit 1), latitude, longitude) as distance
     from spark_db.t_user_profile
 )
 select *

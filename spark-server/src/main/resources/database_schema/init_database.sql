@@ -182,8 +182,8 @@ CREATE TABLE spark_db.t_user_profile (
     sex integer NOT NULL,
     sex_preferences integer,
     confirmed_token character varying(40),
-    location_1 numeric(25,15) DEFAULT 0.0,
-    location_2 numeric(25,15) DEFAULT 0.0,
+    latitude numeric(25,15) DEFAULT 0.0,
+    longitude numeric(25,15) DEFAULT 0.0,
     rating integer DEFAULT 0,
     age integer
 );
@@ -313,7 +313,7 @@ COPY spark_db.t_message (id_message, text, date, "from", "to") FROM stdin;
 -- Data for Name: t_user_profile; Type: TABLE DATA; Schema: spark_db; Owner: sammy
 --
 
-COPY spark_db.t_user_profile (user_profile_id, login, password, email, first_name, last_name, confirmed, biography, sex, sex_preferences, confirmed_token, location_1, location_2, rating, age) FROM stdin;
+COPY spark_db.t_user_profile (user_profile_id, login, password, email, first_name, last_name, confirmed, biography, sex, sex_preferences, confirmed_token, latitude, longitude, rating, age) FROM stdin;
 562	1231213	Tv909unPLrdcI3trt0m5G2+xxeh0PlYymvIM8YPYTVY=$oumbvn31Z3Zg8Xkqd3SC0X7PtZbbncPurjFF0M4w93A=	zininlol1231231@rambler.ru	\N	\N	f	\N	-1	\N	QSDqith1nKVA85QjioI9nkPMcahmN682LovhuQYj	0.000000000000000	0.000000000000000	0	\N
 58	﻿Ace	123	sena@price.io	\N	\N	f	\N	0	\N	\N	55.870900000000000	49.351200000000000	6	\N
 59	Agent	123	youlanda@pouros.biz	\N	\N	f	\N	0	\N	\N	55.839200000000000	49.188100000000000	17	\N

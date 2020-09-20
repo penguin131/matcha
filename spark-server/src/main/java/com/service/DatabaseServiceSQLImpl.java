@@ -205,7 +205,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info(String.format("updateUserCoordinates(%s, %s): ", mapper.writeValueAsString(coordinates), login));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "update \"spark_db\".t_user_profile set location_1=?, location_2=? where login=?");
+                    "update \"spark_db\".t_user_profile set latitude=?, longitude=? where login=?");
             preparedStatement.setFloat(1, coordinates.getLatitude());
             preparedStatement.setFloat(2, coordinates.getLongitude());
             preparedStatement.setString(3, login);

@@ -12,12 +12,12 @@ public class SQLRequestGenerationHelper {
 
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
 		StringBuilder sb = new StringBuilder("with CTE as (\n" +
-				"    select user_profile_id, location_1, location_2 from \"spark_db\".t_user_profile where login='" + login + "'\n" +
+				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login='" + login + "'\n" +
 				"    )\n" +
 				"   , CTE2 as (\n" +
 				"    select\n" +
 				"         user_profile_id\n" +
-				"         ,wsg84_get_distance( (select CTE.location_1 from CTE limit 1), (select CTE.location_2 from CTE limit 1), location_1, location_2) as distance\n" +
+				"         ,wsg84_get_distance( (select CTE.latitude from CTE limit 1), (select CTE.longitude from CTE limit 1), latitude, longitude) as distance\n" +
 				"    from spark_db.t_user_profile\n" +
 				")\n" +
 				"select *\n" +
@@ -86,7 +86,7 @@ public class SQLRequestGenerationHelper {
 			field.setAccessible(true);
 			if (field.get(userProfile) != null) {
 				if (!comma) {
-				 	sb.append(" set");
+				 	sb.append(" set ");
 				 	comma = true;
 				} else {
 					sb.append(",");

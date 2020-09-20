@@ -152,8 +152,8 @@ public class UserProfileDto {
                 rs.getInt("photo"),
                 rs.getInt("rating"),
                 rs.getInt("age"),
-                rs.getFloat("location_1"),
-                rs.getFloat("location_2"),
+                rs.getFloat("latitude"),
+                rs.getFloat("longitude"),
                 rs.getInt("has_like") > 0,
                 rs.getInt("has_dislike") > 0
                 );
