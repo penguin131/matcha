@@ -198,10 +198,15 @@ public class LogicServiceBean implements LogicService {
 		}
 	}
 
+	//Не дает удалить чужие фотки
 	@Override
-	public void deleteImage(String user, String id) throws AccessDeniedException {
+	public void deleteImage(String user, String id) {
 		try {
-			databaseService.deleteImage(user, id);
+			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
+			int intId = Integer.parseInt(id);
+			if (photos != null && photos.stream().anyMatch(image -> image.getImageId() == intId)) {
+				databaseService.deleteImage(id);
+			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -217,7 +222,7 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public String getUserPhotos(String user, Request req) {
+	public String getUserPhotos(String user) {
 		try {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
  			if (photos.size() > 0) {

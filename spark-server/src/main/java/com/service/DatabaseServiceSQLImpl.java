@@ -309,24 +309,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void deleteImage(String user, String id) throws SQLException, AccessDeniedException {
-        logger.info(String.format("deleteImage(%s, %s)", id, user));
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "select (select login from \"spark_db\".t_user_profile where user_profile_id=user_id limit 1) as user" +
-                    " from \"spark_db\".t_image where id_image=?");
-            preparedStatement.setString(1, user);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (user.equals(resultSet.getString("id_image")))
-                throw new AccessDeniedException("this photo does not belong to the current user!");
-            deleteImage(id);
-        } catch (SQLException ex) {
-            logger.info("deleteImage() exception:\n" + ex.getMessage());
-            throw ex;
-        }
-    }
-
-    private void deleteImage(String id) throws SQLException {
+    public void deleteImage(String id) throws SQLException {
         logger.info(String.format("deleteImage(%s)", id));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(

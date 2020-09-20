@@ -104,7 +104,7 @@ public interface LogicService {
 	 * @param user Логин пользователя
 	 * @return Список всех картинок одного пользователя
 	 */
-	String getUserPhotos(String user, Request req);
+	String getUserPhotos(String user);
 
 	/**
 	 * Поиск пользователей по фильтру, исключая текущего юзера

@@ -92,11 +92,8 @@ public interface DatabaseService {
 
     /**
      * Удалит запись о картинке в БД
-     * @param user логин пользователя
-     * @param id ID картинки
-     * @throws AccessDeniedException Нельзя удалять чужие картинки
      */
-    void deleteImage(String user, String id) throws SQLException, AccessDeniedException;
+    void deleteImage(String id) throws SQLException;
 
     /**
      * Отметит картинку как аватарку
