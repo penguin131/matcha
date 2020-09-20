@@ -295,6 +295,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     @Override
     public String saveImage(String user, byte[] image) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
+        logger.info("Body: " + new String(image));
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "insert into \"spark_db\".t_image (user_id, bytes) values" +
