@@ -301,7 +301,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                     " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?)");
             preparedStatement.setString(1, user);
             preparedStatement.setString(2, image);
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
         } catch (SQLException ex) {
             logger.info("saveImage() exception:\n" + ex.getMessage());
             throw ex;
