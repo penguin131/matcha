@@ -216,10 +216,13 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public String getUserPhotos(String user) {
+	public String getUserPhotos(String user, Request req) {
 		try {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
-			if (photos.size() > 0) {
+			for (UserPhotoDto photo : photos) {
+				photo.setImageId(req.url().substring(0, req.url().indexOf("/", 21) + 1) + photo.getImageId());
+			}
+ 			if (photos.size() > 0) {
 				return mapper.writeValueAsString(photos);
 			}
 		} catch (SQLException | JsonProcessingException ex) {

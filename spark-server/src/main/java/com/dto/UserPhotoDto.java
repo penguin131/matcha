@@ -1,19 +1,19 @@
 package com.dto;
 
 public class UserPhotoDto {
-    private int imageId;
+    private String imageId;
     private boolean isMain;
 
-    public UserPhotoDto(int imageId, boolean isMain) {
+    public UserPhotoDto(String imageId, boolean isMain) {
         this.imageId = imageId;
         this.isMain = isMain;
     }
 
-    public int getImageId() {
+    public String getImageId() {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 
