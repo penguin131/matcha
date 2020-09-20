@@ -331,8 +331,10 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                     " where user_id=(select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1)");
             preparedStatement.setString(1, userLogin);
             preparedStatement.executeUpdate();
-            preparedStatement = connection.prepareStatement("update \"spark_db\".t_image set is_main=true where id_image=?");
+            preparedStatement = connection.prepareStatement("update \"spark_db\".t_image set is_main=true where id_image=?" +
+                    " and user_id=(select user_profile_id from spark_db.t_user_profile where login=?)");
             preparedStatement.setInt(1, Integer.parseInt(imageId));
+            preparedStatement.setString(2, userLogin);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             logger.info("setMainImage() exception:\n" + ex.getMessage());
