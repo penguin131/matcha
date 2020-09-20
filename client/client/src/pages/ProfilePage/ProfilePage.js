@@ -10,39 +10,27 @@ import "react-image-gallery/styles/css/image-gallery.css";
 
 const ProfilePage = ({match}) => {
   const [userProfile, setUserProfile] = useState({})
-  const [profileIsLoading, setProfileIsLiading] = useState(false)
-  const [imagesIsLoading, setImagesIsLiading] = useState(false)
+  const [profileIsLoading, setProfileIsLoading] = useState(false)
+  const [imagesIsLoading, setImagesIsLoading] = useState(false)
   const [userPhotos, setUserPhotos] = useState([])
   const user = match.params.login.substring(1, match.params.login.length)
-   
-const images = [
-  {
-    original: 'https://picsum.photos/id/1018/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1018/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1015/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1015/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1019/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1019/250/150/',
-  },
-];
+  const images = userPhotos.map(photo => ({original: photo.data, thumbnail: photo.data})) 
+
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source()
 
     Promise.all([
-      services.fetchData(setProfileIsLiading, setUserProfile, 'getUserProfileForLogin', user, source),
-      services.fetchData(setImagesIsLiading, setUserPhotos, 'getUserPhotos', user, source)
+      services.fetchData(setProfileIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
+      services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', user, source)
     ])
+
     return () => {
       source.cancel();
     };
   }, [user])
 
-  const {first_name, last_name, login, biography, rating, sex} = userProfile
+  const {first_name, last_name, login, biography, rating, sex, has_like, has_dislike} = userProfile
 
   return (
     <div className={css.mainSectionContainer}>

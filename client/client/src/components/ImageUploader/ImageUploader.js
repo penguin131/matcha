@@ -9,7 +9,7 @@ const ImageUploader = () => {
   const [images, setImages] = useState([])
   const maxNumber = 5
   const acceptType = ['jpg', 'png']
-  const maxFileSize = 5 * 1024 * 1024
+  const maxFileSize = 3145728
 
   const onChange = (imageList, addUpdateIndex) => {
     setImages(imageList)
@@ -47,10 +47,10 @@ const ImageUploader = () => {
                 {`Your selected file type is not allow ${acceptType.join(', ')}`}
               </span>}
               {errors.maxFileSize && <span>
-                {`Selected file size exceed ${maxFileSize / 2048} mb`}
+                {`Selected file size exceed ${maxFileSize / 3145728} mb`}
               </span>}
             </div>
-            {imageList.length > 0 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
+            {imageList.length > 0 && imageList.length <= 5 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
           </div>
         )}}
       </ImageUploading>

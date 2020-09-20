@@ -8,12 +8,7 @@ import * as services from '../../services/services'
 
 const SettingsPage = ({data}) => {
   const { userProfile = {}, userPhotos = [], isLoading = false } = data
-  
-  const {
-    first_name,
-    last_name,
-    login,
-  } = userProfile;
+  const { first_name, last_name, login } = userProfile;
 
   return (
     <div className={css.settingsContainer}>
@@ -22,7 +17,9 @@ const SettingsPage = ({data}) => {
         <div className={css.userName}>
           {`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}
         </div>
-        {userPhotos.map((photo, i) => <ImageItem key={i} dataUrl={photo.url} onClick={() => services.deleteImage(photo.id)}/>)}
+        <div className={css.imagesBlock}>
+          {userPhotos.map((photo, i) => <ImageItem key={i} dataUrl={photo.data} onClick={() => services.deleteImage(photo.imageId)}/>)}
+        </div>
         <ImageUploader/>
         <SettingsForm
           onSubmit={services.updateProfile}

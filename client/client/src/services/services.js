@@ -124,7 +124,8 @@ export const uploadImages = async (values, setIsLoading = () => {}) => {
   try {
     await axios.post(`${url}/protected/downloadImage`, values, {
       headers: {
-        'Authorization': `${token}`
+        'Authorization': `${token}`,
+        'Content-Type': 'application/upload',
       }
     })
   } catch(e) {
@@ -134,7 +135,7 @@ export const uploadImages = async (values, setIsLoading = () => {}) => {
 
 export const deleteImage = async (id) => {
   try {
-    await axios.get(`${url}protected/deleteImage${id}`, {
+    await axios.get(`${url}protected/deleteImage/${id}`, {
       headers: {
         'Authorization': `${token}`
       }
