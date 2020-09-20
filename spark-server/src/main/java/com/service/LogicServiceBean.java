@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.security.JWTHelper.createJWT;
@@ -222,6 +223,8 @@ public class LogicServiceBean implements LogicService {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
  			if (photos.size() > 0) {
 				return mapper.writeValueAsString(photos);
+			} else {
+				return mapper.writeValueAsString(new ArrayList<>());
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
