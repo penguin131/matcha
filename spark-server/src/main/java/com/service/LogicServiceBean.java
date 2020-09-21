@@ -121,7 +121,7 @@ public class LogicServiceBean implements LogicService {
 	public void updateUserProfile(String requestBody, String login) throws ValidateException {
 		try {
 			InnerProfileDto user = mapper.readValue(requestBody, InnerProfileDto.class);
-			if (user.getTags().size() > 10) {
+			if (user.getTags() != null && user.getTags().size() > 10) {
 				throw new ValidateException("To many tags");
 			}
 			ValidateHelper.validateUserProfile(user);
