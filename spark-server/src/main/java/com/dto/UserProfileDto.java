@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserProfileDto {
     private String login;
@@ -21,8 +21,6 @@ public class UserProfileDto {
     private String biography;
     @JsonProperty("sex_preferences")
     private String sexPreferences;
-    @JsonProperty("confirmed_token")
-    private String confirmedToken;
     private Float latitude;
     private Float longitude;
     private Integer photo;
@@ -33,7 +31,7 @@ public class UserProfileDto {
     @JsonProperty("has_dislike")
     private Boolean hasDislike;
     @JsonProperty("tags")
-    private List<String> hashTags;
+    private Set<String> tags;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -73,14 +71,6 @@ public class UserProfileDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getConfirmedToken() {
-        return confirmedToken;
-    }
-
-    public void setConfirmedToken(String confirmedToken) {
-        this.confirmedToken = confirmedToken;
     }
 
     public Integer getPhoto() {
@@ -149,7 +139,6 @@ public class UserProfileDto {
                 rs.getString("biography"),
                 rs.getString("email"),
                 rs.getBoolean("confirmed"),
-                rs.getString("confirmed_token"),
                 rs.getInt("photo"),
                 rs.getInt("rating"),
                 rs.getInt("age"),
@@ -158,11 +147,15 @@ public class UserProfileDto {
                 rs.getInt("has_like") > 0,
                 rs.getInt("has_dislike") > 0
         );
-        List<String> tags = new ArrayList<>();
-        tags.add("music");
-        tags.add("dance");
-        tags.add("drink vodka");
-        user.setHashTags(tags);
+        Set<String> tags = new HashSet<>();
+        String arrayString = rs.getString("tags");
+        if (arrayString != null) {
+            String[] splitedString = arrayString.split("\"");
+            for (int i = 1; i < splitedString.length; i+=2) {
+                tags.add(splitedString[i]);
+            }
+        }
+        user.setTags(tags);
         return user;
     }
 
@@ -176,7 +169,6 @@ public class UserProfileDto {
                 StringUtils.equals(lastName, other.getLastName()) &&
                 StringUtils.equals(biography, other.getBiography()) &&
                 StringUtils.equals(sexPreferences, other.getSexPreferences()) &&
-                StringUtils.equals(confirmedToken, other.getConfirmedToken()) &&
                 integerEquals(photo, other.getPhoto()) &&
                 integerEquals(rating, other.getRating()) &&
                 integerEquals(age, other.getAge());
@@ -197,7 +189,6 @@ public class UserProfileDto {
                           String biography,
                           String email,
                           Boolean confirmed,
-                          String confirmedToken,
                           Integer photo,
                           Integer rating,
                           Integer age,
@@ -213,7 +204,6 @@ public class UserProfileDto {
         this.setConfirmed(confirmed);
         this.setFirstName(firstName);
         this.setLastName(lastName);
-        this.setConfirmedToken(confirmedToken);
         this.photo = photo;
         this.rating = rating;
         this.age = age;
@@ -230,12 +220,12 @@ public class UserProfileDto {
         confirmed = false;
     }
 
-    public List<String> getHashTags() {
-        return hashTags;
+    public Set<String> getTags() {
+        return tags;
     }
 
-    public void setHashTags(List<String> hashTags) {
-        this.hashTags = hashTags;
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
     public String getLogin() {

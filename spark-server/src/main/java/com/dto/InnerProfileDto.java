@@ -2,6 +2,9 @@ package com.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.lang.reflect.Field;
+import java.util.Set;
+
 public class InnerProfileDto {
 	private String login;
 	private String email;
@@ -15,6 +18,7 @@ public class InnerProfileDto {
 	private Float latitude;
 	private Float longitude;
 	private Integer age;
+	private Set<String> tags;
 
 	public String getLogin() {
 		return login;
@@ -86,5 +90,24 @@ public class InnerProfileDto {
 
 	public void setAge(Integer age) {
 		this.age = age;
+	}
+
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+
+	public boolean hasFields() throws IllegalAccessException {
+		Class<?> thisClass = this.getClass();
+		for (Field field : thisClass.getDeclaredFields()) {
+			field.setAccessible(true);
+			if (field.get(this) != null && !"tags".equals(field.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

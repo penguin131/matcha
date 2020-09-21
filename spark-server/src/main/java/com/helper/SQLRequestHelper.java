@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SQLRequestGenerationHelper {
+public class SQLRequestHelper {
 
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
 		StringBuilder sb = new StringBuilder("with CTE as (\n" +
@@ -84,6 +84,9 @@ public class SQLRequestGenerationHelper {
 		Field[] fields = userProfile.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			field.setAccessible(true);
+			if ("tags".equals(field.getName())) {
+				continue;
+			}
 			if (field.get(userProfile) != null) {
 				if (!comma) {
 				 	sb.append(" set ");
@@ -121,5 +124,40 @@ public class SQLRequestGenerationHelper {
 			}
 		}
 		statement.setString(counter, login);
+	}
+
+	public static String generateInsertTagsRequest(InnerProfileDto profile) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("delete from spark_db.t_tag where user_id=(select user_profile_id from spark_db.t_user_profile where login=?);");
+		if (profile.getTags().size() > 0) {
+			sb.append("with CTE as (\n" +
+					"    select user_profile_id from spark_db.t_user_profile where login=?\n" +
+					"    )\n" +
+					"insert into spark_db.t_tag (name, user_id)\n" +
+					"values ");
+		}
+		boolean first = true;
+		for (String ignored : profile.getTags()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(" ,");
+			}
+			sb.append("(?, (select user_profile_id from CTE))");
+		}
+		return sb.toString();
+	}
+
+	public static void addValuesToPreparedStatementTag(PreparedStatement statement, InnerProfileDto profile, String login)
+			throws SQLException {
+		statement.setString(1, login);
+		if (profile.getTags().size() > 0) {
+			statement.setString(2, login);
+		}
+		int counter = 3;
+		for (String tag : profile.getTags()) {
+			statement.setString(counter, tag);
+			counter++;
+		}
 	}
 }

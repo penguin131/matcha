@@ -8,7 +8,7 @@ import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class SQLRequestGenerationHelperTest {
+public class SQLRequestHelperTest {
 
 	private final String startText1 = "with CTE as (\n" +
 			"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login='";
@@ -39,10 +39,10 @@ public class SQLRequestGenerationHelperTest {
 	public void generateUserSearchRequestTest() {
 		//zero login
 		assertEquals(withoutLogin + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(null, null));
+				SQLRequestHelper.generateUserSearchRequest(null, null));
 		//non-zero login
 		assertEquals(withLogin + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(null, login));
+				SQLRequestHelper.generateUserSearchRequest(null, login));
 	}
 
 	@Test
@@ -50,48 +50,48 @@ public class SQLRequestGenerationHelperTest {
 		//zero login
 		UserFilterDto filter1 = new UserFilterDto();
 		assertEquals(withoutLogin + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setRating(1);
 		assertEquals(withoutLogin + " where rating>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setSex("male");
 		assertEquals(withoutLogin + " where sex=? and rating>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setAgeMin(1);
 		assertEquals(withoutLogin + " where sex=? and rating>=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setAgeMax(2);
 		assertEquals(withoutLogin + " where sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setSexPreferences("male");
 		assertEquals(withoutLogin + " where (sex_preferences=? or sex_preferences is null) and sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 		filter1.setDistance(1);
 		assertEquals(withoutLogin + " where CTE2.distance<=? and (sex_preferences=? or sex_preferences is null) and sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter1, null));
+				SQLRequestHelper.generateUserSearchRequest(filter1, null));
 
 		//non-zero login
 		String login = "123";
 		UserFilterDto filter2 = new UserFilterDto();
 		assertEquals(withLogin + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setRating(1);
 		assertEquals(withLogin + " and rating>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setSex("male");
 		assertEquals(withLogin + " and sex=? and rating>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setAgeMin(1);
 		assertEquals(withLogin + " and sex=? and rating>=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setAgeMax(2);
 		assertEquals(withLogin + " and sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setSexPreferences("male");
 		assertEquals(withLogin + " and (sex_preferences=? or sex_preferences is null) and sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 		filter2.setDistance(1);
 		assertEquals(withLogin + " and CTE2.distance<=? and (sex_preferences=? or sex_preferences is null) and sex=? and rating>=? and age<=? and age>=?" + standardOrderBy,
-				SQLRequestGenerationHelper.generateUserSearchRequest(filter2, login));
+				SQLRequestHelper.generateUserSearchRequest(filter2, login));
 	}
 }

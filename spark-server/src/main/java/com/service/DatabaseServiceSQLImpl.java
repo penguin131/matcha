@@ -7,7 +7,7 @@ import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
-import com.helper.SQLRequestGenerationHelper;
+import com.helper.SQLRequestHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -15,8 +15,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.helper.SQLRequestGenerationHelper.addValuesToPreparedStatement;
-import static com.helper.SQLRequestGenerationHelper.generateUserSearchRequest;
+import static com.helper.SQLRequestHelper.addValuesToPreparedStatement;
+import static com.helper.SQLRequestHelper.generateUserSearchRequest;
 
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
@@ -80,6 +80,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                     " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)" +
                             "or user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?) and t_users_unity.confirmed=true) as has_like" +
                     " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)) as has_dislike" +
+                    " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
                     " from \"spark_db\".t_user_profile where login=?");
             preparedStatement.setString(1, from);
             preparedStatement.setString(2, from);
@@ -189,14 +190,23 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
-    @Override//todo asd
+    @Override
     public void updateUserProfile(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException, IllegalAccessException {
         logger.info("updateUserProfile(): " + mapper.writeValueAsString(userProfileDto));
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQLRequestGenerationHelper.generateUpdateUserRequest(userProfileDto));
-            SQLRequestGenerationHelper.addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
-            preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement;
+            if (userProfileDto.hasFields()) {
+                preparedStatement = connection.prepareStatement(
+                        SQLRequestHelper.generateUpdateUserRequest(userProfileDto));
+                SQLRequestHelper.addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
+                preparedStatement.executeUpdate();
+            }
+            if (userProfileDto.getTags() != null) {
+                preparedStatement = connection.prepareStatement(
+                        SQLRequestHelper.generateInsertTagsRequest(userProfileDto));
+                SQLRequestHelper.addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException | IllegalAccessException ex) {
             logger.info("updateUserProfile() exception:\n" + ex.getMessage());
             throw ex;
@@ -367,13 +377,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String login)
+    public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String from)
             throws SQLException, JsonProcessingException {
-        logger.info(String.format("getUserWithFilter(%s)", filter == null ? "null" : filter.toString()));
+        logger.info(String.format("getUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), from));
         List<UserProfileDto> profiles = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(generateUserSearchRequest(filter, login));
-            addValuesToPreparedStatement(preparedStatement, filter, login);
+            PreparedStatement preparedStatement = connection.prepareStatement(generateUserSearchRequest(filter, from));
+            addValuesToPreparedStatement(preparedStatement, filter, from);
             preparedStatement.execute();
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
