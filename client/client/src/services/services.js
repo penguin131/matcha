@@ -108,9 +108,46 @@ export const getGeolocation = async () => {
   }
 }
 
-export const updateProfile = async (values, setIsLoading) => {
+export const updateProfile = async (values, setIsLoading = () => {}) => {
   try {
     await axios.post(`${url}/protected/updateUserProfile`, values, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    })
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+export const uploadImages = async (values, setIsLoading = () => {}) => {
+  try {
+    await axios.post(`${url}/protected/downloadImage`, values, {
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/upload',
+      }
+    })
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+export const deleteImage = async (id) => {
+  try {
+    await axios.get(`${url}protected/deleteImage/${id}`, {
+      headers: {
+        'Authorization': `${token}`
+      }
+    })
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+export const setAvatar = async (id) => {
+  try {
+    await axios.get(`${url}protected/setAvatar/${id}`, {
       headers: {
         'Authorization': `${token}`
       }

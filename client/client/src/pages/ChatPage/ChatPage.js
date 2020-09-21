@@ -72,9 +72,10 @@ const ChatPage = () => {
       </div>
       <div className={css.chatWindow}>
         <div className={css.chatTitle}>
-          <Link to={`/profile/:${currentChat}`}>
-            <span className={css.userName}>{currentChat && currentChat}</span>
-          </Link>
+          {currentChat && <Link to={`/profile/:${currentChat}`}>
+            <span className={css.userName}>{currentChat}</span>
+          </Link>}
+          
           {/* <TrashLogo className={css.trashLogo}/> */}
         </div>
         <ChatList

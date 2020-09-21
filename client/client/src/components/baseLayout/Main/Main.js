@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Header from '../Header/Header'
 import Navigation from '../Navigation/Navigation'
 import Aside from '../Aside/Aside'
@@ -9,18 +9,13 @@ import ProfilePage from '../../../pages/ProfilePage/ProfilePage'
 import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
-import Loader from '../../Loader/Loader'
 import * as services from '../../../services/services'
 import axios from 'axios'
-/* import { AuthContext } from '../../context/AuthContext' */
 import css from './Main.module.css'
 
-const Main = () => {
-  /* const { isAuth } = useContext(AuthContext) */
-  const isAuth = true
+const Main = ({isAuth, setIsAuth}) => {
   const [isLoading, setIsLoading] = useState(false)
   const [userProfile, setUserProfile] = useState({})
-  const [geolocation, setGeolocation] = useState({  latitude: 0, longitude: 0 })
   const [userPhotos, setUserPhotos] = useState([])
   const user = localStorage.currentUser
 
@@ -36,7 +31,7 @@ const Main = () => {
     return () => {
       source.cancel();
     };
-  }, [])
+  }, [user])
   
   useEffect(() => {
     const options = {
@@ -62,22 +57,20 @@ const Main = () => {
 
   return (
     <div className={css.appContainer}>
-      <Header data={{userProfile, userPhotos}}/>
+      <Header data={{userProfile, userPhotos}} isLoading={isLoading} setIsAuth={setIsAuth}/>
         <main className={css.mainContainer}>
           <Navigation/>
-          {isLoading ? <Loader/> : (
             <Switch>
               <ProtectedRoute exact path='/chats' component={ChatPage} isAuth={isAuth}/>
               <ProtectedRoute exact
                               path='/settings'
-                              component={() => <SettingsPage data={{userProfile, userPhotos}}/>}
+                              component={() => <SettingsPage data={{userProfile, userPhotos, isLoading}}/>}
                               isAuth={isAuth}
               />
               <ProtectedRoute exact path='/profile/:login' component={ProfilePage} isAuth={isAuth}/>
               <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
               <ProtectedRoute exact path='/*' component={NotFoundPage} isAuth={isAuth}/>
             </Switch>
-          )} 
           <Aside/>
         </main>
     </div>

@@ -2,12 +2,16 @@
   flex: 0 0 100px;
   display: flex;
   justify-content: space-between;
+  margin-right: 20px;
 
   .logo {
     background-color: #713BDB;
-    padding: 25px 0 0 20px; 
+    padding: 23px 0 0 30px;
     height: 100px;
     min-width: 100px;
+    svg {
+      width: 40px;
+    }
   }
   .userInfo{
     display: flex;
@@ -24,5 +28,8 @@
       border-radius: 50%;
       margin: 0 20px;
     }
+  }
+  .logout {
+    cursor: pointer;
   }
 }

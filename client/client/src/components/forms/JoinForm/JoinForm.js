@@ -74,7 +74,6 @@ const JoinForm = ({ onSubmit }) => {
                 {isLoading && <Loader/>}
             </div>
             <div className={css.buttons}>
-            
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
                 Join us
               </button>

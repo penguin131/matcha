@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { ReactComponent as ChatsActiveLogo} from '../../../imgs/chatsActive.svg'
 import { ReactComponent as MatchActiveLogo} from '../../../imgs/matchActive.svg'
@@ -11,20 +11,21 @@ import { ReactComponent as SettingsLogo} from '../../../imgs/settings.svg'
 import css from './Navigation.module.less'
 
 const Navigation = () => {
-  const [activeTab, setActiveTab] = useState('')
+  const tab = window.location.pathname
+
   return (
     <nav className={css.navContainer}>
-      <Link to={'/'} onClick={() => setActiveTab('Search')}>
-        {activeTab === 'Search' ?  <SearchActiveLogo/> : <SearchLogo/>}
+      <Link to={'/'}>
+        {tab === '/' ?  <SearchActiveLogo/> : <SearchLogo/>}
       </Link>
-      <Link to={'/chats'} onClick={() => setActiveTab('Chats')}>
-        {activeTab === 'Chats' ?  <ChatsActiveLogo/> : <ChatsLogo/>}
+      <Link to={'/chats'}>
+        {tab === '/chats' ?  <ChatsActiveLogo/> : <ChatsLogo/>}
       </Link>
-      <Link to={'/'} onClick={() => setActiveTab('Match')}>
-        {activeTab === 'Match' ?  <MatchActiveLogo/> : <MatchLogo/>}
+      <Link to={'/'}>
+        {tab === '/' ?  <MatchActiveLogo/> : <MatchLogo/>}
       </Link>
-      <Link to={'/settings'} onClick={() => setActiveTab('Settings')}>
-        {activeTab === 'Settings' ?  <SettingsActiveLogo/> : <SettingsLogo/>}
+      <Link to={'/settings'}>
+        {tab === '/settings' ?  <SettingsActiveLogo/> : <SettingsLogo/>}
       </Link>
     </nav>
   )

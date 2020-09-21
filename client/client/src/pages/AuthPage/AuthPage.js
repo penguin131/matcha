@@ -17,17 +17,16 @@ const JoinButton = () => {
 	)
 }
 
-const AuthPage = () => {
+const AuthPage = ({ setIsAuth }) => {
 	return (
 		<>
 			<Switch>
 				<Route path='/login' component={JoinButton}/>
 				<Route path='/join' component={LoginButton}/>
 			</Switch>
-	
 			<div className={css.joinPageContainer}>
 				<Switch>
-					<Route path='/login' component={() => <LoginForm onSubmit={services.login}/>}/>
+					<Route path='/login' component={() => <LoginForm onSubmit={services.login} setIsAuth={setIsAuth}/>}/>
 					<Route path='/join' component={() => <JoinForm onSubmit={services.join}/>}/>
 				</Switch>
 			</div>
