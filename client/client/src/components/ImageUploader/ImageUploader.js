@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import ImageUploading from "react-images-uploading"
 import * as services from '../../services/services'
-/* import css from './ImageUploader.module.less' */
+import cssButton from '../Button/Button.module.less'
 import ImageItem from '../ImageItem/ImageItem'
 
 const ImageUploader = ({imgsCount}) => {
@@ -34,10 +34,10 @@ const ImageUploader = ({imgsCount}) => {
 
         return (
           <div>
-            <button style={isDragging ? {color: 'red'} : null}
+            <button className={cssButton.button}
                     onClick={onImageUpload}
                     {...dragProps}
-            >Click or Drop</button>
+            >Upload image</button>
             {imageList.map((image, i) => (
               <ImageItem
                 key={i}

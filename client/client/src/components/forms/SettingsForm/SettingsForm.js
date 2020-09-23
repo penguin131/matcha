@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import Loader from '../../Loader/Loader'
-import TagsInput from '../../TagsInput/TagsInput'
 import css from '../authForms.module.less'
 import settingsCss from './SettingsForm.module.less'
 
@@ -73,7 +72,6 @@ const SettingsForm = ({onSubmit, data }) => {
                 value="female"
               /> female
             </div>
-            <TagsInput/>
             <div className={css.buttons}>
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
                   Save

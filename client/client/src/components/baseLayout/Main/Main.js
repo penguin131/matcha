@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Header from '../Header/Header'
 import Navigation from '../Navigation/Navigation'
-import Aside from '../Aside/Aside'
 import MainPage from '../../../pages/MainPage/MainPage'
 import SettingsPage from '../../../pages/SettingsPage/SettingsPage'
 import ChatPage from '../../../pages/ChatPage/ChatPage'
@@ -60,18 +59,17 @@ const Main = ({isAuth, setIsAuth}) => {
       <Header data={{userProfile, userPhotos}} isLoading={isLoading} setIsAuth={setIsAuth}/>
         <main className={css.mainContainer}>
           <Navigation/>
-            <Switch>
-              <ProtectedRoute exact path='/chats' component={ChatPage} isAuth={isAuth}/>
-              <ProtectedRoute exact
-                              path='/settings'
-                              component={() => <SettingsPage data={{userProfile, userPhotos, isLoading}}/>}
-                              isAuth={isAuth}
-              />
-              <ProtectedRoute exact path='/profile/:login' component={ProfilePage} isAuth={isAuth}/>
-              <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
-              <ProtectedRoute exact path='/*' component={NotFoundPage} isAuth={isAuth}/>
-            </Switch>
-          <Aside/>
+          <Switch>
+            <ProtectedRoute exact path='/chats' component={ChatPage} isAuth={isAuth}/>
+            <ProtectedRoute exact
+                            path='/settings'
+                            component={() => <SettingsPage data={{userProfile, userPhotos, isLoading}}/>}
+                            isAuth={isAuth}
+            />
+            <ProtectedRoute exact path='/profile/:login' component={ProfilePage} isAuth={isAuth}/>
+            <ProtectedRoute exact path='/' component={MainPage} isAuth={isAuth}/>
+            <ProtectedRoute exact path='/*' component={NotFoundPage} isAuth={isAuth}/>
+          </Switch>
         </main>
     </div>
   )
