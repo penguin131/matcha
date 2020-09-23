@@ -3,38 +3,62 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	.userName {
+
+	.profileInfoContainer {
+		min-height: 300px;
 		display: flex;
+		flex-direction: column;
+		align-items: center;
 		justify-content: center;
-		margin: 20px 0;
-	}
+		.userName {
+			display: flex;
+			justify-content: center;
+			margin: 20px 0;
+		}
+		.likePanel {
+			margin-top: 20px;
+			display: flex;
+			.likeElement {
+				cursor: pointer;
+			}
+			.like {
+				svg:active{
+					path {
+						fill: green;
+					}
+				}
+			}
+			.activeLike {
+				svg {
+					path {
+						fill: green;
+					}
+				}
+			}
+			.dislike {
+				svg:active{
+					path {
+						fill: red;
+					}
+				}
+			}
+			.activeDislike {
+				svg {
+					path {
+						fill: red;
+					}
+				}
+			}
+		}
+	}	
+	
 	.galleryContainer {
-		
-		width: 30vw;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		height: 20vh;
 		.carousel-root {
 			max-height: 100px;
-		}
-	} 
-	.likePanel {
-		margin-top: 20px;
-		display: flex;
-		.likeElement {
-			cursor: pointer;
-		}
-		.like {
-			svg:active{
-				path {
-					fill: green;
-				}
-			}
-		}
-		.dislike {
-			svg:active{
-				path {
-					fill: red;
-				}
-			}
 		}
 	}
 }

@@ -3,11 +3,9 @@ import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import Loader from '../../Loader/Loader'
 import { useHistory } from 'react-router-dom'
-import { AuthContext } from '../../context/AuthContext'
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit, setIsAuth }) => {
   const [isLoading, setIsLoading] = useState(false)
-  const { setIsAuth } = useContext(AuthContext)
   let history = useHistory()
 
   return (
