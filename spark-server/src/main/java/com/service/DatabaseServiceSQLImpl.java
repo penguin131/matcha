@@ -330,6 +330,23 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         }
     }
 
+    public String getImage(String id) throws SQLException {
+        logger.info(String.format("getImage(%s)", id));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from spark_db.t_image where id_image=?");
+            preparedStatement.setInt(1, Integer.parseInt(id));
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getString("bytes");
+            }
+            return "";
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+    }
+
     @Override
     public void setMainImage(String imageId, String userLogin) throws SQLException {
         logger.info(String.format("setMainImage(%s)", imageId));

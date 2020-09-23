@@ -258,7 +258,12 @@ public class LogicServiceBean implements LogicService {
 
 	@Override
 	public byte[] getImage(String name) {
-		return imageManager.getImage(name);
+		try {
+			return databaseService.getImage(name).getBytes();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return new byte[0];
+		}
 	}
 
 	@Override

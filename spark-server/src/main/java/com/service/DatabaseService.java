@@ -96,6 +96,11 @@ public interface DatabaseService {
     void deleteImage(String id) throws SQLException;
 
     /**
+     * Вернет картинку по айди
+     */
+    String getImage(String id) throws SQLException;
+
+    /**
      * Отметит картинку как аватарку
      * @param imageId ID картинки
      * @param userLogin Логин пользователя
