@@ -148,7 +148,6 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		//todo эту штуку
 		get("/protected/getNextUser", ((request, response) -> {
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			return logicService.getNextUser(login, request.body());
@@ -188,7 +187,7 @@ public class MajorEndpoint {
 	}
 
 	private static void	addHeaders(Response res) {
-		res.header("Access-Control-Allow-Origin","*");
+		res.header("Access-Control-Allow-Origin","http://localhost:3000");
 		res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
 		res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	}
