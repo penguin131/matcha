@@ -12,6 +12,7 @@ import com.images.ImageManager;
 import com.images.ImageManagerImpl;
 import com.mail.MailService;
 import com.security.SecurityHelper;
+import org.apache.commons.lang.StringUtils;
 import spark.Request;
 
 import javax.mail.MessagingException;
@@ -258,5 +259,20 @@ public class LogicServiceBean implements LogicService {
 	@Override
 	public byte[] getImage(String name) {
 		return imageManager.getImage(name);
+	}
+
+	@Override
+	public String getNextUser(String login, String filter) {
+		try {
+			UserFilterDto filterDto = null;
+			if (!StringUtils.isEmpty(filter)) {
+				filterDto = mapper.readValue(filter, UserFilterDto.class);
+			}
+			databaseService.createSearchData(filterDto, login);
+			return mapper.writeValueAsString(databaseService.nextUserWithFilter(filterDto, login));
+		} catch (IOException | SQLException ex) {
+			ex.printStackTrace();
+			return "";
+		}
 	}
 }

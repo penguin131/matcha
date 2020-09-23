@@ -8,18 +8,18 @@ public class UserFilterDto {
 	private String sexPreferences;
 	private String sex;
 	private Integer rating;
+	@JsonProperty("age_max")
 	private Integer ageMax;
+	@JsonProperty("age_min")
 	private Integer ageMin;
-	private String sortType;
 
-	public UserFilterDto(Integer distance, String sexPreferences, String sex, Integer rating, Integer ageMax, Integer ageMin, String sortType) {
+	public UserFilterDto(Integer distance, String sexPreferences, String sex, Integer rating, Integer ageMax, Integer ageMin) {
 		this.distance = distance;
 		this.sexPreferences = sexPreferences;
 		this.sex = sex;
 		this.rating = rating;
 		this.ageMax = ageMax;
 		this.ageMin = ageMin;
-		this.sortType = sortType;
 	}
 
 	public UserFilterDto() {
@@ -82,11 +82,15 @@ public class UserFilterDto {
 		this.ageMin = ageMin;
 	}
 
-	public String getSortType() {
-		return sortType;
-	}
-
-	public void setSortType(String sortType) {
-		this.sortType = sortType;
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + (distance != null ? distance : 0);
+		hash = 31 * hash + (sexPreferences != null ? sexPreferences.hashCode() : 0);
+		hash = 31 * hash + (sex != null ? sex.hashCode() : 0);
+		hash = 31 * hash + (rating != null ? rating : 0);
+		hash = 31 * hash + (ageMax != null ? ageMax : 0);
+		hash = 31 * hash + (ageMin != null ? ageMin : 0);
+		return hash;
 	}
 }

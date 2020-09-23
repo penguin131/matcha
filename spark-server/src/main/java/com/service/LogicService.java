@@ -117,4 +117,6 @@ public interface LogicService {
 	 * @return boolean
 	 */
 	boolean checkEmailExist(String email) throws SQLException;
+
+	String getNextUser(String login, String filter);
 }

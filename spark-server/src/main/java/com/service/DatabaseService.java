@@ -123,4 +123,19 @@ public interface DatabaseService {
      * @return boolean
      */
     boolean checkEmailExist(String email) throws SQLException;
+
+    /**
+     * Создает данные по поиску, если их еще не существует
+     * @param filter фильтр поиска
+     * @param login логин пользователя, который отправляет запрос
+     */
+    void createSearchData(UserFilterDto filter, String login) throws SQLException;
+
+    /**
+     * Следующий пользователь по фильтру
+     * @param filter фильтр поиска
+     * @param login логин пользователя, который отправляет запрос
+     * @return информация о пользователе
+     */
+    UserProfileDto nextUserWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException;
 }

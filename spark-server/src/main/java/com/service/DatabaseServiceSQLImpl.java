@@ -7,7 +7,6 @@ import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
-import com.helper.SQLRequestHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -15,8 +14,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.helper.SQLRequestHelper.addValuesToPreparedStatement;
-import static com.helper.SQLRequestHelper.generateUserSearchRequest;
+import static com.helper.SQLRequestHelper.*;
 
 public class DatabaseServiceSQLImpl implements DatabaseService {
     private final Logger logger = Logger.getLogger(DatabaseServiceSQLImpl.class);
@@ -154,7 +152,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             preparedStatement.setString(1, from);
             preparedStatement.setString(2, to);
             preparedStatement.execute();
-            logger.info("complaint created");
         } catch (SQLException ex) {
             logger.info("setLike() exception:\n" + ex.getMessage());
             throw ex;
@@ -196,15 +193,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         try {
             PreparedStatement preparedStatement;
             if (userProfileDto.hasFields()) {
-                preparedStatement = connection.prepareStatement(
-                        SQLRequestHelper.generateUpdateUserRequest(userProfileDto));
-                SQLRequestHelper.addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
+                preparedStatement = connection.prepareStatement(generateUpdateUserRequest(userProfileDto));
+                addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
                 preparedStatement.executeUpdate();
             }
             if (userProfileDto.getTags() != null) {
-                preparedStatement = connection.prepareStatement(
-                        SQLRequestHelper.generateInsertTagsRequest(userProfileDto));
-                SQLRequestHelper.addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
+                preparedStatement = connection.prepareStatement(generateInsertTagsRequest(userProfileDto));
+                addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | IllegalAccessException ex) {
@@ -396,5 +391,78 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             throw ex;
         }
         return profiles;
+    }
+
+    @Override
+    public void createSearchData(UserFilterDto filter, String login) throws SQLException {
+        logger.info(String.format("createSearchData(%s, %s)", filter == null ? "null" : filter.toString(), login));
+        try {
+            int hash = (filter == null || !filter.hasFields() ? 0 : filter.hashCode());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select count(*) from spark_db.t_user_filter\n" +
+                            " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=?) and filter_hash=?");
+            preparedStatement.setString(1, login);
+            preparedStatement.setInt(2, hash);
+            ResultSet rs = preparedStatement.executeQuery();
+            //Если записи еще нет, то создаю
+            if (!rs.next() || rs.getInt(1) == 0) {
+                //сохраняю упорядоченные айдишники пользователей, найденных по фильтру
+                logger.info("Insert values into t_search_data.");
+                preparedStatement = connection.prepareStatement(generateInsertRequest(filter, login));
+                addValuesToPreparedStatement(preparedStatement, filter, login);
+                preparedStatement.execute();
+                //Инсерт в таблицу со счетчиком
+                logger.info("Insert values into t_user_filter.");
+                preparedStatement = connection.prepareStatement(
+                        "insert into spark_db.t_user_filter (from_user_id, filter_hash)\n" +
+                        " (select user_profile_id,? from spark_db.t_user_profile where login=? limit 1)");
+                preparedStatement.setInt(1, hash);
+                preparedStatement.setString(2, login);
+                preparedStatement.execute();
+            }
+            logger.info("createSearchData() success");
+        } catch (SQLException ex) {
+            logger.info(ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public UserProfileDto nextUserWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException {
+        logger.info(String.format("nextUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), login));
+        try {
+            int hash = (filter == null || !filter.hasFields() ? 0 : filter.hashCode());
+            //увеличиваю счетчик
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "update spark_db.t_user_filter set counter=counter+1\n" +
+                    " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                    "  and filter_hash=?;\n");
+            preparedStatement.setString(1, login);
+            preparedStatement.setInt(2, hash);
+            preparedStatement.execute();
+            //вытаскиваю следующего юзера
+            preparedStatement = connection.prepareStatement(
+                    " with CTE as (\n" +
+                    "    select * from spark_db.t_user_filter\n" +
+                    "        where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                    "          and filter_hash=?\n" +
+                    "    limit 1\n" +
+                    " )\n" +
+                    " select t1.login from spark_db.t_user_profile t1\n" +
+                    " where t1.user_profile_id=(select t2.user_id from spark_db.t_search_data t2 " +
+                    " where t2.number=(select counter from CTE) and t2.filter_hash=(select filter_hash from CTE)\n" +
+                    "    limit 1);\n");
+            preparedStatement.setString(1, login);
+            preparedStatement.setInt(2, hash);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                String login2 = rs.getString("login");
+                return getUserProfileForLogin(login2, login);
+            } else {
+                return null;
+            }
+        } catch (SQLException | JsonProcessingException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }

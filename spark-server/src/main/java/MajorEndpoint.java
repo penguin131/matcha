@@ -148,6 +148,12 @@ public class MajorEndpoint {
 			return "";
 		});
 
+		//todo эту штуку
+		get("/protected/getNextUser", ((request, response) -> {
+			String login = getUserNameFromToken(request.headers("Authorization"));
+			return logicService.getNextUser(login, request.body());
+		}));
+
 		//Filters
 		before((request, response) -> {
 			if (!request.url().contains("/chat")) {

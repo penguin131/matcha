@@ -10,23 +10,7 @@ import java.sql.SQLException;
 
 public class SQLRequestHelper {
 
-	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
-		StringBuilder sb = new StringBuilder("with CTE as (\n" +
-				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login='" + login + "'\n" +
-				"    )\n" +
-				"   , CTE2 as (\n" +
-				"    select\n" +
-				"         user_profile_id\n" +
-				"         ,wsg84_get_distance( (select CTE.latitude from CTE limit 1), (select CTE.longitude from CTE limit 1), latitude, longitude) as distance\n" +
-				"    from spark_db.t_user_profile\n" +
-				")\n" +
-				"select *\n" +
-				"     ,(select id_image from \"spark_db\".t_image  where u.user_profile_id=user_id and is_main=true limit 1) as photo\n" +
-				"     ,(select  count(*) from spark_db.t_users_unity where u.user_profile_id=user2_id or (u.user_profile_id=user1_id and confirmed=true)) as has_like\n" +
-				"     ,(select  count(*) from spark_db.t_complaint where u.user_profile_id=to_user) as has_dislike\n" +
-				"     ,CTE2.distance\n" +
-				"from \"spark_db\".t_user_profile u\n" +
-				"join CTE2 on CTE2.user_profile_id=u.user_profile_id");
+	private static void addConditions(StringBuilder sb, UserFilterDto filter, String login) {
 		boolean hasCondition = false;
 		if (login != null) {
 			hasCondition = true;
@@ -62,11 +46,57 @@ public class SQLRequestHelper {
 				",(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
 				"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
 				",CTE2.distance");
+	}
+
+	public static String generateInsertRequest(UserFilterDto filter, String login) {
+		StringBuilder sb = new StringBuilder(
+				"with CTE as (\n" +
+				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login=?\n" +
+				"    )\n" +
+				"   , CTE2 as (\n" +
+				"    select\n" +
+				"         user_profile_id\n" +
+				"         ,wsg84_get_distance( (select CTE.latitude from CTE limit 1), (select CTE.longitude from CTE limit 1), latitude, longitude) as distance\n" +
+				"    from spark_db.t_user_profile\n" +
+				" )\n" +
+				" insert into spark_db.t_search_data (filter_hash, user_id, number) " +
+				" select " + (filter == null ? 0 : filter.hashCode()) + " ,u.user_profile_id, row_number() over (" +
+				"order by rating desc\n" +
+						"       ,(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
+						"         where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
+						"       ,CTE2.distance" +
+				") as number" +
+				" from \"spark_db\".t_user_profile u\n" +
+				" join CTE2 on CTE2.user_profile_id=u.user_profile_id");
+		addConditions(sb, filter, login);
+		return sb.toString();
+	}
+
+	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
+		StringBuilder sb = new StringBuilder("with CTE as (\n" +
+				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login=?\n" +
+				"    )\n" +
+				"   , CTE2 as (\n" +
+				"    select\n" +
+				"         user_profile_id\n" +
+				"         ,wsg84_get_distance( (select CTE.latitude from CTE limit 1), (select CTE.longitude from CTE limit 1), latitude, longitude) as distance\n" +
+				"    from spark_db.t_user_profile\n" +
+				" )\n" +
+				" select *\n" +
+				"     ,(select id_image from \"spark_db\".t_image  where u.user_profile_id=user_id and is_main=true limit 1) as photo\n" +
+				"     ,(select  count(*) from spark_db.t_users_unity where u.user_profile_id=user2_id or (u.user_profile_id=user1_id and confirmed=true)) as has_like\n" +
+				"     ,(select  count(*) from spark_db.t_complaint where u.user_profile_id=to_user) as has_dislike\n" +
+				"     ,CTE2.distance\n" +
+				" ,(select json_agg(name) from spark_db.t_tag where user_id=u.user_profile_id) as tags" +
+				" from \"spark_db\".t_user_profile u\n" +
+				" join CTE2 on CTE2.user_profile_id=u.user_profile_id");
+		addConditions(sb, filter, login);
 		return sb.toString();
 	}
 
 	public static void addValuesToPreparedStatement(PreparedStatement statement, UserFilterDto filter, String login) throws SQLException {
-		int counter = 1;
+		statement.setString(1, login);
+		int counter = 2;
 		if (login != null) statement.setString(counter++, login);
 		if (filter == null) return;
 		if (filter.getDistance() != null) statement.setInt(counter++, filter.getDistance());
