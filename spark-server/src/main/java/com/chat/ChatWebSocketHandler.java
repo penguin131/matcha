@@ -30,6 +30,7 @@ public class ChatWebSocketHandler {
         }
         logger.info("put user: " + username);
         Chat.activeUserMap.put(userSession, username);
+        logger.info("User map size: " + Chat.activeUserMap.size());
     }
 
     @OnWebSocketClose
