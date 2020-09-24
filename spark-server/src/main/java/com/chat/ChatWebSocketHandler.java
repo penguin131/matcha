@@ -13,6 +13,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.utils.StringUtils;
 
+import java.util.Map;
+
 @WebSocket
 public class ChatWebSocketHandler {
     private final static Logger logger = Logger.getLogger(ChatWebSocketHandler.class);
@@ -28,9 +30,17 @@ public class ChatWebSocketHandler {
             logger.info("Empty username");
             throw new Exception("Empty username");
         }
-        logger.info("put user: " + username);
-        Chat.activeUserMap.put(userSession, username);
-        logger.info("User map size: " + Chat.activeUserMap.size());
+        Session session = findSessionForName(username);
+        if (session != null) {
+            logger.info("replace user: " + username);
+            Chat.activeUserMap.remove(session);
+            Chat.activeUserMap.put(userSession, username);
+
+        } else {
+            logger.info("put user: " + username);
+            Chat.activeUserMap.put(userSession, username);
+            logger.info("User map size: " + Chat.activeUserMap.size());
+        }
     }
 
     @OnWebSocketClose
@@ -45,5 +55,14 @@ public class ChatWebSocketHandler {
         logger.info("Send message: " + mapper.writeValueAsString(message1));
         Chat.sendMessage(Chat.activeUserMap.get(user), message1);
         databaseService.saveChatMessage(message1);
+    }
+
+    private Session findSessionForName(String name) {
+        for (Map.Entry<Session, String> pair : Chat.activeUserMap.entrySet()) {
+            if (name.equals(pair.getValue())) {
+                return pair.getKey();
+            }
+        }
+        return null;
     }
 }
