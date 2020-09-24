@@ -2,14 +2,13 @@ package com.service;
 
 import com.dto.*;
 import com.exceptions.AccessDeniedException;
+import com.exceptions.BusinessException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helper.Password;
 import com.helper.ServiceHelper;
 import com.helper.ValidateHelper;
-import com.images.ImageManager;
-import com.images.ImageManagerImpl;
 import com.mail.MailService;
 import com.security.SecurityHelper;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +28,6 @@ public class LogicServiceBean implements LogicService {
 	private DatabaseService databaseService = ServiceHelper.getDatabaseService();
 	private ObjectMapper mapper = new ObjectMapper();
 	private static final long TTL = 1000000000;
-	private ImageManager imageManager = new ImageManagerImpl();
 
 	@Override
 	public String getAllUsers(String login) {
@@ -54,7 +52,11 @@ public class LogicServiceBean implements LogicService {
 			user.setPassword(Password.getSaltedHash(user.getPassword()));
 			String hash = SecurityHelper.generateHash();
 			databaseService.createUserProfile(user, hash);
-			MailService.sendConfirmationEmail(user.getEmail(), hash, request.url().substring(0, request.url().indexOf("createUserProfile")));
+			MailService.sendConfirmationEmail(
+					user.getEmail(),
+					hash,
+					request.url().substring(0, request.url().indexOf("createUserProfile")),
+					"verification/");
 		} catch (IOException | MessagingException | SQLException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
 			ex.printStackTrace();
 		} catch (ValidateException ex) {
@@ -119,19 +121,36 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public void updateUserProfile(String requestBody, String login) throws ValidateException {
+	public void updateUserProfile(Request request, String login) throws ValidateException, MessagingException {
 		try {
-			InnerProfileDto user = mapper.readValue(requestBody, InnerProfileDto.class);
+			InnerProfileDto user = mapper.readValue(request.body(), InnerProfileDto.class);
 			if (user.getTags() != null && user.getTags().size() > 10) {
 				throw new ValidateException("To many tags");
 			}
 			ValidateHelper.validateUserProfile(user);
-			databaseService.updateUserProfile(user, login);
-		} catch (SQLException | IOException | IllegalAccessException ex) {
-			ex.printStackTrace();
-		} catch (ValidateException ex) {
+			if (user.getEmail() != null) {
+				ValidateHelper.validateEmail(user.getEmail());
+				//todo
+				UserProfileDto profile = databaseService.getUserProfileForLogin(login, null);
+				if (profile == null) {
+					throw new BusinessException("No user profile with login " + login);
+				}
+				String hash = profile.getConfirmedToken();
+				MailService.sendConfirmationEmail(
+						user.getEmail(),
+						hash,
+						request.url().substring(0, request.url().indexOf("protected")),
+						"changeMail/");
+				databaseService.saveNewEmail(login, user.getEmail());
+			}
+			if (user.hasFields()) {
+				databaseService.updateUserProfile(user, login);
+			}
+		} catch (ValidateException | MessagingException ex) {
 			ex.printStackTrace();
 			throw ex;
+		} catch (SQLException | IOException | IllegalAccessException | BusinessException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -162,12 +181,17 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public void confirmUserForToken(String token) {
+	public String confirmUserForToken(String token) {
 		try {
+			if (StringUtils.isEmpty(token)) {
+				throw new BusinessException("Zero confirmed token");
+			}
 			databaseService.confirmUserForToken(token);
-		} catch (SQLException ex) {
+		} catch (SQLException | BusinessException ex) {
 			ex.printStackTrace();
+			return "Error";
 		}
+		return "Success";
 	}
 
 	@Override
@@ -279,5 +303,18 @@ public class LogicServiceBean implements LogicService {
 			ex.printStackTrace();
 			return "";
 		}
+	}
+
+	public String updateUserMail(String token) {
+		try {
+			if (StringUtils.isEmpty(token)) {
+				throw new BusinessException("Zero confirmed token");
+			}
+			databaseService.updateUserMailFromTemp(token);
+		} catch (SQLException | BusinessException ex) {
+			ex.printStackTrace();
+			return "Error";
+		}
+		return "Success";
 	}
 }

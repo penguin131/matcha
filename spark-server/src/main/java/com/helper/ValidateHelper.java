@@ -38,7 +38,7 @@ public class ValidateHelper {
         logger.info("<==    validateBaseUserProfile(): success");
     }
 
-    private static void validateEmail(String email) throws ValidateException, AddressException {
+    public static void validateEmail(String email) throws ValidateException, AddressException {
         if (StringUtils.isEmpty(email))
             throw new ValidateException("Empty email");
         InternetAddress emailAddr = new InternetAddress(email);

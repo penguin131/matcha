@@ -13,7 +13,7 @@ import java.util.Properties;
 public class MailService {
     private final static Logger logger = Logger.getLogger(MailService.class);
 
-    public static void sendConfirmationEmail(String to, String hash, String reqUrl) throws UnsupportedEncodingException, MessagingException, UnknownHostException {
+    public static void sendConfirmationEmail(String to, String hash, String reqUrl, String mode) throws UnsupportedEncodingException, MessagingException, UnknownHostException {
         logger.info(String.format("==>  sendConfirmationEmail(%s, %s)", to, hash));
         final String fromEmail = "smight.matcha@rambler.ru";
         final String password = "HBj41TFQ";
@@ -29,15 +29,15 @@ public class MailService {
             }
         };
         Session session = Session.getDefaultInstance(props, auth);
-        sendEmail(session, to,"Account confirmation", getUrlToText(reqUrl) + hash);
+        sendEmail(session, to,"Account confirmation", getUrlToText(reqUrl, mode) + hash);
         logger.info("<==    sendConfirmationEmail()");
     }
 
-    private static String getUrlToText(String reqUrl) {
+    private static String getUrlToText(String reqUrl, String mode) {
         if ("https".equals(reqUrl.substring(0, 5))) {
             reqUrl = "http" + reqUrl.substring(5);
         }
-        String text = "To confirm the account click on the link:\n" + reqUrl +"verification/";
+        String text = "To confirm the account click on the link:\n" + reqUrl + mode;
         logger.info("Email text: " + text);
         return text;
     }

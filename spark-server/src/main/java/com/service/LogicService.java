@@ -5,7 +5,7 @@ import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import spark.Request;
 
-import javax.mail.internet.AddressException;
+import javax.mail.MessagingException;
 import java.sql.SQLException;
 
 public interface LogicService {
@@ -47,7 +47,7 @@ public interface LogicService {
 	/**
 	 * Обновляет пользовательский профиль
 	 */
-	void updateUserProfile(String requestBody, String login) throws ValidateException, AddressException;
+	void updateUserProfile(Request request, String login) throws ValidateException, MessagingException;
 
 	/**
 	 * Обновляет пользовательский профиль
@@ -62,7 +62,7 @@ public interface LogicService {
 	/**
 	 * Проставит подтвержденную почту пользователю по его токену
 	 */
-	void confirmUserForToken(String token) throws SQLException;
+	String confirmUserForToken(String token) throws SQLException;
 
 	/**
 	 * Вернет всю историю сообщений между двумя пользователями, упорядоченную по дате в обратном порядке
@@ -109,7 +109,7 @@ public interface LogicService {
 	/**
 	 * Поиск пользователей по фильтру, исключая текущего юзера
 	 */
-	String getUsersWithFilter(String filter, String login) throws SQLException, JsonProcessingException;
+	String getUsersWithFilter(String filter, String login) throws JsonProcessingException;
 
 	/**
 	 * Проверяет, есть ли такая почта в БД
@@ -118,5 +118,17 @@ public interface LogicService {
 	 */
 	boolean checkEmailExist(String email) throws SQLException;
 
+	/**
+	 * Получение следующего пользователя в поиске
+	 * @param login логин того, кто запрашивает
+	 * @param filter фильтр поиска
+	 * @return JSON найденного юзера
+	 */
 	String getNextUser(String login, String filter);
+
+	/**
+	 * Апдейт мейла из временного поля на новый
+	 * @param token логин пользователя
+	 */
+	String updateUserMail(String token);
 }

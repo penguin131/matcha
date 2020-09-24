@@ -1,6 +1,7 @@
 package com.dto;
 
 import com.dictionary.Sex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,6 +33,8 @@ public class UserProfileDto {
     private Boolean hasDislike;
     @JsonProperty("tags")
     private Set<String> tags;
+    @JsonIgnore
+    private String confirmedToken;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -145,7 +148,8 @@ public class UserProfileDto {
                 rs.getFloat("latitude"),
                 rs.getFloat("longitude"),
                 rs.getInt("has_like") > 0,
-                rs.getInt("has_dislike") > 0
+                rs.getInt("has_dislike") > 0,
+                rs.getString("confirmed_token")
         );
         Set<String> tags = new HashSet<>();
         String arrayString = rs.getString("tags");
@@ -195,7 +199,8 @@ public class UserProfileDto {
                           Float latitude,
                           Float longitude,
                           Boolean hasLike,
-                          Boolean hasDislike) {
+                          Boolean hasDislike,
+                          String confirmedToken) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -211,6 +216,7 @@ public class UserProfileDto {
         this.longitude = longitude;
         this.hasLike = hasLike;
         this.hasDislike = hasDislike;
+        this.confirmedToken = confirmedToken;
     }
 
     public UserProfileDto() {
@@ -250,5 +256,13 @@ public class UserProfileDto {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public String getConfirmedToken() {
+        return confirmedToken;
+    }
+
+    public void setConfirmedToken(String confirmedToken) {
+        this.confirmedToken = confirmedToken;
     }
 }

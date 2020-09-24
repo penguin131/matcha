@@ -143,4 +143,13 @@ public interface DatabaseService {
      * @return информация о пользователе
      */
     UserProfileDto nextUserWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException;
+
+    /**
+     * Сохраняет новую почту во временную колонку
+     * @param login логин юзера
+     * @param newEmail новая почта
+     */
+    void saveNewEmail(String login, String newEmail) throws SQLException;
+
+    void updateUserMailFromTemp(String token) throws SQLException;
 }

@@ -114,7 +114,7 @@ public class SQLRequestHelper {
 		Field[] fields = userProfile.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			field.setAccessible(true);
-			if ("tags".equals(field.getName())) {
+			if ("tags".equals(field.getName()) || "email".equals(field.getName())) {
 				continue;
 			}
 			if (field.get(userProfile) != null) {
@@ -139,7 +139,9 @@ public class SQLRequestHelper {
 		for (Field field : fields) {
 			field.setAccessible(true);
 			if (field.get(userProfile) != null) {
-				if (field.getType().equals(String.class)) {
+				if ("email".equals(field.getName())) {
+					continue;
+				} else if (field.getType().equals(String.class)) {
 					statement.setString(counter, (String) field.get(userProfile));
 				} else if (field.getType().equals(Integer.class)) {
 					statement.setInt(counter, (Integer) field.get(userProfile));

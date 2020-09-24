@@ -82,7 +82,7 @@ public class MajorEndpoint {
 		post("/protected/updateUserProfile", (req, res) -> {
 			try {
 				String from = getUserNameFromToken(req.headers("Authorization"));
-				logicService.updateUserProfile(req.body(), from);
+				logicService.updateUserProfile(req, from);
 				return "";
 			} catch (ValidateException | AddressException ex) {
 				return ex.getMessage();
@@ -95,10 +95,11 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		get("/verification/:hash", (req, res) -> {
-			logicService.confirmUserForToken(req.params(":hash"));
-			return "Your account is verified!";
-		});
+		//Подтверждение почты
+		get("/verification/:hash", (req, res) -> logicService.confirmUserForToken(req.params(":hash")));
+
+		//Смена почты
+		get("/changeMail/:hash", (req, res) -> logicService.updateUserMail(req.params(":hash")));
 
 		get("/protected/getChatHistory/:user", (req, res) -> {
 			String user = getUserNameFromToken(req.headers("Authorization"));

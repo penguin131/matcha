@@ -7,7 +7,6 @@ import java.util.Set;
 
 public class InnerProfileDto {
 	private String login;
-	private String email;
 	@JsonProperty("first_name")
 	private String firstName;
 	@JsonProperty("last_name")
@@ -19,6 +18,7 @@ public class InnerProfileDto {
 	private Float longitude;
 	private Integer age;
 	private Set<String> tags;
+	private String email;
 
 	public String getLogin() {
 		return login;
@@ -26,14 +26,6 @@ public class InnerProfileDto {
 
 	public void setLogin(String login) {
 		this.login = login;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getFirstName() {
@@ -104,10 +96,18 @@ public class InnerProfileDto {
 		Class<?> thisClass = this.getClass();
 		for (Field field : thisClass.getDeclaredFields()) {
 			field.setAccessible(true);
-			if (field.get(this) != null && !"tags".equals(field.getName())) {
+			if (field.get(this) != null && !"tags".equals(field.getName()) && !"email".equals(field.getName())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }
