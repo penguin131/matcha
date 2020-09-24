@@ -21,20 +21,20 @@ public class ChatWebSocketHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {
-//        logger.info("Start connection to web socket");
+        logger.info("Start connection to web socket");
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
         String username = JWTHelper.getUserNameFromToken(token);
         if (StringUtils.isEmpty(username)) {
             logger.info("Empty username");
             throw new Exception("Empty username");
         }
-//        logger.info("put user: " + username);
+        logger.info("put user: " + username);
         Chat.activeUserMap.put(userSession, username);
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-//        logger.info("End connection to web socket");
+        logger.info("End connection to web socket");
         Chat.activeUserMap.remove(user);
     }
 
