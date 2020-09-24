@@ -155,22 +155,18 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public void updateUserProfile(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException, IllegalAccessException {
         logger.info("updateUserProfile(): " + mapper.writeValueAsString(userProfileDto));
         PreparedStatement preparedStatement;
-        if (userProfileDto.hasFields()) {
-            preparedStatement = connection.prepareStatement(generateUpdateUserRequest(userProfileDto));
-            addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
-            preparedStatement.executeUpdate();
-        }
+        preparedStatement = connection.prepareStatement(generateUpdateUserRequest(userProfileDto));
+        addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
+        preparedStatement.executeUpdate();
     }
 
     @Override
     public void updateUserTags(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException {
         logger.info("updateUserTags(): " + mapper.writeValueAsString(userProfileDto));
         PreparedStatement preparedStatement;
-        if (userProfileDto.getTags() != null) {
-            preparedStatement = connection.prepareStatement(generateInsertTagsRequest(userProfileDto));
-            addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
-            preparedStatement.executeUpdate();
-        }
+        preparedStatement = connection.prepareStatement(generateInsertTagsRequest(userProfileDto));
+        addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
+        preparedStatement.executeUpdate();
     }
 
     @Override

@@ -128,7 +128,9 @@ public class LogicServiceBean implements LogicService {
 				throw new ValidateException("To many tags");
 			}
 			ValidateHelper.validateUserProfile(user);
-			databaseService.updateUserProfile(user, login);
+			if (user.hasFields()) {
+				databaseService.updateUserProfile(user, login);
+			}
 			//todo password
 			if (user.getEmail() != null) {
 				ValidateHelper.validateEmail(user.getEmail());
