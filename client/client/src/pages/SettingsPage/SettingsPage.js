@@ -1,5 +1,7 @@
 import React from 'react'
 import SettingsForm from '../../components/forms/SettingsForm/SettingsForm'
+import ChangeEmailForm from '../../components/forms/ChangeEmailForm/ChangeEmailForm'
+import ChangePassForm from '../../components/forms/ChangePassForm/ChangePassForm'
 import css from './SettingsPage.module.less'
 import Loader from '../../components/Loader/Loader'
 import ImageUploader from '../../components/ImageUploader/ImageUploader'
@@ -39,6 +41,8 @@ const SettingsPage = ({data}) => {
           data={userProfile}
         />
         <TagsInput data={tags}/>
+        <ChangeEmailForm onSubmit={services.updateProfile}/>
+        <ChangePassForm onSubmit={services.updateProfile}/>
       </>
     )}
     </div> 

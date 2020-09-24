@@ -19,7 +19,14 @@ const SettingsForm = ({onSubmit, data }) => {
     <div className={css.authFormContainer}>{
       <>
         <Form
-          onSubmit={e => onSubmit(e)}
+          onSubmit={e => {
+            const data = {
+              "sex": e.sex,
+              "biography": e.biography,
+              "sexPreferences": e.sexPreferences,
+            }
+            onSubmit(data)
+          }}
           mutators={{
             setLoading: (args, state, utils) => {
               utils.changeValue(state, 'isLoading', () => args[0])
