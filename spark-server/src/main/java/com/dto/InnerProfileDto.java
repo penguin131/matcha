@@ -92,6 +92,14 @@ public class InnerProfileDto {
 		this.tags = tags;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public boolean hasFields() throws IllegalAccessException {
 		Class<?> thisClass = this.getClass();
 		for (Field field : thisClass.getDeclaredFields()) {
@@ -101,13 +109,5 @@ public class InnerProfileDto {
 			}
 		}
 		return false;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 }

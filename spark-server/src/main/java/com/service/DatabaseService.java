@@ -56,6 +56,10 @@ public interface DatabaseService {
     void updateUserProfile(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException, IllegalAccessException;
 
     /**
+     * Сохранение новых тэгов
+     */
+    void updateUserTags(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException;
+    /**
      * Обновляет пользовательский профиль
      */
     void updateUserCoordinates(CoordinateDto coordinates, String login) throws SQLException, JsonProcessingException;

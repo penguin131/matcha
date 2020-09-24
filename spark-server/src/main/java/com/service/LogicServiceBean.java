@@ -128,9 +128,10 @@ public class LogicServiceBean implements LogicService {
 				throw new ValidateException("To many tags");
 			}
 			ValidateHelper.validateUserProfile(user);
+			databaseService.updateUserProfile(user, login);
+			//todo password
 			if (user.getEmail() != null) {
 				ValidateHelper.validateEmail(user.getEmail());
-				//todo
 				UserProfileDto profile = databaseService.getUserProfileForLogin(login, null);
 				if (profile == null) {
 					throw new BusinessException("No user profile with login " + login);
@@ -143,8 +144,8 @@ public class LogicServiceBean implements LogicService {
 						"changeMail/");
 				databaseService.saveNewEmail(login, user.getEmail());
 			}
-			if (user.hasFields()) {
-				databaseService.updateUserProfile(user, login);
+			if (user.getTags() != null) {
+				databaseService.updateUserTags(user, login);
 			}
 		} catch (ValidateException | MessagingException ex) {
 			ex.printStackTrace();

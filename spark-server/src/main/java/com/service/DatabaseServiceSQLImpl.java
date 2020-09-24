@@ -160,6 +160,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             addValuesToPreparedStatement(preparedStatement, userProfileDto, login);
             preparedStatement.executeUpdate();
         }
+    }
+
+    @Override
+    public void updateUserTags(InnerProfileDto userProfileDto, String login) throws SQLException, JsonProcessingException {
+        logger.info("updateUserTags(): " + mapper.writeValueAsString(userProfileDto));
+        PreparedStatement preparedStatement;
         if (userProfileDto.getTags() != null) {
             preparedStatement = connection.prepareStatement(generateInsertTagsRequest(userProfileDto));
             addValuesToPreparedStatementTag(preparedStatement, userProfileDto, login);
