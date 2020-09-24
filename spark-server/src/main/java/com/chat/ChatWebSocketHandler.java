@@ -28,8 +28,12 @@ public class ChatWebSocketHandler {
             logger.info("Empty username");
             throw new Exception("Empty username");
         }
-        logger.info("put user: " + username);
-        Chat.activeUserMap.put(userSession, username);
+        if (Chat.activeUserMap.containsValue(username)) {
+            logger.info("user already exists!");
+        } else {
+            logger.info("put user: " + username);
+            Chat.activeUserMap.put(userSession, username);
+        }
         logger.info("User map size: " + Chat.activeUserMap.size());
     }
 
