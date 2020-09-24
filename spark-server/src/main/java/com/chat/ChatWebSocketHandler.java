@@ -21,6 +21,7 @@ public class ChatWebSocketHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {
+        userSession.setIdleTimeout(10);
         logger.info("Start connection to web socket");
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
         String username = JWTHelper.getUserNameFromToken(token);
