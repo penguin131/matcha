@@ -23,6 +23,7 @@ public class InnerProfileDto {
 	private String oldPassword;
 	@JsonProperty("new_password")
 	private String newPassword;
+	private String password;
 
 	public String getLogin() {
 		return login;
@@ -133,5 +134,13 @@ public class InnerProfileDto {
 
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
