@@ -18,7 +18,8 @@ public class InnerProfileDto {
 	private Float longitude;
 	private Integer age;
 	private Set<String> tags;
-	private String email;
+	@JsonProperty("new_email")
+	private String newEmail;
 	@JsonProperty("old_password")
 	private String oldPassword;
 	@JsonProperty("new_password")
@@ -97,12 +98,12 @@ public class InnerProfileDto {
 		this.tags = tags;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getNewEmail() {
+		return newEmail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setNewEmail(String newEmail) {
+		this.newEmail = newEmail;
 	}
 
 	public boolean hasFields() throws IllegalAccessException {
@@ -111,7 +112,7 @@ public class InnerProfileDto {
 			field.setAccessible(true);
 			if (field.get(this) != null &&
 					!"tags".equals(field.getName()) &&
-					!"email".equals(field.getName()) &&
+					!"newEmail".equals(field.getName()) &&
 					!"oldPassword".equals(field.getName()) &&
 					!"newPassword".equals(field.getName())) {
 				return true;

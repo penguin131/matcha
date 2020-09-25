@@ -140,22 +140,22 @@ public class LogicServiceBean implements LogicService {
 				databaseService.changePassword(login, Password.getSaltedHash(user.getNewPassword()));
 			}
 			//Смена почты
-			if (user.getEmail() != null && user.getPassword() != null) {
+			if (user.getNewEmail() != null && user.getPassword() != null) {
 				if (!databaseService.checkPassword(login, user.getPassword())) {
 					throw new AccessDeniedException("Invalid password");
 				}
-				ValidateHelper.validateEmail(user.getEmail());
+				ValidateHelper.validateEmail(user.getNewEmail());
 				UserProfileDto profile = databaseService.getUserProfileForLogin(login, null);
 				if (profile == null) {
 					throw new BusinessException("No user profile with login " + login);
 				}
 				String hash = profile.getConfirmedToken();
 				MailService.sendConfirmationEmail(
-						user.getEmail(),
+						user.getNewEmail(),
 						hash,
 						request.url().substring(0, request.url().indexOf("protected")),
 						"changeMail/");
-				databaseService.saveNewEmail(login, user.getEmail());
+				databaseService.saveNewEmail(login, user.getNewEmail());
 			}
 			//Апдейт списка тэгов
 			if (user.getTags() != null) {

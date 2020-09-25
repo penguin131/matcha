@@ -56,7 +56,7 @@ public class ValidateHelper {
         if (userProfileDto.getLogin() != null && service.getUserProfileForLogin(userProfileDto.getLogin(), null) != null) {
             throw new ValidateException("Login already exists!");
         }
-        if (userProfileDto.getEmail() != null && service.checkEmailExist(userProfileDto.getEmail())) {
+        if (userProfileDto.getNewEmail() != null && service.checkEmailExist(userProfileDto.getNewEmail())) {
             throw new ValidateException("Email is already in use");
         }
         logger.info("<==    validateUserProfile(): success");
