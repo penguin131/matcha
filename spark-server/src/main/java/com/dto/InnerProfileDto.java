@@ -113,6 +113,7 @@ public class InnerProfileDto {
 			if (field.get(this) != null &&
 					!"tags".equals(field.getName()) &&
 					!"newEmail".equals(field.getName()) &&
+					!"password".equals(field.getName()) &&
 					!"oldPassword".equals(field.getName()) &&
 					!"newPassword".equals(field.getName())) {
 				return true;
