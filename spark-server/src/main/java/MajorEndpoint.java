@@ -84,6 +84,9 @@ public class MajorEndpoint {
 				String from = getUserNameFromToken(req.headers("Authorization"));
 				logicService.updateUserProfile(req, from);
 				return "";
+			} catch (AccessDeniedException ex) {
+				halt(403, "403 Forbidden");
+				return "";
 			} catch (ValidateException | AddressException ex) {
 				return ex.getMessage();
 			}

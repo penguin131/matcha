@@ -47,7 +47,7 @@ public interface LogicService {
 	/**
 	 * Обновляет пользовательский профиль
 	 */
-	void updateUserProfile(Request request, String login) throws ValidateException, MessagingException;
+	void updateUserProfile(Request request, String login) throws ValidateException, MessagingException, AccessDeniedException;
 
 	/**
 	 * Обновляет пользовательский профиль

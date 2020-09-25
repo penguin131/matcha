@@ -19,6 +19,10 @@ public class InnerProfileDto {
 	private Integer age;
 	private Set<String> tags;
 	private String email;
+	@JsonProperty("old_password")
+	private String oldPassword;
+	@JsonProperty("new_password")
+	private String newPassword;
 
 	public String getLogin() {
 		return login;
@@ -104,10 +108,30 @@ public class InnerProfileDto {
 		Class<?> thisClass = this.getClass();
 		for (Field field : thisClass.getDeclaredFields()) {
 			field.setAccessible(true);
-			if (field.get(this) != null && !"tags".equals(field.getName()) && !"email".equals(field.getName())) {
+			if (field.get(this) != null &&
+					!"tags".equals(field.getName()) &&
+					!"email".equals(field.getName()) &&
+					!"oldPassword".equals(field.getName()) &&
+					!"newPassword".equals(field.getName())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public String getOldPassword() {
+		return oldPassword;
+	}
+
+	public void setOldPassword(String oldPassword) {
+		this.oldPassword = oldPassword;
+	}
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 }

@@ -121,17 +121,25 @@ public class LogicServiceBean implements LogicService {
 	}
 
 	@Override
-	public void updateUserProfile(Request request, String login) throws ValidateException, MessagingException {
+	public void updateUserProfile(Request request, String login) throws ValidateException, MessagingException, AccessDeniedException {
 		try {
 			InnerProfileDto user = mapper.readValue(request.body(), InnerProfileDto.class);
 			if (user.getTags() != null && user.getTags().size() > 10) {
 				throw new ValidateException("To many tags");
 			}
 			ValidateHelper.validateUserProfile(user);
+			//Если есть поля без специальной логики
 			if (user.hasFields()) {
 				databaseService.updateUserProfile(user, login);
 			}
-			//todo password
+			//Смена пароля
+			if (user.getOldPassword() != null && user.getNewPassword() != null) {
+				if (!databaseService.checkPassword(login, user.getOldPassword())) {
+					throw new AccessDeniedException("Invalid password");
+				}
+				databaseService.changePassword(login, Password.getSaltedHash(user.getNewPassword()));
+			}
+			//Смена почты
 			if (user.getEmail() != null) {
 				ValidateHelper.validateEmail(user.getEmail());
 				UserProfileDto profile = databaseService.getUserProfileForLogin(login, null);
@@ -146,13 +154,15 @@ public class LogicServiceBean implements LogicService {
 						"changeMail/");
 				databaseService.saveNewEmail(login, user.getEmail());
 			}
+			//Апдейт списка тэгов
 			if (user.getTags() != null) {
 				databaseService.updateUserTags(user, login);
 			}
-		} catch (ValidateException | MessagingException ex) {
+			//Ошибки, связанные с отправкой письма, валидацией и несовпадением старого пароля
+		} catch (ValidateException | MessagingException | AccessDeniedException ex) {
 			ex.printStackTrace();
 			throw ex;
-		} catch (SQLException | IOException | IllegalAccessException | BusinessException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

@@ -402,4 +402,14 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("updateUserMailFromTemp() success");
 
     }
+
+    public void changePassword(String login, String password) throws SQLException{
+        logger.info(String.format("changePassword(%s, %s)", login, password));
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "update spark_db.t_user_profile set password=? where login=?");
+        preparedStatement.setString(1, password);
+        preparedStatement.setString(2, login);
+        preparedStatement.executeUpdate();
+        logger.info("changePassword() success");
+    }
 }

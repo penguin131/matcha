@@ -70,6 +70,11 @@ public interface DatabaseService {
     boolean checkPassword(String login, String password) throws Exception;
 
     /**
+     * Смена пароля
+     */
+    void changePassword(String login, String password) throws SQLException;
+
+    /**
      * Проставит подтвержденную почту пользователю по его токену
      */
     void confirmUserForToken(String token) throws SQLException;
