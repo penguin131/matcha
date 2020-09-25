@@ -66,6 +66,7 @@ public interface DatabaseService {
 
     /**
      * Проверка совпадения пароля и логина
+     * пароль должен быть уже закодированный
      */
     boolean checkPassword(String login, String password) throws Exception;
 

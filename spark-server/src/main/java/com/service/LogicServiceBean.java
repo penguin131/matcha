@@ -134,14 +134,14 @@ public class LogicServiceBean implements LogicService {
 			}
 			//Смена пароля
 			if (user.getOldPassword() != null && user.getNewPassword() != null) {
-				if (!databaseService.checkPassword(login, user.getOldPassword())) {
+				if (!databaseService.checkPassword(login, Password.getSaltedHash(user.getOldPassword()))) {
 					throw new AccessDeniedException("Invalid login/password");
 				}
 				databaseService.changePassword(login, Password.getSaltedHash(user.getNewPassword()));
 			}
 			//Смена почты
 			if (user.getNewEmail() != null && user.getPassword() != null) {
-				if (!databaseService.checkPassword(login, user.getPassword())) {
+				if (!databaseService.checkPassword(login, Password.getSaltedHash(user.getOldPassword()))) {
 					throw new AccessDeniedException("Invalid login/password");
 				}
 				ValidateHelper.validateEmail(user.getNewEmail());
