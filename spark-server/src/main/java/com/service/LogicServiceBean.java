@@ -141,7 +141,7 @@ public class LogicServiceBean implements LogicService {
 			}
 			//Смена почты
 			if (user.getNewEmail() != null && user.getPassword() != null) {
-				if (!databaseService.checkPassword(login, Password.getSaltedHash(user.getOldPassword()))) {
+				if (!databaseService.checkPassword(login, Password.getSaltedHash(user.getPassword()))) {
 					throw new AccessDeniedException("Invalid login/password");
 				}
 				ValidateHelper.validateEmail(user.getNewEmail());
