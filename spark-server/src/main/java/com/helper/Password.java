@@ -16,15 +16,11 @@ public class Password {
     private static final int iterations = 20*1000;
     private static final int saltLen = 32;
     private static final int desiredKeyLen = 256;
-    private static Logger logger = Logger.getLogger(Password.class);
 
     public static String getSaltedHash(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        logger.info(String.format("==>  getSaltedHash(%s)", password));
         byte[] salt = new byte[saltLen];
         RANDOM.nextBytes(salt);
-        String hash = Base64.encodeBase64String(salt) + "$" + hash(password, salt);
-        logger.info("<==    getSaltedHash(): " + hash);
-        return hash;
+        return Base64.encodeBase64String(salt) + "$" + hash(password, salt);
     }
 
     //password в изначальном виде, stored хешированный
@@ -39,14 +35,11 @@ public class Password {
     }
 
     private static String hash(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        logger.info(String.format("==>  hash(%s, salt)", password));
         if (password == null || password.length() == 0)
             throw new IllegalArgumentException("Empty passwords are not supported.");
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         SecretKey key = f.generateSecret(new PBEKeySpec(
                 password.toCharArray(), salt, iterations, desiredKeyLen));
-        String res = Base64.encodeBase64String(key.getEncoded());
-        logger.info("<==    hash(): " + res);
-        return res;
+        return Base64.encodeBase64String(key.getEncoded());
     }
 }
