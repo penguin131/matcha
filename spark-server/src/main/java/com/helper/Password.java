@@ -22,7 +22,6 @@ public class Password {
         logger.info(String.format("==>  getSaltedHash(%s)", password));
         byte[] salt = new byte[saltLen];
         RANDOM.nextBytes(salt);
-        logger.info("salt: " + new String(salt));
         String hash = Base64.encodeBase64String(salt) + "$" + hash(password, salt);
         logger.info("<==    getSaltedHash(): " + hash);
         return hash;
