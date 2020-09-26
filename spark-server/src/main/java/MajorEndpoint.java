@@ -1,4 +1,4 @@
-import com.chat.ChatWebSocketHandler;
+import com.chat.WebSocketHandler;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
@@ -22,7 +22,7 @@ public class MajorEndpoint {
 		LogicService logicService = ServiceHelper.getLogicService();
 		port(8080);
 		staticFiles.location("/public");
-		webSocket("/chat", ChatWebSocketHandler.class);
+		webSocket("/chat", WebSocketHandler.class);
 		Config.configureLogger();
 
 		//REST

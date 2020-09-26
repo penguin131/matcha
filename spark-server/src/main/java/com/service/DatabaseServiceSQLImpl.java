@@ -219,7 +219,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         preparedStatement.setString(4, user1);
         ResultSet rs = preparedStatement.executeQuery();
         while (rs.next()) {
-            messages.add(new MessageDto(MessageType.CHAT_MESSAGE,
+            messages.add(new MessageDto(MessageType.CHAT_MESSAGE.getName(),
                     rs.getString("text"),
                     rs.getString("login1"),
                     rs.getString("login2"),

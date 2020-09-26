@@ -19,7 +19,7 @@ public class WebSockets {
         for (Map.Entry<Session, String> entry : activeUserMap.entrySet()) {
             if (entry.getValue().equals(sender) || entry.getValue().equals(message.getTo())) {
                 entry.getKey().getRemote().sendString(String.valueOf(new JSONObject()
-                        .put("type", message.getType().ordinal())
+                        .put("type", message.getType())
                         .put("msgText", message.getMsgText())
                         .put("from", message.getFrom())
                         .put("to", message.getTo())

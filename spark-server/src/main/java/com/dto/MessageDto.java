@@ -3,7 +3,7 @@ package com.dto;
 import com.dictionary.MessageType;
 
 public class MessageDto {
-    private MessageType type;
+    private String type;
     private String msgText;
     private String from;
     private String to;
@@ -25,11 +25,11 @@ public class MessageDto {
         this.msgText = msgText;
     }
 
-    public MessageType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(MessageType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -49,7 +49,7 @@ public class MessageDto {
         this.date = date;
     }
 
-    public MessageDto(MessageType type,
+    public MessageDto(String type,
                       String msgText,
                       String from,
                       String to,

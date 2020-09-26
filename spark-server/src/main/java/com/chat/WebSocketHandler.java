@@ -14,15 +14,15 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.utils.StringUtils;
 
 @WebSocket
-public class ChatWebSocketHandler {
-    private final static Logger logger = Logger.getLogger(ChatWebSocketHandler.class);
+public class WebSocketHandler {
+    private final static Logger logger = Logger.getLogger(WebSocketHandler.class);
     private static ObjectMapper mapper = new ObjectMapper();
     private static final DatabaseService databaseService = ServiceHelper.getDatabaseService();
 
     @OnWebSocketConnect
     public void onConnect(Session userSession) throws Exception {
         logger.info("Start connection to web socket");
-        userSession.setIdleTimeout(3600000);//1 час
+        userSession.setIdleTimeout(10000000);//примерно 3 часа
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
         String username = JWTHelper.getUserNameFromToken(token);
         if (StringUtils.isEmpty(username)) {

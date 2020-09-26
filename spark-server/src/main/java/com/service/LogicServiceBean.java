@@ -97,7 +97,7 @@ public class LogicServiceBean implements LogicService {
 		try {
 			boolean result = databaseService.setLike(from, to);
 			MessageDto notification = new MessageDto();
-			notification.setType(MessageType.NOTIFICATION);
+			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
 			notification.setMsgText(from + " liked you!");
 			WebSockets.sendMessage(null, notification);
@@ -120,7 +120,7 @@ public class LogicServiceBean implements LogicService {
 		try {
 			databaseService.setComplaint(from, to);
 			MessageDto notification = new MessageDto();
-			notification.setType(MessageType.NOTIFICATION);
+			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
 			notification.setMsgText(from + " disliked you!");
 			WebSockets.sendMessage(null, notification);
@@ -332,7 +332,7 @@ public class LogicServiceBean implements LogicService {
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
 			MessageDto notification = new MessageDto();
 			notification.setTo(nextUser.getLogin());
-			notification.setType(MessageType.NOTIFICATION);
+			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setMsgText("User " + login + " watch you profile!");
 			WebSockets.sendMessage(null, notification);
 			return mapper.writeValueAsString(nextUser);
