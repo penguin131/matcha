@@ -1,5 +1,7 @@
 package com.service;
 
+import com.chat.WebSockets;
+import com.dictionary.MessageType;
 import com.dto.*;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.BusinessException;
@@ -93,7 +95,18 @@ public class LogicServiceBean implements LogicService {
 	@Override
 	public void setLike(String from, String to) throws ValidateException {
 		try {
-			databaseService.setLike(from, to);
+			boolean result = databaseService.setLike(from, to);
+			MessageDto notification = new MessageDto();
+			notification.setType(MessageType.NOTIFICATION);
+			notification.setTo(to);
+			notification.setMsgText(from + " liked you!");
+			WebSockets.sendMessage(null, notification);
+			//Если лайк совпал, то дополнительное уведомление
+			if (result) {
+				notification.setTo(from);
+				notification.setMsgText("New match with user " + to);
+				WebSockets.sendMessage(null, notification);
+			}
 		} catch (ValidateException ex) {
 			ex.printStackTrace();
 			throw ex;
@@ -106,7 +119,12 @@ public class LogicServiceBean implements LogicService {
 	public void setComplaint(String from, String to) {
 		try {
 			databaseService.setComplaint(from, to);
-		} catch (SQLException ex) {
+			MessageDto notification = new MessageDto();
+			notification.setType(MessageType.NOTIFICATION);
+			notification.setTo(to);
+			notification.setMsgText(from + " disliked you!");
+			WebSockets.sendMessage(null, notification);
+		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -311,7 +329,13 @@ public class LogicServiceBean implements LogicService {
 				filterDto = mapper.readValue(filter, UserFilterDto.class);
 			}
 			databaseService.createSearchData(filterDto, login);
-			return mapper.writeValueAsString(databaseService.nextUserWithFilter(filterDto, login));
+			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
+			MessageDto notification = new MessageDto();
+			notification.setTo(nextUser.getLogin());
+			notification.setType(MessageType.NOTIFICATION);
+			notification.setMsgText("User " + login + " watch you profile!");
+			WebSockets.sendMessage(null, notification);
+			return mapper.writeValueAsString(nextUser);
 		} catch (IOException | SQLException ex) {
 			ex.printStackTrace();
 			return "";

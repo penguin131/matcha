@@ -1,4 +1,4 @@
-create function set_like("from" character varying, "to" character varying) returns void
+create function set_like("from" character varying, "to" character varying) returns boolean
     language plpgsql
 as
 $$
@@ -57,10 +57,12 @@ begin
             where t_users_unity_id in (select * from cte_unity);
             --         up rating
             update spark_db.t_user_profile set rating=rating+1 where login="to";
+            return true;
         end if;
         end if;
         end if;
     end if;
+    return false;
 end
 $$;
 

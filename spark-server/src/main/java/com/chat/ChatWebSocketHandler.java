@@ -30,21 +30,21 @@ public class ChatWebSocketHandler {
             throw new Exception("Empty username");
         }
         logger.info("put user: " + username);
-        Chat.activeUserMap.put(userSession, username);
-        logger.info("User map size: " + Chat.activeUserMap.size());
+        WebSockets.activeUserMap.put(userSession, username);
+        logger.info("User map size: " + WebSockets.activeUserMap.size());
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
         logger.info("End connection to web socket");
-        Chat.activeUserMap.remove(user);
+        WebSockets.activeUserMap.remove(user);
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) throws Exception {
         MessageDto message1 = mapper.readValue(message, MessageDto.class);
         logger.info("Send message: " + mapper.writeValueAsString(message1));
-        Chat.sendMessage(Chat.activeUserMap.get(user), message1);
+        WebSockets.sendMessage(WebSockets.activeUserMap.get(user), message1);
         databaseService.saveChatMessage(message1);
     }
 }

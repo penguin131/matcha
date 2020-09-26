@@ -120,7 +120,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void setLike(String from, String to) throws ValidateException, SQLException, JsonProcessingException {
+    public boolean setLike(String from, String to) throws ValidateException, SQLException, JsonProcessingException {
         logger.info("setLike() from: " + from);
         if (StringUtils.equals(from, to))
             throw new ValidateException("User cannot be friends with himself");
@@ -129,7 +129,11 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         CallableStatement preparedStatement = connection.prepareCall("{CALL set_like(?,?)}");
         preparedStatement.setString(1, from);
         preparedStatement.setString(2, to);
-        preparedStatement.execute();
+        ResultSet rs = preparedStatement.executeQuery();
+        if (rs.next()) {
+            return rs.getBoolean(1);
+        }
+        return false;
     }
 
     @Override

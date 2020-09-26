@@ -153,7 +153,7 @@ public class MajorEndpoint {
 			return "";
 		});
 
-		get("/protected/getNextUser", ((request, response) -> {
+		post("/protected/getNextUser", ((request, response) -> {
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			return logicService.getNextUser(login, request.body());
 		}));

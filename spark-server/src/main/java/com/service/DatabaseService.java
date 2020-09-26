@@ -37,7 +37,7 @@ public interface DatabaseService {
     /**
      * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.
      */
-    void setLike(String from, String to) throws Exception;
+    boolean setLike(String from, String to) throws Exception;
 
     /**
      * Ставит жалобу, влияет на рейтинг
