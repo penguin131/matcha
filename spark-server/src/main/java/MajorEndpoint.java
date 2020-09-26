@@ -114,6 +114,7 @@ public class MajorEndpoint {
 			try {
 				return logicService.getToken(req.body());
 			} catch (AccessDeniedException ex) {
+				halt(403, "403 Forbidden");
 				return ex.getMessage();
 			}
 		});

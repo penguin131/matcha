@@ -27,7 +27,7 @@ public class Filler {
 			int index = 0;
 			while (rs.next()) {
 				PreparedStatement preparedStatement2 = connection.prepareStatement(
-						"update spark_db.t_user_profile set location_1=?, location_2=? where user_profile_id=?");
+						"update spark_db.t_user_profile set latitude=?, longitude=? where user_profile_id=?");
 				preparedStatement2.setFloat(1, coordinates[index].getLatitude());
 				preparedStatement2.setFloat(2, coordinates[index].getLongitude());
 				preparedStatement2.setInt(3, rs.getInt("user_profile_id"));
