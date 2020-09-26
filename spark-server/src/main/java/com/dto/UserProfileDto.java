@@ -12,6 +12,7 @@ import java.util.Set;
 
 public class UserProfileDto {
     private String login;
+    @JsonIgnore
     private String email;
     private String sex;
     @JsonProperty("first_name")
