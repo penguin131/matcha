@@ -6,6 +6,7 @@ create function set_like("from" character varying, "to" character varying) retur
 as
 $$
 declare
+--     simple и reverse >0 по идее невозможная ситуация
 --     мой лайк
     simple integer=(select count(*) from spark_db.t_users_unity t1
                                              join spark_db.t_user_profile t2 on (t2.user_profile_id=t1.user1_id)
@@ -16,6 +17,18 @@ declare
                                               join spark_db.t_user_profile t2 on (t2.user_profile_id=t1.user1_id)
                                               join spark_db.t_user_profile t3 on (t3.user_profile_id=t1.user2_id)
                      where t2.login="to" and t3.login="from");
+--     Меня лайкнули и я подтвердил
+    reverseConfirmed boolean=reverse>0 and
+                      (select t1.confirmed from spark_db.t_users_unity t1
+                                                join spark_db.t_user_profile t2 on (t2.user_profile_id=t1.user1_id)
+                                                join spark_db.t_user_profile t3 on (t3.user_profile_id=t1.user2_id)
+                       where t2.login="to" and t3.login="from" limit 1)=true;
+--     Я лайкнул, а потом подтвердили
+    simpleConfirmed boolean=simple>0 and
+                            (select t1.confirmed from spark_db.t_users_unity t1
+                                                          join spark_db.t_user_profile t2 on (t2.user_profile_id=t1.user1_id)
+                                                          join spark_db.t_user_profile t3 on (t3.user_profile_id=t1.user2_id)
+                             where t2.login="from" and t3.login="to" limit 1)=true;
 begin
 --               Если есть жалоба, то нельзя подружиться
     if (select count(*) from spark_db.t_complaint t1
@@ -24,12 +37,26 @@ begin
         where t2.login="from" and t3.login="to")=0 and "from"<>"to"
     then
 ------------------------------------        LIKED      -----------------------------------------------------------------
---             пролайкано в обе стороны todo дыра, может не отмениться
-        if (simple>0 and reverse>0)
+--      Я лайкнул, а потом подтвердили
+        if (simpleConfirmed=true)
+        then
+            delete from spark_db.t_users_unity
+            where (select user_profile_id from spark_db.t_user_profile where login="from")=postgres.spark_db.t_users_unity.user1_id
+              and (select user_profile_id from spark_db.t_user_profile where login="to")=postgres.spark_db.t_users_unity.user2_id;
+            insert into spark_db.t_users_unity (user1_id, user2_id)
+            VALUES (
+                       (select user_profile_id from spark_db.t_user_profile where login="to" limit 1),
+                       (select user_profile_id from spark_db.t_user_profile where login="from" limit 1));
+
+            --         down rating
+            update spark_db.t_user_profile set rating=rating-1 where login="to";
+--      Меня лайкнули, а я подтвердил
+        else if (reverseConfirmed=true)
         then
             update spark_db.t_users_unity set confirmed=false
-            where (select user_profile_id from spark_db.t_user_profile where login="from")=postgres.spark_db.t_users_unity.user2_id
-              and (select user_profile_id from spark_db.t_user_profile where login="to")=postgres.spark_db.t_users_unity.user1_id;
+            where (select user_profile_id from spark_db.t_user_profile where login="to")=postgres.spark_db.t_users_unity.user1_id
+              and (select user_profile_id from spark_db.t_user_profile where login="from")=postgres.spark_db.t_users_unity.user2_id;
+
             --         down rating
             update spark_db.t_user_profile set rating=rating-1 where login="to";
         else if (simple>0 and reverse=0)
@@ -46,11 +73,11 @@ begin
             --         insert new user unity
             insert into spark_db.t_users_unity (user1_id, user2_id)
             VALUES (
-                       (select user_profile_id from spark_db.t_user_profile where login="from"),
-                       (select user_profile_id from spark_db.t_user_profile where login="to"));
+                       (select user_profile_id from spark_db.t_user_profile where login="from" limit 1),
+                       (select user_profile_id from spark_db.t_user_profile where login="to" limit 1));
             --         up rating
             update spark_db.t_user_profile set rating=rating+1 where login="to";
---             Если этот чел уже ставил мне лайк
+--             Если этот чел уже ставил мне лайк, то мне пофиг, ставлю новый и мы друганы
         elsif simple=0 and reverse>0
         then
             WITH cte_unity AS
@@ -64,6 +91,7 @@ begin
             --         up rating
             update spark_db.t_user_profile set rating=rating+1 where login="to";
             return true;
+        end if;
         end if;
         end if;
         end if;
