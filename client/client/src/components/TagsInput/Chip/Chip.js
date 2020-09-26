@@ -1,5 +1,4 @@
 import React from 'react'
-import {ReactComponent as ClearLogo} from '../../../imgs/clear.svg'
 import css from './Chip.module.less'
 
 const Chip = ({data, onRemove}) => {

@@ -8,12 +8,9 @@ const SettingsForm = ({onSubmit, data }) => {
   const [isFormLoading, setFormIsLoading] = useState(false)
   const {
     biography,
-    /* sex,
-    sex_preferences, */
+    sex,
+    sex_preferences,
   } = data
-
-  const sex = 'male'
-  const sexPreferences = 'female'
 
   return (
     <div className={css.authFormContainer}>{
@@ -23,9 +20,9 @@ const SettingsForm = ({onSubmit, data }) => {
             const data = {
               "sex": e.sex,
               "biography": e.biography,
-              "sexPreferences": e.sexPreferences,
+              "sex_preferences": e.sexPreferences,
             }
-            onSubmit(data)
+            onSubmit(data, setFormIsLoading)
           }}
           mutators={{
             setLoading: (args, state, utils) => {
@@ -36,7 +33,7 @@ const SettingsForm = ({onSubmit, data }) => {
             isLoading: false,
             biography: biography,
             sex: sex,
-            sexPreferences: sexPreferences,
+            sexPreferences: sex_preferences,
           }}
           
         render={({handleSubmit, form, submitting, pristine, values }) => (

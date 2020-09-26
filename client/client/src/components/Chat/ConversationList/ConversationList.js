@@ -27,7 +27,7 @@ const ConversationList = ({ data = [], setCurrentChat, isLoading }) => {
   return (
     <div className={css.conversationList}>
       {!isLoading ? (
-        data.length > 1 ? data.map((element, i) => (
+        data.length > 0 ? data.map((element, i) => (
           <Conversation
             key={i}
             index={i}

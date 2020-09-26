@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import Loader from '../../Loader/Loader'
-import ChangePassForm from '../ChangePassForm/ChangePassForm'
 
 const ChangeEmailForm = ({ onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false)

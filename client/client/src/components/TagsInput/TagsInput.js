@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import Chip from './Chip/Chip'
 import css from './TagsInput.module.less'
 import Button from '../../components/Button/Button'
-import _ from 'lodash'
 import * as services from '../../services/services'
 
 const TagsInput = ({ data=[] }) => {

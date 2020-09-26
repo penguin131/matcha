@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 import Main from './components/baseLayout/Main/Main'
 import AuthPage from './pages/AuthPage/AuthPage'
@@ -7,9 +7,10 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import './App.css'
 
 const App = () => {
-  const currentUser = localStorage.getItem('currentUser')
-  const [isAuth, setIsAuth] = useState(currentUser ? true : false)
-  console.log(currentUser)
+/*   const currentUser = localStorage.getItem('currentUser') */
+/*   const [isAuth, setIsAuth] = useState(currentUser ? true : false) */
+const [isAuth, setIsAuth] = useState(true)
+
   return (
     <ErrorBoundary>
       <BrowserRouter>

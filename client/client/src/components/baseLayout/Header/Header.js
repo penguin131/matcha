@@ -14,6 +14,7 @@ const Header = ({ data, isLoading, setIsAuth }) => {
 		setIsAuth(false)
 		localStorage.removeItem('currentUser')
 		localStorage.removeItem('token')
+		localStorage.removeItem('currentChat')
 	}
 
 	return (

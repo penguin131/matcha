@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState} from 'react'
 import ConversationList from '../../components/Chat/ConversationList/ConversationList'
 import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
@@ -8,30 +8,33 @@ import { ws } from '../../services/backendUrl'
 import * as services from '../../services/services.js'
 import axios from 'axios'
 
+const token = localStorage.token
+
+const webSocket = new WebSocket(`${ws}${token}`)
+
 const ChatPage = () => {
   const [friendsListIsLoading, setFriendsListIsLoading] = useState(false)
   const [chatListIsLoading, setChatListIsLoading] = useState(false)
   const [friendsList, setFriendsList] = useState([])
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
-  const token = localStorage.token
-  const webSocket = useRef(new WebSocket(`${ws}${token}`))
+
   const [messages, setMessages] = useState([])
   
   useEffect(() => {
-    webSocket.current.onopen = () => {
+    webSocket.onopen = () => {
       console.log('connected')
     }
-    webSocket.current.onclose = () => {
+    webSocket.onclose = () => {
       console.log('closed')
     }
     
     return () => {
-      webSocket.current.close()
+      webSocket.close()
       console.log('closed')
     }
   }, [])
   useEffect(() => {
-    webSocket.current.onmessage = (message) => {
+    webSocket.onmessage = (message) => {
       setMessages([JSON.parse(message.data), ...messages])
     }
   }, [messages])
@@ -45,7 +48,7 @@ const ChatPage = () => {
       date: Date.now(),
     }
 
-    webSocket.current.send(JSON.stringify(message))
+    webSocket.send(JSON.stringify(message))
   }
 
   useEffect(() => {

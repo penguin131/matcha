@@ -1,8 +1,7 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import Loader from '../../Loader/Loader'
-import { useHistory } from 'react-router-dom'
 
 const ChangePassForm = ({ onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false)
