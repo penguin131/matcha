@@ -5,7 +5,7 @@ const Chip = ({data, onRemove}) => {
   return (
     <div className={css.chip}>
       <div className={css.text}><span>{data}</span></div>
-      <div className={css.cross} onClick={onRemove}>x</div>
+      {onRemove ? <div className={css.cross} onClick={onRemove}>x</div> : null}
     </div>
   )
 }

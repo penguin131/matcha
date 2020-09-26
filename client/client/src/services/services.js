@@ -156,3 +156,18 @@ export const setAvatar = async (id) => {
     console.log(e)
   }
 }
+
+export const getNextUser = async (values, setIsLoading = () => {}, setData) => {
+  setIsLoading(true)
+  try {
+    await axios.post(`${url}/protected/getNextUser`, values, {
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/upload',
+      }
+    }).then(res => setData(res.data))
+  } catch(e) {
+    console.log(e)
+  }
+  setIsLoading(false)
+}

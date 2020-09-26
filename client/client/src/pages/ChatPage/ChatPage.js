@@ -4,20 +4,14 @@ import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
 import { Link } from 'react-router-dom'
 import css from './ChatPage.module.less'
-import { ws } from '../../services/backendUrl'
 import * as services from '../../services/services.js'
 import axios from 'axios'
 
-const token = localStorage.token
-
-const webSocket = new WebSocket(`${ws}${token}`)
-
-const ChatPage = () => {
+const ChatPage = ({ webSocket }) => {
   const [friendsListIsLoading, setFriendsListIsLoading] = useState(false)
   const [chatListIsLoading, setChatListIsLoading] = useState(false)
   const [friendsList, setFriendsList] = useState([])
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
-
   const [messages, setMessages] = useState([])
   
   useEffect(() => {
@@ -35,7 +29,10 @@ const ChatPage = () => {
   }, [])
   useEffect(() => {
     webSocket.onmessage = (message) => {
-      setMessages([JSON.parse(message.data), ...messages])
+      const data = JSON.parse(message.data)
+      if (data.type === 'chat_message') {
+        setMessages([JSON.parse(message.data), ...messages])
+      }
     }
   }, [messages])
 
