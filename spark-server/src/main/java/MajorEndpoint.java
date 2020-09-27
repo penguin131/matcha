@@ -218,8 +218,8 @@ public class MajorEndpoint {
 
 	private static void	addHeaders(Response res) {
 		res.header("Access-Control-Allow-Origin","*");
-		res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
-		res.header("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+		res.header("Access-Control-Allow-Methods","*");
+		res.header("Access-Control-Allow-Headers","*");
 //		res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 //		res.header("Access-Control-Allow-Origin", "*");
 	}
