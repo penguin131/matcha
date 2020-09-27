@@ -170,6 +170,16 @@ public class MajorEndpoint {
 			return "";
 		}));
 
+		post("/testChat", ((request, response) -> {
+			MessageDto notification = new MessageDto();
+			notification.setTo("bfalmer");
+			notification.setFrom("smight");
+			notification.setType(MessageType.CHAT_MESSAGE.getName());
+			notification.setMsgText("Test chat message");
+			WebSockets.sendMessage(null, notification);
+			return "";
+		}));
+
 		//Filters
 		before((request, response) -> {
 			if (!request.url().contains("/chat")) {
