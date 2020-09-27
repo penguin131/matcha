@@ -23,6 +23,9 @@ public class MajorEndpoint {
 		//Инициализация стартовых обьектов
 		Logger logger = Logger.getLogger(MajorEndpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
+		String keyStoreLocation = "deploy/keystore.jks";
+		String keyStorePassword = "password";
+		secure(keyStoreLocation, keyStorePassword, null, null);
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", WebSocketHandler.class);
