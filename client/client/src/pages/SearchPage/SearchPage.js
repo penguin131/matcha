@@ -25,14 +25,8 @@ const SearchPage = () => {
 
   useEffect(() => {
     const {login} = userProfile
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source()
 
-    services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', login, source)
-
-    return () => {
-      source.cancel();
-    };
+    services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', login)
   }, [userProfile])
 
   return (
@@ -43,7 +37,6 @@ const SearchPage = () => {
                     profileIsLoading={profileIsLoading}
                     imagesIsLoading={imagesIsLoading}/>
       <Button onClick={() =>  services.getNextUser(filters, setProfileIsLoading, setUserProfile)} label="Next"/>
-      
     </div>
   )
 }

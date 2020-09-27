@@ -4,70 +4,58 @@ import ChatForm from '../../components/forms/ChatForm/ChatForm'
 import ChatList from '../../components/Chat/ChatList/ChatList'
 import { Link } from 'react-router-dom'
 import css from './ChatPage.module.less'
-import * as services from '../../services/services.js'
+import { useGetAxiosFetch } from '../../services/useAxiosFetch'
+import { allFriendsUrl, chatHistoryUrl } from '../../services/services' 
 import axios from 'axios'
 
+const token = localStorage.token
+
 const ChatPage = ({ webSocket }) => {
-  const [friendsListIsLoading, setFriendsListIsLoading] = useState(false)
-  const [chatListIsLoading, setChatListIsLoading] = useState(false)
-  const [friendsList, setFriendsList] = useState([])
+  const config = {headers: {'Authorization': token}}
+  const [friendsList, fetchFriendsList] = useGetAxiosFetch(config)
+  const [chatHistory, fetchChatHistory] = useGetAxiosFetch(config)
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
   const [messages, setMessages] = useState([])
-  
+
   useEffect(() => {
-    webSocket.onopen = () => {
-      console.log('connected')
-    }
-    webSocket.onclose = () => {
-      console.log('closed')
-    }
-    
-    return () => {
-      webSocket.close()
-      console.log('closed')
-    }
+    fetchFriendsList(allFriendsUrl)
   }, [])
+  
   useEffect(() => {
     webSocket.onmessage = (message) => {
       const data = JSON.parse(message.data)
+
       if (data.type === 'chat_message') {
+        console.log(';e;')
         setMessages([JSON.parse(message.data), ...messages])
       }
     }
   }, [messages])
 
+  useEffect(() => {
+    fetchChatHistory(`${chatHistoryUrl}/${currentChat}`).then(res => res?.data && setMessages(res.data))
+  }, [currentChat])
+
   const onSubmit = (values) => {
     const message = {
-      type: 0,
+      type: 'chat_message',
       msgText: values.message,
       from: localStorage.currentUser,
       to: currentChat,
       date: Date.now(),
     }
-
+    console.log(messages)
+    setMessages([...messages, message])
     webSocket.send(JSON.stringify(message))
   }
-
-  useEffect(() => {
-    services.getAllFriends(setFriendsListIsLoading, setFriendsList)
-  }, [])
-
-  useEffect(() => {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source()
-    services.fetchData(setChatListIsLoading, setMessages, 'getChatHistory', currentChat, source)
-    return () => {
-      source.cancel();
-    };
-  }, [currentChat])
 
   return (
     <div className={css.chatContainer}>
       <div className={css.chatBar}>
         <ConversationList
-          data={friendsList}
+          data={friendsList.data?.data}
           setCurrentChat={setCurrentChat}
-          isLoading={friendsListIsLoading}
+          isLoading={friendsList.loading}
         />
       </div>
       <div className={css.chatWindow}>
@@ -82,7 +70,7 @@ const ChatPage = ({ webSocket }) => {
           currentChat={currentChat}
           messages={messages}
           setMessages={setMessages}
-          isLoading={chatListIsLoading}
+          isLoading={false}
         />
         <ChatForm onSubmit={onSubmit}/>
       </div>

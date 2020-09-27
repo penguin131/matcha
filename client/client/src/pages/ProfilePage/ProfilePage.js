@@ -14,17 +14,10 @@ const ProfilePage = ({match}) => {
   
 
   useEffect(() => {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source()
-
     Promise.all([
-      services.fetchData(setProfileIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
-      services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', user, source)
+      services.fetchData(setProfileIsLoading, setUserProfile, 'getUserProfileForLogin', user),
+      services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', user)
     ])
-
-    return () => {
-      source.cancel();
-    };
   }, [user])
 
   return (

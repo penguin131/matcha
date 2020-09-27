@@ -22,7 +22,7 @@ const SettingsPage = ({data}) => {
         </div>
         <div className={css.imagesBlock}>
           <div className={css.imagesList}>
-            {userPhotos.map((photo, i) => (
+            {userPhotos?.length && userPhotos.map((photo, i) => (
               <ImageItem
                 key={i}
                 dataUrl={photo.data}

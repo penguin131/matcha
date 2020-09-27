@@ -2,25 +2,85 @@ import axios from 'axios'
 import { url, proxy, ipInfoToken } from './backendUrl'
 
 const token = localStorage.token
+const user = localStorage.currentUser
 
-export const fetchData = async (setIsLoading, setData, api, id, source) => {
+export const userProfileForLoginUrl = `${url}protected/getUserProfileForLogin/${user}`
+export const userPhotosUrl = `${url}protected/getUserPhotos/${user}`
+export const updateUserProfileUrl = `${url}/protected/updateUserProfile`
+export const geolocationServiceUrl = `${proxy}https://ipinfo.io?token=${ipInfoToken}`
+export const allFriendsUrl = `${url}protected/getAllFriends`
+export const chatHistoryUrl = `${url}protected/getChatHistory`
+// gets
+
+const axiosGet = async (setData, url, apiToken, source = {}) => {
+  let data = {}
+
   try {
-    setIsLoading(true)
-    await axios.get(`${url}/protected/${api}/${id}`, {
+    await axios.get(url, {
       headers: {
-        'Authorization': `${token}`
+        'Authorization': `${apiToken}`
       },
       cancelToken: source.token
-    } )
-    .then(res => {
-      setIsLoading(false) 
-      setData(res.data)
-    })
+    }).then(res => setData(res.data))
   } catch(e) {
-    setIsLoading(false) 
+    data = e
+  }
+
+  return data
+}
+
+export const fetchData = async (setData, api, id) => {
+  const apiUrl = `${url}protected/${api}/${id}`
+  console.log(api)
+  const data = await axiosGet(setData, apiUrl, token)
+
+  return (data)
+}
+
+export const getAllFriends = async (setData, source) => {
+  const apiUrl = `${url}protected/getAllFriends`
+  const data = await axiosGet(setData, apiUrl, token, source)
+
+  return (data)
+}
+
+export const setLikeDislike = async (login, payload) => {
+  const apiUrl = `${url}protected/${payload}/${login}`
+  const data = await axiosGet(apiUrl, token)
+
+  return (data)
+}
+
+export const getGeolocation = async () => {
+  try {
+    await axios.get(`${proxy}https://ipinfo.io?token=${ipInfoToken}`)
+      .then(res => {
+        const data = res.data.loc.split(',')
+        updateProfile({
+          latitude: data[0],
+          longitude: data[1],
+        })
+      });
+  } catch(e) {
     console.log(e)
   }
 }
+
+export const deleteImage = async (id) => {
+  const apiUrl = `${url}protected/deleteImage/${id}`
+  const data = await axiosGet(apiUrl, token)
+
+  return (data)
+}
+
+export const setAvatar = async (id) => {
+  const apiUrl = `${url}protected/setAvatar/${id}`
+  const data = await axiosGet(apiUrl, token)
+
+  return (data)
+}
+
+// posts
 
 export const join = async (values, setIsLoading) => {
   const data = {
@@ -63,51 +123,6 @@ export const login = async (values, setIsLoading, history, setIsAuth) => {
   }
 }
 
-export const getAllFriends = async (setIsLoading, setFriendsList) => {
-  try {
-    setIsLoading(true)
-    await axios.get(`${url}protected/getAllFriends`, {
-        headers: {
-          'Authorization': `${token}`
-        }
-      })
-      .then(res => {
-        setIsLoading(false) 
-        setFriendsList(res.data)
-      })
-    } catch(e) {
-      setIsLoading(false) 
-      console.log(e)
-    }
-}
-
-export const setLikeDislike = async (login, payload) => {
-  try {
-    await axios.get(`${url}protected/${payload}/${login}`, {
-      headers: {
-        'Authorization': `${token}`
-      }
-    })
-  } catch(e) {
-    console.log(e)
-  }
-}
-
-export const getGeolocation = async () => {
-  try {
-    await axios.get(`${proxy}https://ipinfo.io?token=${ipInfoToken}`, (res) => {}, "jsonp")
-      .then(res => {
-        const data = res.data.loc.split(',')
-        updateProfile({
-          latitude: data[0],
-          longitude: data[1],
-        })
-      });
-  } catch(e) {
-    console.log(e)
-  }
-}
-
 export const updateProfile = async (values, setIsLoading = () => {}) => {
   try {
     await axios.post(`${url}/protected/updateUserProfile`, values, {
@@ -126,30 +141,6 @@ export const uploadImages = async (values, setIsLoading = () => {}) => {
       headers: {
         'Authorization': `${token}`,
         'Content-Type': 'application/upload',
-      }
-    })
-  } catch(e) {
-    console.log(e)
-  }
-}
-
-export const deleteImage = async (id) => {
-  try {
-    await axios.get(`${url}protected/deleteImage/${id}`, {
-      headers: {
-        'Authorization': `${token}`
-      }
-    })
-  } catch(e) {
-    console.log(e)
-  }
-}
-
-export const setAvatar = async (id) => {
-  try {
-    await axios.get(`${url}protected/setAvatar/${id}`, {
-      headers: {
-        'Authorization': `${token}`
       }
     })
   } catch(e) {

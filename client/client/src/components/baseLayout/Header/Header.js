@@ -6,9 +6,8 @@ import { Link } from 'react-router-dom'
 import Loader from '../../../components/Loader/Loader'
 import css from './Header.module.less'
 
-const Header = ({ data, isLoading, setIsAuth }) => {
-  const { userProfile, userPhotos } = data
-	const mainPhoto = userPhotos.length > 0 ? userPhotos.find(photo => photo.main) : null
+const Header = ({ userProfile, userPhotos, isLoading, setIsAuth }) => {
+	const mainPhoto = userPhotos?.length > 0 ? userPhotos.find(photo => photo.main) : null
 
 	const logout = () => {
 		setIsAuth(false)

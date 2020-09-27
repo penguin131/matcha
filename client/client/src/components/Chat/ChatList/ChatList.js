@@ -18,13 +18,12 @@ const MessageRow = ({ msgText, date, myself }) => {
   )
 }
 
-const ChatList = ({ currentChat, messages, isLoading }) => {
-
+const ChatList = ({ currentChat, messages = [], isLoading }) => {
   return (
     <div className={css.chatContainer}>
       {currentChat ? isLoading ? <Loader/> :
       <div className={css.chatList}>
-        {messages.map((element, i) => {
+        {messages.length && messages.map((element, i) => {
           const { msgText, from, date } = element
 
           return (

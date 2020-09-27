@@ -9,44 +9,26 @@ import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import SearchPage from '../../../pages/SearchPage/SearchPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
-import * as services from '../../../services/services'
-import axios from 'axios'
 import css from './Main.module.css'
 import { ws } from '../../../services/backendUrl'
+import { useGetAxiosFetch, usePostAxiosFetch } from '../../../services/useAxiosFetch'
+import { userProfileForLoginUrl, userPhotosUrl, updateUserProfileUrl, geolocationServiceUrl } from '../../../services/services'
 
 const token = localStorage.token
 const webSocket = new WebSocket(`${ws}${token}`)
 
 const Main = ({isAuth, setIsAuth}) => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [userProfile, setUserProfile] = useState({})
-  const [userPhotos, setUserPhotos] = useState([])
-  const user = localStorage.currentUser
- 
+  const config = {headers: {'Authorization': token}}
+  const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
+  const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
+  const [{}, getUserGeolocation] = useGetAxiosFetch()
+  const [{}, updateUserProfile] = usePostAxiosFetch(config)
 
   useEffect(() => {
-    webSocket.onmessage = (message) => {
-      const data = JSON.parse(message.data)
-      if (data.type === 'notification') {
-        console.log(data)
-      }
-    }
+    fetchUserProfile(userProfileForLoginUrl)
+    fetchUserPhotos(userPhotosUrl)
   }, [])
 
-  useEffect(() => {  
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source()
-
-    Promise.all([
-      services.fetchData(setIsLoading, setUserProfile, 'getUserProfileForLogin', user, source),
-      services.fetchData(setIsLoading, setUserPhotos, 'getUserPhotos', user, source),
-    ])
-  
-    return () => {
-      source.cancel();
-    };
-  }, [user])
-  
   useEffect(() => {
     const options = {
       enableHighAccuracy: true,
@@ -56,23 +38,56 @@ const Main = ({isAuth, setIsAuth}) => {
 
     const success = (pos) => {
       const crd = pos.coords;
-      services.updateProfile({
+      const data = {
         latitude: crd.latitude,
         longitude: crd.longitude
-      })
+      }
+      updateUserProfile(updateUserProfileUrl, data)
     };
     
     const error = async (err) => {
-      services.getGeolocation()
+      getUserGeolocation(geolocationServiceUrl)
+        .then(res => {
+          const coords = res.data.loc.split(',')
+          const data = {
+            latitude: coords[0],
+            longitude: coords[1]
+          }
+
+          updateUserProfile(updateUserProfileUrl, data)
+        })
     };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, [])
 
+  useEffect(() => {
+    webSocket.onopen = () => {
+      console.log('connected')
+    }
+
+    webSocket.onclose = () => {
+      console.log('closed')
+    }
+    
+    webSocket.onmessage = (message) => {
+      const data = JSON.parse(message.data)
+      if (data.type === 'notification') {
+        console.log(data)
+      }
+    }
+  
+    return () => {
+      webSocket.close()
+      console.log('closed')
+    }
+  }, [])
+
   return (
     <div className={css.appContainer}>
-      <Header data={{userProfile, userPhotos}}
-              isLoading={isLoading}
+      <Header userProfile={userProfile.data?.data}
+              userPhotos={userPhotos.data?.data}
+              isLoading={userProfile.loading}
               setIsAuth={setIsAuth}/>
         <main className={css.mainContainer}>
           <Navigation/>
@@ -86,7 +101,7 @@ const Main = ({isAuth, setIsAuth}) => {
             <ProtectedRoute exact
                             path='/settings'
                             component={() => (
-                              <SettingsPage data={{userProfile, userPhotos, isLoading}}/>
+                              <SettingsPage data={{userProfile, userPhotos, isLoading: userProfile.loading}}/>
                             )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact
