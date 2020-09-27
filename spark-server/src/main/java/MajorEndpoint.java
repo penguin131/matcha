@@ -23,9 +23,6 @@ public class MajorEndpoint {
 		//Инициализация стартовых обьектов
 		Logger logger = Logger.getLogger(MajorEndpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
-		String keyStoreLocation = "deploy/keystore.jks";
-		String keyStorePassword = "password";
-		secure(keyStoreLocation, keyStorePassword, null, null);
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", WebSocketHandler.class);
@@ -217,9 +214,7 @@ public class MajorEndpoint {
 	}
 
 	private static void	addHeaders(Response res) {
-		res.header("Access-Control-Allow-Origin","*");
-		res.header("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
-		res.header("Access-Control-Allow-Credentials", "true");
-		res.header("Access-Control-Allow-Headers","*");
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Methods", "GET");
 	}
 }
