@@ -204,11 +204,12 @@ public class LogicServiceBean implements LogicService {
 			String login = credentials.getLogin();
 			String password = credentials.getPassword();
 			if (databaseService.checkPassword(login, password)) {
-				return createJWT(login, "securityService", "security", TTL);
+				String token = createJWT(login, "securityService", "security", TTL);
+				databaseService.updateLastAuthDate(login, System.currentTimeMillis());
+				return token;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return "";
 		}
 		throw new AccessDeniedException("Invalid login/password");
 	}

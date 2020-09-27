@@ -195,6 +195,17 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
+    public void updateLastAuthDate(String login, long date) throws SQLException {
+        logger.info(String.format("updateLastAuthDate(%s)", login));
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "update spark_db.t_user_profile set last_auth_date=? where login=?");
+        preparedStatement.setLong(1, date);
+        preparedStatement.setString(2, login);
+        preparedStatement.execute();
+        logger.info("updateLastAuthDate() success");
+    }
+
+    @Override
     public void confirmUserForToken(String token) throws SQLException {
         logger.info("confirmUserForToken() token: " + token);
         PreparedStatement preparedStatement = connection.prepareStatement(

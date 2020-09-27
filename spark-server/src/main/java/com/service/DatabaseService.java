@@ -70,6 +70,8 @@ public interface DatabaseService {
      */
     boolean checkPassword(String login, String password) throws Exception;
 
+    void updateLastAuthDate(String login, long date) throws SQLException;
+
     /**
      * Смена пароля
      */

@@ -9,12 +9,9 @@ import com.helper.ServiceHelper;
 import com.service.LogicService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
-import spark.Filter;
 import spark.Response;
 
 import javax.mail.internet.AddressException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.security.JWTHelper.decodeJWT;
 import static com.security.JWTHelper.getUserNameFromToken;
@@ -221,17 +218,4 @@ public class MajorEndpoint {
 //		res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 //		res.header("Access-Control-Allow-Origin", "*");
 	}
-//	private static final Map<String, String> corsHeaders = new HashMap<String, String>();
-//
-//	static {
-//		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-//		corsHeaders.put("Access-Control-Allow-Origin", "*");
-//		corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
-//		corsHeaders.put("Access-Control-Allow-Credentials", "true");
-//	}
-//
-//	public static void apply() {
-//		Filter filter = (request, response) -> corsHeaders.forEach(response::header);
-//		after(filter);
-//	}
 }
