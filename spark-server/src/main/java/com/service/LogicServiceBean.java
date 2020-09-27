@@ -99,6 +99,7 @@ public class LogicServiceBean implements LogicService {
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
+			notification.setFrom(from);
 			notification.setMsgText(from + " liked you!");
 			WebSockets.sendMessage(null, notification);
 			//Если лайк совпал, то дополнительное уведомление
@@ -122,6 +123,7 @@ public class LogicServiceBean implements LogicService {
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
+			notification.setFrom(from);
 			notification.setMsgText(from + " disliked you!");
 			WebSockets.sendMessage(null, notification);
 		} catch (SQLException | IOException ex) {
@@ -332,6 +334,7 @@ public class LogicServiceBean implements LogicService {
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
 			MessageDto notification = new MessageDto();
 			notification.setTo(nextUser.getLogin());
+			notification.setFrom(login);
 			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setMsgText("User " + login + " watch you profile!");
 			WebSockets.sendMessage(null, notification);

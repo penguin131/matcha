@@ -1,7 +1,5 @@
 package com.dto;
 
-import com.dictionary.MessageType;
-
 public class MessageDto {
     private String type;
     private String msgText;
