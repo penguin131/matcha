@@ -1,4 +1,7 @@
 import com.chat.WebSocketHandler;
+import com.chat.WebSockets;
+import com.dictionary.MessageType;
+import com.dto.MessageDto;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
@@ -156,6 +159,15 @@ public class MajorEndpoint {
 		post("/protected/getNextUser", ((request, response) -> {
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			return logicService.getNextUser(login, request.body());
+		}));
+
+		post("/notification", ((request, response) -> {
+			MessageDto notification = new MessageDto();
+			notification.setTo("bfalmer");
+			notification.setType(MessageType.NOTIFICATION.getName());
+			notification.setMsgText("Test notification");
+			WebSockets.sendMessage(null, notification);
+			return "";
 		}));
 
 		//Filters
