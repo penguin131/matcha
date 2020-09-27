@@ -9,9 +9,12 @@ import com.helper.ServiceHelper;
 import com.service.LogicService;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
+import spark.Filter;
 import spark.Response;
 
 import javax.mail.internet.AddressException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.security.JWTHelper.decodeJWT;
 import static com.security.JWTHelper.getUserNameFromToken;
@@ -182,6 +185,7 @@ public class MajorEndpoint {
 
 		//Filters
 		before((request, response) -> {
+			addHeaders(response);
 			if (!request.url().contains("/chat")) {
 				logger.info("==> Request start: " + request.url());
 			}
@@ -197,7 +201,6 @@ public class MajorEndpoint {
 			Claims claims = null;
 			long currentTime = 0;
 			try {
-				addHeaders(response);
 				String JWTToken = request.headers("Authorization");
 				claims = decodeJWT(JWTToken);
 				currentTime = System.currentTimeMillis();
@@ -220,7 +223,18 @@ public class MajorEndpoint {
 //		res.header("Access-Control-Allow-Headers","*");
 		res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 		res.header("Access-Control-Allow-Origin", "*");
-		res.header("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
-		res.header("Access-Control-Allow-Credentials", "true");
 	}
+//	private static final Map<String, String> corsHeaders = new HashMap<String, String>();
+//
+//	static {
+//		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+//		corsHeaders.put("Access-Control-Allow-Origin", "*");
+//		corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
+//		corsHeaders.put("Access-Control-Allow-Credentials", "true");
+//	}
+//
+//	public static void apply() {
+//		Filter filter = (request, response) -> corsHeaders.forEach(response::header);
+//		after(filter);
+//	}
 }
