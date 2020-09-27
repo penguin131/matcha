@@ -1,5 +1,5 @@
-import com.chat.WebSocketHandler;
-import com.chat.WebSockets;
+import com.sockets.WebSocketHandler;
+import com.sockets.WebSockets;
 import com.dictionary.MessageType;
 import com.dto.MessageDto;
 import com.exceptions.AccessDeniedException;

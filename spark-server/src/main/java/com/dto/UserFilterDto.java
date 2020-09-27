@@ -84,6 +84,8 @@ public class UserFilterDto {
 
 	@Override
 	public int hashCode() {
+		if (!hasFields())
+			return 0;
 		int hash = 7;
 		hash = 31 * hash + (distance != null ? distance : 0);
 		hash = 31 * hash + (sexPreferences != null ? sexPreferences.hashCode() : 0);

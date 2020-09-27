@@ -1,6 +1,6 @@
 package com.service;
 
-import com.chat.WebSockets;
+import com.sockets.WebSockets;
 import com.dictionary.MessageType;
 import com.dto.*;
 import com.exceptions.AccessDeniedException;
@@ -332,13 +332,18 @@ public class LogicServiceBean implements LogicService {
 				filterDto = mapper.readValue(filter, UserFilterDto.class);
 			}
 			databaseService.createSearchData(filterDto, login);
+			//Уведомление
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
-			MessageDto notification = new MessageDto();
-			notification.setTo(nextUser.getLogin());
-			notification.setFrom(login);
-			notification.setType(MessageType.NOTIFICATION.getName());
-			notification.setMsgText("User " + login + " watch you profile!");
+			if (nextUser == null) {
+				return null;
+			}
+			MessageDto notification = WebSockets.prepareMessage(
+					login,
+					nextUser.getLogin(),
+					MessageType.NOTIFICATION.getName(),
+					"User " + login + " watch you profile!");
 			WebSockets.sendMessage(null, notification);
+
 			return mapper.writeValueAsString(nextUser);
 		} catch (IOException | SQLException ex) {
 			ex.printStackTrace();

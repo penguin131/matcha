@@ -11,35 +11,34 @@ import java.sql.SQLException;
 public class SQLRequestHelper {
 
 	private static void addConditions(StringBuilder sb, UserFilterDto filter, String login) {
-		boolean hasCondition = false;
+		sb.append(" where (select count(*) from spark_db.t_image im where im.user_id=u.user_profile_id and im.is_main=true)>0")//есть аватарка
+				.append(" and (select count(*) from spark_db.t_complaint \n" +	//нет жалоб
+						"    where to_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login='")
+				.append(login)
+				.append("' limit 1)\n")
+				.append("    and from_user=u.user_profile_id)=0")
+				.append(" and u.confirmed=true");//Подтвержденные юзеры
 		if (login != null) {
-			hasCondition = true;
-			sb.append(" where login<>?");
+			sb.append(" and login<>?");
 		}
 		if (filter != null && filter.hasFields()) {
 			if (filter.getDistance() != null) {
-				sb.append(hasCondition ? " and" : " where").
-						append(" CTE2.distance<=?");
-				hasCondition = true;
+				sb.append(" and CTE2.distance<=?");
 			}
 			if (filter.getSexPreferences() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" (sex_preferences=? or sex_preferences is null)");
-				hasCondition = true;
+				sb.append(" and (sex_preferences=? or sex_preferences is null)");
 			}
 			if (filter.getSex() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" sex=?");
-				hasCondition = true;
+				sb.append(" and sex=?");
 			}
 			if (filter.getRating() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" rating>=?");
-				hasCondition = true;
+				sb.append(" and rating>=?");
 			}
 			if (filter.getAgeMax() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" age<=?");
-				hasCondition = true;
+				sb.append(" and age<=?");
 			}
 			if (filter.getAgeMin() != null) {
-				sb.append(hasCondition ? " and" : " where").append(" age>=?");
+				sb.append(" and age>=?");
 			}
 		}
 		sb.append(" order by rating desc\n" +

@@ -1,4 +1,4 @@
-package com.chat;
+package com.sockets;
 
 import com.dto.MessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

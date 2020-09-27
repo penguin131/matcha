@@ -1,4 +1,4 @@
-package com.chat;
+package com.sockets;
 
 import com.dto.MessageDto;
 import org.apache.log4j.Logger;
@@ -26,5 +26,14 @@ public class WebSockets {
                         .put("date", message.getDate())));
             }
         }
+    }
+
+    public static MessageDto prepareMessage(String from, String to, String type, String text) {
+        MessageDto message = new MessageDto();
+        message.setTo(to);
+        message.setFrom(from);
+        message.setType(type);
+        message.setMsgText(text);
+        return message;
     }
 }

@@ -36,6 +36,8 @@ public class UserProfileDto {
     private Set<String> tags;
     @JsonIgnore
     private String confirmedToken;
+    @JsonProperty("last_auth_date")
+    private long lastAuthDate;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -150,7 +152,8 @@ public class UserProfileDto {
                 rs.getFloat("longitude"),
                 rs.getInt("has_like") > 0,
                 rs.getInt("has_dislike") > 0,
-                rs.getString("confirmed_token")
+                rs.getString("confirmed_token"),
+                rs.getLong("last_auth_date")
         );
         Set<String> tags = new HashSet<>();
         String arrayString = rs.getString("tags");
@@ -201,7 +204,8 @@ public class UserProfileDto {
                           Float longitude,
                           Boolean hasLike,
                           Boolean hasDislike,
-                          String confirmedToken) {
+                          String confirmedToken,
+                          Long lastAuthDate) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -218,6 +222,7 @@ public class UserProfileDto {
         this.hasLike = hasLike;
         this.hasDislike = hasDislike;
         this.confirmedToken = confirmedToken;
+        this.lastAuthDate = lastAuthDate != null ? lastAuthDate : 0;
     }
 
     public UserProfileDto() {
@@ -265,5 +270,13 @@ public class UserProfileDto {
 
     public void setConfirmedToken(String confirmedToken) {
         this.confirmedToken = confirmedToken;
+    }
+
+    public long getLastAuthDate() {
+        return lastAuthDate;
+    }
+
+    public void setLastAuthDate(long lastAuthDate) {
+        this.lastAuthDate = lastAuthDate;
     }
 }
