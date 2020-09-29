@@ -1,5 +1,6 @@
 package com.dto;
 
+import com.dictionary.SortType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,7 +70,12 @@ public class UserFilterDto {
 	}
 
 	public String getSortType() {
-		return sortType;
+		if (SortType.TAGS.getName().equals(sortType)) {
+			return sortType;
+		} else if (SortType.DISTANCE.getName().equals(sortType)) {
+			return sortType;
+		}
+		return SortType.RATING.getName();
 	}
 
 	public void setSortType(String sortType) {

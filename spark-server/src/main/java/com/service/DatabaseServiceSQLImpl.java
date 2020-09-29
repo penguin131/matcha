@@ -511,5 +511,4 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         logger.info("getAllLookedUsers() result: " + mapper.writeValueAsString(profiles));
         return profiles;
     }
-
 }
