@@ -1,6 +1,8 @@
 package com.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserFilterDto {
 	private Integer distance;
@@ -12,15 +14,8 @@ public class UserFilterDto {
 	private Integer ageMax;
 	@JsonProperty("age_min")
 	private Integer ageMin;
-
-	public UserFilterDto(Integer distance, String sexPreferences, String sex, Integer rating, Integer ageMax, Integer ageMin) {
-		this.distance = distance;
-		this.sexPreferences = sexPreferences;
-		this.sex = sex;
-		this.rating = rating;
-		this.ageMax = ageMax;
-		this.ageMin = ageMin;
-	}
+	@JsonProperty("sort_type")
+	private String sortType;//distance, rating, tags. Rating first default
 
 	public UserFilterDto() {
 	}
@@ -57,15 +52,6 @@ public class UserFilterDto {
 		this.rating = rating;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("{distance: %d, sex_preferences: %s, sex: %s, rating: %d}", distance, sexPreferences, sex, rating);
-	}
-
-	public boolean hasFields() {
-		return distance != null || sexPreferences != null || sex != null || rating != null || ageMax != null || ageMin != null;
-	}
-
 	public Integer getAgeMax() {
 		return ageMax;
 	}
@@ -82,6 +68,28 @@ public class UserFilterDto {
 		this.ageMin = ageMin;
 	}
 
+	public String getSortType() {
+		return sortType;
+	}
+
+	public void setSortType(String sortType) {
+		this.sortType = sortType;
+	}
+
+	@Override
+	public String toString() {
+		try {
+			return new ObjectMapper().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public boolean hasFields() {
+		return distance != null || sexPreferences != null || sex != null || rating != null || ageMax != null || ageMin != null || sortType != null;
+	}
+
 	@Override
 	public int hashCode() {
 		if (!hasFields())
@@ -93,6 +101,7 @@ public class UserFilterDto {
 		hash = 31 * hash + (rating != null ? rating : 0);
 		hash = 31 * hash + (ageMax != null ? ageMax : 0);
 		hash = 31 * hash + (ageMin != null ? ageMin : 0);
+		hash = 31 * hash + (sortType != null ? sortType.hashCode() : 0);
 		return hash;
 	}
 }

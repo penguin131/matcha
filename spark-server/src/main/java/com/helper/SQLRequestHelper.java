@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public class SQLRequestHelper {
 
-	private static void addConditions(StringBuilder sb, UserFilterDto filter, String login) {
+	private static void addConditions(StringBuilder sb, UserFilterDto filter, String login, String orderBy) {
 		sb.append(" where (select count(*) from spark_db.t_image im where im.user_id=u.user_profile_id and im.is_main=true)>0")//есть аватарка
 				.append(" and (select count(*) from spark_db.t_complaint \n" +	//нет жалоб
 						"    where to_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login='")
@@ -41,13 +41,11 @@ public class SQLRequestHelper {
 				sb.append(" and age>=?");
 			}
 		}
-		sb.append(" order by rating desc\n" +
-				",(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
-				"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
-				",CTE2.distance");
+		sb.append(orderBy);
 	}
 
 	public static String generateInsertRequest(UserFilterDto filter, String login) {
+		String orderBy = createOrderBy(filter);
 		StringBuilder sb = new StringBuilder(
 				"with CTE as (\n" +
 				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login=?\n" +
@@ -60,19 +58,18 @@ public class SQLRequestHelper {
 				" )\n" +
 				" insert into spark_db.t_search_data (filter_hash, user_id, number) " +
 				" select " + (filter == null ? 0 : filter.hashCode()) + " ,u.user_profile_id, row_number() over (" +
-				"order by rating desc\n" +
-						"       ,(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
-						"         where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
-						"       ,CTE2.distance" +
+				orderBy +
 				") as number" +
 				" from \"spark_db\".t_user_profile u\n" +
 				" join CTE2 on CTE2.user_profile_id=u.user_profile_id");
-		addConditions(sb, filter, login);
+		addConditions(sb, filter, login, orderBy);
 		return sb.toString();
 	}
 
 	public static String generateUserSearchRequest(UserFilterDto filter, String login) {
-		StringBuilder sb = new StringBuilder("with CTE as (\n" +
+		String orderBy = createOrderBy(filter);
+		StringBuilder sb = new StringBuilder(
+				"with CTE as (\n" +
 				"    select user_profile_id, latitude, longitude from \"spark_db\".t_user_profile where login=?\n" +
 				"    )\n" +
 				"   , CTE2 as (\n" +
@@ -89,7 +86,7 @@ public class SQLRequestHelper {
 				" ,(select json_agg(name) from spark_db.t_tag where user_id=u.user_profile_id) as tags" +
 				" from \"spark_db\".t_user_profile u\n" +
 				" join CTE2 on CTE2.user_profile_id=u.user_profile_id");
-		addConditions(sb, filter, login);
+		addConditions(sb, filter, login, orderBy);
 		return sb.toString();
 	}
 
@@ -190,5 +187,27 @@ public class SQLRequestHelper {
 			statement.setString(counter, tag);
 			counter++;
 		}
+	}
+
+	private static String createOrderBy(UserFilterDto filter) {
+
+		String orderBy;
+		if (filter != null && "tags".equals(filter.getSortType())) {
+			orderBy = " order by (select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
+					"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
+					" ,rating desc\n" +
+					",CTE2.distance";
+		} else if (filter != null && "distance".equals(filter.getSortType())) {
+			orderBy = " order by CTE2.distance\n" +
+					" ,rating desc\n" +
+					",(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
+					"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n";
+		} else {
+			orderBy = " order by rating desc\n" +
+					" ,(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
+					"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
+					",CTE2.distance";
+		}
+		return orderBy;
 	}
 }

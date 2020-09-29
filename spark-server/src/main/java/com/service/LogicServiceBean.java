@@ -335,7 +335,7 @@ public class LogicServiceBean implements LogicService {
 			//Уведомление
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
 			if (nextUser == null) {
-				return null;
+				return "";
 			}
 			MessageDto notification = WebSockets.prepareMessage(
 					login,
