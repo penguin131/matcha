@@ -29,6 +29,17 @@ public interface LogicService {
 	 */
 	String getAllFriendsForLogin(String login);
 
+
+	/**
+	 * Вернет всех понравившихся людей
+	 */
+	String getAllLikedUsers(String login);
+
+	/**
+	 * Вернет всех пользователей, посмотревших текущего
+	 */
+	String getAllLookedUsers(String login);
+
 	/**
 	 * Ставит лайк. Если запись уже есть в БД - она просто подтверждается.
 	 */

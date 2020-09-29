@@ -63,12 +63,12 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         UserProfileDto userProfile = null;
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "select *" +
-                        " ,(select id_image from \"spark_db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
-                        " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)" +
-                        "or user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?) and t_users_unity.confirmed=true) as has_like" +
-                        " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)) as has_dislike" +
-                        " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
-                        " from \"spark_db\".t_user_profile where login=?");
+                " ,(select id_image from \"spark_db\".t_image where user_profile_id=user_id and is_main=true limit 1) as photo " +
+                " ,(select count(*) from spark_db.t_users_unity where user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)" +
+                "or user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?) and t_users_unity.confirmed=true) as has_like" +
+                " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)) as has_dislike" +
+                " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
+                " from \"spark_db\".t_user_profile where login=?");
         preparedStatement.setString(1, from);
         preparedStatement.setString(2, from);
         preparedStatement.setString(3, from);
@@ -80,12 +80,39 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         } else {
             logger.info("No user profile with login: " + login);
         }
+        saveGetUserProfileHistory(login, from);
         return userProfile;
+    }
+
+    private void saveGetUserProfileHistory(String to, String from) throws SQLException {
+        if (!StringUtils.isEmpty(to) && !StringUtils.isEmpty(from) && !to.equals(from)) {
+            logger.info(String.format("saveGetUserProfileHistory(%s, %s)", to, from));
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "select * from spark_db.t_looked_user\n" +
+                    "where from_user=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                    "and to_user=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)");
+            preparedStatement.setString(1, from);
+            preparedStatement.setString(2, to);
+            if (!preparedStatement.executeQuery().next()) {
+                logger.info("Create new t_looked_user note");
+                preparedStatement = connection.prepareStatement(
+                        "insert into spark_db.t_looked_user (from_user, to_user) \n" +
+                        "values ((select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                        "        ,(select user_profile_id from spark_db.t_user_profile where login=? limit 1))");
+                preparedStatement.setString(1, from);
+                preparedStatement.setString(2, to);
+                preparedStatement.execute();
+            } else {
+                logger.info("Note already exists");
+            }
+            logger.info("saveGetUserProfileHistory() success");
+        }
     }
 
     private String getUserPassword(String login) throws SQLException {
         logger.info("getUserPassword() login: " + login);
-        PreparedStatement preparedStatement = connection.prepareStatement("select password from \"spark_db\".t_user_profile where login=?");
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select password from \"spark_db\".t_user_profile where login=?");
         preparedStatement.setString(1, login);
         ResultSet rs = preparedStatement.executeQuery();
         if (rs.next()) {
@@ -427,4 +454,62 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         preparedStatement.executeUpdate();
         logger.info("changePassword() success");
     }
+
+    public List<UserProfileDto> getAllLikedUsers(String login) throws SQLException, JsonProcessingException {
+        logger.info(String.format("getAllLikedUsers(%s)", login));
+        List<UserProfileDto> profiles = new ArrayList<>();
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select t3.*\n" +
+                "     ,(select id_image from \"spark_db\".t_image where t3.user_profile_id=user_id and is_main=true limit 1) as photo\n" +
+                "     ,1 as has_like\n" +
+                "     ,0 as has_dislike\n" +
+                "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                " from spark_db.t_user_profile t1\n" +
+                " join spark_db.t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
+                " join spark_db.t_user_profile t3 on (t3.user_profile_id=t2.user2_id)\n" +
+                " where t1.login=?\n" +
+                " union all\n" +
+                " select t3.*\n" +
+                "     ,(select id_image from \"spark_db\".t_image where t3.user_profile_id=user_id and is_main=true limit 1) as photo\n" +
+                "     ,1 as has_like\n" +
+                "     ,0 as has_dislike\n" +
+                "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                " from spark_db.t_user_profile t1\n" +
+                " join spark_db.t_users_unity t2 on (t1.user_profile_id=t2.user2_id and t2.confirmed=true)\n" +
+                " join spark_db.t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
+                " where t1.login=?;");
+        preparedStatement.setString(1, login);
+        preparedStatement.setString(2, login);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            UserProfileDto userProfile = UserProfileDto.getInstance(rs);
+            profiles.add(userProfile);
+        }
+        logger.info("getAllLikedUsers() result: " + mapper.writeValueAsString(profiles));
+        return profiles;
+    }
+
+    public List<UserProfileDto> getAllLookedUsers(String login) throws SQLException, JsonProcessingException {
+        logger.info(String.format("getAllLookedUsers(%s)", login));
+        List<UserProfileDto> profiles = new ArrayList<>();
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select t2.*" +
+                "     ,(select id_image from \"spark_db\".t_image where t3.user_profile_id=user_id and is_main=true limit 1) as photo\n" +
+                "     ,(select count(*) from spark_db.t_users_unity where t3.user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login)\n" +
+                "                                                      or t3.user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login) and t_users_unity.confirmed=true) as has_like\n" +
+                "     ,(select count(*) from spark_db.t_complaint where t3.user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login)) as has_dislike\n" +
+                "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                " from spark_db.t_looked_user t1\n" +
+                "                     join spark_db.t_user_profile t2 on (t1.from_user=t2.user_profile_id)\n" +
+                "                     join spark_db.t_user_profile t3 on (t1.to_user=t3.user_profile_id)\n" +
+                " where t3.login=?;");
+        preparedStatement.setString(1, login);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            profiles.add(UserProfileDto.getInstance(rs));
+        }
+        logger.info("getAllLookedUsers() result: " + mapper.writeValueAsString(profiles));
+        return profiles;
+    }
+
 }

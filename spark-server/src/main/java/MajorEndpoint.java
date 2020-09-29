@@ -54,6 +54,16 @@ public class MajorEndpoint {
 			return logicService.getAllFriendsForLogin(login);
 		});
 
+		get("/protected/getAllLikedUsers", (req, res) -> {
+			String login = getUserNameFromToken(req.headers("Authorization"));
+			return logicService.getAllLikedUsers(login);
+		});
+
+		get("/protected/getAllLookedUsers", (req, res) -> {
+			String login = getUserNameFromToken(req.headers("Authorization"));
+			return logicService.getAllLookedUsers(login);
+		});
+
 		get("/protected/getUsersWithFilter", (req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getUsersWithFilter(req.body(), login);

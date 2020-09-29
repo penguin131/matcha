@@ -363,4 +363,32 @@ public class LogicServiceBean implements LogicService {
 		}
 		return "Success";
 	}
+
+	public String getAllLikedUsers(String login) {
+		try {
+			List<UserProfileDto> users = databaseService.getAllLikedUsers(login);
+			if (users.size() == 0) {
+				return "";
+			} else {
+				return mapper.writeValueAsString(users);
+			}
+		} catch (SQLException | JsonProcessingException ex){
+			ex.printStackTrace();
+			return "";
+		}
+	}
+
+	public String getAllLookedUsers(String login) {
+		try {
+			List<UserProfileDto> users = databaseService.getAllLookedUsers(login);
+			if (users.size() == 0) {
+				return "";
+			} else {
+				return mapper.writeValueAsString(users);
+			}
+		} catch (SQLException | JsonProcessingException ex){
+			ex.printStackTrace();
+			return "";
+		}
+	}
 }

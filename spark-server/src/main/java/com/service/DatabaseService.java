@@ -15,6 +15,20 @@ public interface DatabaseService {
      */
     List<UserProfileDto> getAllUsers(String login) throws SQLException, JsonProcessingException;
 
+
+    /**
+     * Вернет массив понравившихся профилей
+     * @return List<UserProfileDto>
+     */
+    List<UserProfileDto> getAllLikedUsers(String login) throws SQLException, JsonProcessingException;
+
+
+    /**
+     * Вернет массив посмотревших меня профилей
+     * @return List<UserProfileDto>
+     */
+    List<UserProfileDto> getAllLookedUsers(String login) throws SQLException, JsonProcessingException;
+
     /**
      * Добавление нового пользовательского профиля
      */
