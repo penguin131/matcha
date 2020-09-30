@@ -9,11 +9,9 @@ import com.sockets.WebSocketHandler;
 import com.sockets.WebSockets;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
-import spark.Filter;
-import spark.Spark;
+import spark.Response;
 
 import javax.mail.internet.AddressException;
-import java.util.HashMap;
 
 import static com.security.JWTHelper.decodeJWT;
 import static com.security.JWTHelper.getUserNameFromToken;
@@ -30,7 +28,6 @@ public class MajorEndpoint {
 		webSocket("/chat", WebSocketHandler.class);
 		Config.configureLogger();
 
-		CorsFilter.apply();
 		//REST
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
@@ -201,6 +198,10 @@ public class MajorEndpoint {
 			}
 		});
 
+		after(((request, response) -> {
+			addHeaders(response);
+		}));
+
 		afterAfter((request, response) -> {
 			if (!request.url().contains("/chat")) {
 				logger.info("<== Request end: " + request.url());
@@ -226,28 +227,10 @@ public class MajorEndpoint {
 		init();
 	}
 
-//	private static void	addHeaders(Response res) {
-//		res.header("Access-Control-Allow-Origin","*");
-//		res.header("Allow", "GET,PUT,POST,DELETE,OPTIONS");
-////		res.header("Access-Control-Allow-Origin", "*");
-//	}
-
-
-	static class CorsFilter {
-
-		private static final HashMap<String, String> corsHeaders = new HashMap<>();
-
-		public CorsFilter() {
-			corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-			corsHeaders.put("Access-Control-Allow-Origin", "*");
-			corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
-			corsHeaders.put("Access-Control-Allow-Credentials", "true");
-		}
-
-		public static void apply() {
-			Filter filter = (request, response) -> corsHeaders.forEach(response::header);
-			Spark.after(filter);
-		}
+	private static void	addHeaders(Response res) {
+		res.header("Access-Control-Allow-Origin","*");
+		res.header("Allow", "GET,PUT,POST,DELETE,OPTIONS");
+//		res.header("Access-Control-Allow-Origin", "*");
 	}
 
 }
