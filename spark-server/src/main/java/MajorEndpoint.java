@@ -10,7 +10,6 @@ import com.sockets.WebSockets;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Filter;
-import spark.Response;
 import spark.Spark;
 
 import javax.mail.internet.AddressException;
@@ -24,7 +23,6 @@ public class MajorEndpoint {
 
 	public static void main(String[] args) {
 		//Инициализация стартовых обьектов
-		CorsFilter.apply();
 		Logger logger = Logger.getLogger(MajorEndpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
 		port(8080);
@@ -32,6 +30,7 @@ public class MajorEndpoint {
 		webSocket("/chat", WebSocketHandler.class);
 		Config.configureLogger();
 
+		CorsFilter.apply();
 		//REST
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
@@ -233,7 +232,8 @@ public class MajorEndpoint {
 ////		res.header("Access-Control-Allow-Origin", "*");
 //	}
 
-	public static class CorsFilter {
+
+	static class CorsFilter {
 
 		private static final HashMap<String, String> corsHeaders = new HashMap<>();
 
@@ -249,4 +249,6 @@ public class MajorEndpoint {
 			Spark.after(filter);
 		}
 	}
+
 }
+
