@@ -27,7 +27,7 @@ public class MajorEndpoint {
 	static {
 		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 		corsHeaders.put("Access-Control-Allow-Origin", "*");
-		corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,authorization");
+		corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
 		corsHeaders.put("Access-Control-Expose-Headers", "date,access-control-allow-origin,access-control-allow-methods,access-control-allow-headers,content-type,connection,server,x-final-url");
 	}
 
@@ -208,21 +208,17 @@ public class MajorEndpoint {
 			return "";
 		}));
 
-		//Filters
 		before((request, response) -> {
-//			addHeaders(response);
-			if (!request.url().contains("/chat")) {
-				logger.info("==> Request start: " + request.url());
-			}
+			logger.info("==> Request start: " + request.url());
 		});
 
 		afterAfter((request, response) -> {
-			if (!request.url().contains("/chat")) {
-				logger.info("<== Request end: " + request.url());
-			}
+			logger.info("<== Request end: " + request.url());
 		});
 
 		before("/protected/*", (request, response) -> {
+			if ("OPTIONS".equals(request.requestMethod()))
+				return;
 			Claims claims = null;
 			long currentTime = 0;
 			try {
@@ -240,12 +236,6 @@ public class MajorEndpoint {
 		});
 		init();
 	}
-
-//	private static void	addHeaders(Response res) {
-//		res.header("Access-Control-Allow-Origin","*");
-//		res.header("Allow", "GET,PUT,POST,DELETE,OPTIONS");
-////		res.header("Access-Control-Allow-Origin", "*");
-//	}
 
 }
 
