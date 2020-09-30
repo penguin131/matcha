@@ -1,5 +1,3 @@
-import com.sockets.WebSocketHandler;
-import com.sockets.WebSockets;
 import com.dictionary.MessageType;
 import com.dto.MessageDto;
 import com.exceptions.AccessDeniedException;
@@ -7,11 +5,16 @@ import com.exceptions.ValidateException;
 import com.helper.Config;
 import com.helper.ServiceHelper;
 import com.service.LogicService;
+import com.sockets.WebSocketHandler;
+import com.sockets.WebSockets;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
+import spark.Filter;
 import spark.Response;
+import spark.Spark;
 
 import javax.mail.internet.AddressException;
+import java.util.HashMap;
 
 import static com.security.JWTHelper.decodeJWT;
 import static com.security.JWTHelper.getUserNameFromToken;
@@ -21,6 +24,7 @@ public class MajorEndpoint {
 
 	public static void main(String[] args) {
 		//Инициализация стартовых обьектов
+		CorsFilter.apply();
 		Logger logger = Logger.getLogger(MajorEndpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
 		port(8080);
@@ -192,7 +196,7 @@ public class MajorEndpoint {
 
 		//Filters
 		before((request, response) -> {
-			addHeaders(response);
+//			addHeaders(response);
 			if (!request.url().contains("/chat")) {
 				logger.info("==> Request start: " + request.url());
 			}
@@ -223,9 +227,26 @@ public class MajorEndpoint {
 		init();
 	}
 
-	private static void	addHeaders(Response res) {
-		res.header("Access-Control-Allow-Origin","*");
-		res.header("Allow", "GET,PUT,POST,DELETE,OPTIONS");
-//		res.header("Access-Control-Allow-Origin", "*");
+//	private static void	addHeaders(Response res) {
+//		res.header("Access-Control-Allow-Origin","*");
+//		res.header("Allow", "GET,PUT,POST,DELETE,OPTIONS");
+////		res.header("Access-Control-Allow-Origin", "*");
+//	}
+
+	public static class CorsFilter {
+
+		private static final HashMap<String, String> corsHeaders = new HashMap<>();
+
+		public CorsFilter() {
+			corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+			corsHeaders.put("Access-Control-Allow-Origin", "*");
+			corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
+			corsHeaders.put("Access-Control-Allow-Credentials", "true");
+		}
+
+		public static void apply() {
+			Filter filter = (request, response) -> corsHeaders.forEach(response::header);
+			Spark.after(filter);
+		}
 	}
 }
