@@ -10,8 +10,6 @@ import com.sockets.WebSockets;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Filter;
-import spark.Request;
-import spark.Response;
 import spark.Spark;
 
 import javax.mail.internet.AddressException;
@@ -24,12 +22,13 @@ import static spark.Spark.*;
 
 public class MajorEndpoint {
 
-	private static final HashMap<String, String> corsHeaders = new HashMap<String, String>();
+	private static final HashMap<String, String> corsHeaders = new HashMap<>();
 
 	static {
 		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 		corsHeaders.put("Access-Control-Allow-Origin", "*");
 		corsHeaders.put("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin,");
+		corsHeaders.put("Access-Control-Expose-Headers", "date,access-control-allow-origin,access-control-allow-methods,access-control-allow-headers,content-type,connection,server,x-final-url");
 	}
 
 	public static void apply() {
