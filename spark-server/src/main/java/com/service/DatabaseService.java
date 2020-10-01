@@ -1,9 +1,7 @@
 package com.service;
 
 import com.dto.*;
-import com.exceptions.AccessDeniedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.dto.UserPhotoDto;
 
 import java.sql.SQLException;
 import java.util.List;
