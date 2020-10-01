@@ -310,11 +310,6 @@ public class LogicServiceImpl implements LogicService {
 	}
 
 	@Override
-	public boolean checkEmailExist(String email) throws SQLException {
-		return databaseService.checkEmailExist(email);
-	}
-
-	@Override
 	public byte[] getImage(String name) {
 		try {
 			return databaseService.getImage(name).getBytes();

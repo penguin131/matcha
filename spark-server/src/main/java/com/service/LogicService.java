@@ -73,7 +73,7 @@ public interface LogicService {
 	/**
 	 * Проставит подтвержденную почту пользователю по его токену
 	 */
-	String confirmUserForToken(String token) throws SQLException;
+	String confirmUserForToken(String token);
 
 	/**
 	 * Вернет всю историю сообщений между двумя пользователями, упорядоченную по дате в обратном порядке
@@ -120,14 +120,7 @@ public interface LogicService {
 	/**
 	 * Поиск пользователей по фильтру, исключая текущего юзера
 	 */
-	String getUsersWithFilter(String filter, String login) throws JsonProcessingException;
-
-	/**
-	 * Проверяет, есть ли такая почта в БД
-	 * @param email почта
-	 * @return boolean
-	 */
-	boolean checkEmailExist(String email) throws SQLException;
+	String getUsersWithFilter(String filter, String login);
 
 	/**
 	 * Получение следующего пользователя в поиске
