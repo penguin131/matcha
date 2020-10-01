@@ -3,7 +3,7 @@ package com.helper;
 import com.service.LogicService;
 import com.service.DatabaseService;
 import com.service.DatabaseServiceSQLImpl;
-import com.service.LogicServiceBean;
+import com.service.LogicServiceImpl;
 import org.apache.log4j.Logger;
 
 import java.sql.DriverManager;
@@ -27,7 +27,7 @@ public abstract class ServiceHelper {
 
     public static synchronized LogicService getLogicService() {
         if (_logic == null) {
-            _logic = new LogicServiceBean();
+            _logic = new LogicServiceImpl();
         }
         return _logic;
     }

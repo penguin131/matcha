@@ -26,7 +26,7 @@ import java.util.List;
 
 import static com.security.JWTHelper.createJWT;
 
-public class LogicServiceBean implements LogicService {
+public class LogicServiceImpl implements LogicService {
 	private DatabaseService databaseService = ServiceHelper.getDatabaseService();
 	private ObjectMapper mapper = new ObjectMapper();
 	private static final long TTL = 1000000000;
