@@ -393,36 +393,44 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
 
     public UserProfileDto nextUserWithFilter(UserFilterDto filter, String login) throws SQLException, JsonProcessingException {
         logger.info(String.format("nextUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), login));
-        int hash = (filter == null || !filter.hasFields() ? 0 : filter.hashCode());
-        //увеличиваю счетчик
-        PreparedStatement preparedStatement = connection.prepareStatement(
-                "update spark_db.t_user_filter set counter=counter+1\n" +
-                        " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
-                        "  and filter_hash=?;\n");
-        preparedStatement.setString(1, login);
-        preparedStatement.setInt(2, hash);
-        preparedStatement.execute();
-        //вытаскиваю следующего юзера
-        preparedStatement = connection.prepareStatement(
-                " with CTE as (\n" +
-                        "    select * from spark_db.t_user_filter\n" +
-                        "        where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
-                        "          and filter_hash=?\n" +
-                        "    limit 1\n" +
-                        " )\n" +
-                        " select t1.login from spark_db.t_user_profile t1\n" +
-                        " where t1.user_profile_id=(select t2.user_id from spark_db.t_search_data t2 " +
-                        " where t2.number=(select counter from CTE) and t2.filter_hash=(select filter_hash from CTE)\n" +
-                        "    limit 1);\n");
-        preparedStatement.setString(1, login);
-        preparedStatement.setInt(2, hash);
-        ResultSet rs = preparedStatement.executeQuery();
-        if (rs.next()) {
-            String login2 = rs.getString("login");
-            return getUserProfileForLogin(login2, login);
-        } else {
-            return null;
+        int counter = 0;
+        while (counter < 15) {
+            int hash = (filter == null || !filter.hasFields() ? 0 : filter.hashCode());
+            //увеличиваю счетчик
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "update spark_db.t_user_filter set counter=counter+1\n" +
+                            " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                            "  and filter_hash=?;\n");
+            preparedStatement.setString(1, login);
+            preparedStatement.setInt(2, hash);
+            preparedStatement.execute();
+            //вытаскиваю следующего юзера
+            preparedStatement = connection.prepareStatement(
+                    " with CTE as (\n" +
+                            "    select * from spark_db.t_user_filter\n" +
+                            "        where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                            "          and filter_hash=?\n" +
+                            "    limit 1\n" +
+                            " )\n" +
+                            " select t1.login from spark_db.t_user_profile t1\n" +
+                            " where t1.user_profile_id=(select t2.user_id from spark_db.t_search_data t2 " +
+                            " where t2.number=(select counter from CTE) and t2.filter_hash=(select filter_hash from CTE)\n" +
+                            "    limit 1);\n");
+            preparedStatement.setString(1, login);
+            preparedStatement.setInt(2, hash);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                String login2 = rs.getString("login");
+                UserProfileDto user = getUserProfileForLogin(login2, login);
+                if (!user.getHasDislike()) {
+                    return user;
+                }
+            } else {
+                return null;
+            }
+            counter++;
         }
+        return null;
     }
 
     public void saveNewEmail(String login, String newEmail) throws SQLException {

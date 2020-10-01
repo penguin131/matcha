@@ -332,11 +332,11 @@ public class LogicServiceImpl implements LogicService {
 				filterDto = mapper.readValue(filter, UserFilterDto.class);
 			}
 			databaseService.createSearchData(filterDto, login);
-			//Уведомление
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
 			if (nextUser == null) {
 				return "";
 			}
+			//Уведомление
 			MessageDto notification = WebSockets.prepareMessage(
 					login,
 					nextUser.getLogin(),

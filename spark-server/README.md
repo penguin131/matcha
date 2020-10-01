@@ -1,10 +1,9 @@
 <b>For start:</b><br>
 
-1)install two postgresql databases for prod and test <br>
-2)Configure test/resources/application.properties, src/main/resources/application.properties and src/main/resources/META-INF/persistence.xml <br>
-3)run src/main/resources/database_schema/wsg84_get_distance.sql и остальные фуинкции in other databases <br>
-4)run mvn clean package <br>
-5)run mvn exec:java <br>
+1)run docker-compose up -d for create database <br>
+2)Configure application.properties database url <br>
+3)run mvn clean package <br>
+4)run mvn exec:java <br>
 <br><br><br>
 API https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#<br>
 <br>
