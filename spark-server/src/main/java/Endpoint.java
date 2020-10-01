@@ -15,15 +15,14 @@ import spark.Spark;
 import javax.mail.internet.AddressException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.security.JWTHelper.decodeJWT;
 import static com.security.JWTHelper.getUserNameFromToken;
 import static spark.Spark.*;
 
-public class MajorEndpoint {
-
-	private static final HashMap<String, String> corsHeaders = new HashMap<>();
-
+public class Endpoint {
+	private static final Map<String, String> corsHeaders = new HashMap<>();
 	static {
 		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
 		corsHeaders.put("Access-Control-Allow-Origin", "*");
@@ -31,21 +30,21 @@ public class MajorEndpoint {
 		corsHeaders.put("Access-Control-Expose-Headers", "date,access-control-allow-origin,access-control-allow-methods,access-control-allow-headers,content-type,connection,server,x-final-url");
 	}
 
-	public static void apply() {
+	private static void applyFilters() {
 		Filter filter = (request, response) -> corsHeaders.forEach(response::header);
 		Spark.after(filter);
 	}
 
 	public static void main(String[] args) {
 		//Инициализация стартовых обьектов
-		Logger logger = Logger.getLogger(MajorEndpoint.class);
+		Logger logger = Logger.getLogger(Endpoint.class);
 		LogicService logicService = ServiceHelper.getLogicService();
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", WebSocketHandler.class);
 		Config.configureLogger();
 
-		apply();
+		applyFilters();
 		//REST
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
@@ -209,10 +208,14 @@ public class MajorEndpoint {
 		}));
 
 		before((request, response) -> {
+			if ("OPTIONS".equals(request.requestMethod()))
+				return;
 			logger.info("==> Request start: " + request.url());
 		});
 
 		afterAfter((request, response) -> {
+			if ("OPTIONS".equals(request.requestMethod()))
+				return;
 			logger.info("<== Request end: " + request.url());
 		});
 
@@ -236,6 +239,4 @@ public class MajorEndpoint {
 		});
 		init();
 	}
-
 }
-

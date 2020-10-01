@@ -144,7 +144,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>MajorEndpoint</mainClass>
+					<mainClass>Endpoint</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
