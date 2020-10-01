@@ -1,5 +1,4 @@
 .idea/*
 **/target/*
 *.iml
-init_database.sql
-init_functions.sql
+init_database_with_data.sql
