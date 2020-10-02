@@ -6,27 +6,25 @@ import { Link } from 'react-router-dom'
 import css from './ChatPage.module.less'
 import { useGetAxiosFetch } from '../../services/useAxiosFetch'
 import { allFriendsUrl, chatHistoryUrl } from '../../services/services' 
-import axios from 'axios'
 
 const token = localStorage.token
 
 const ChatPage = ({ webSocket }) => {
   const config = {headers: {'Authorization': token}}
   const [friendsList, fetchFriendsList] = useGetAxiosFetch(config)
-  const [chatHistory, fetchChatHistory] = useGetAxiosFetch(config)
+  const [, fetchChatHistory] = useGetAxiosFetch(config)
   const [currentChat, setCurrentChat] = useState(localStorage.currentChat)
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
     fetchFriendsList(allFriendsUrl)
-  }, [])
+  }, [fetchFriendsList])
   
   useEffect(() => {
     webSocket.onmessage = (message) => {
       const data = JSON.parse(message.data)
 
       if (data.type === 'chat_message') {
-        console.log(';e;')
         setMessages([JSON.parse(message.data), ...messages])
       }
     }
@@ -35,7 +33,7 @@ const ChatPage = ({ webSocket }) => {
   useEffect(() => {
     fetchChatHistory(`${chatHistoryUrl}/${currentChat}`).then(res => res?.data && setMessages(res.data))
   }, [currentChat])
-
+  console.log(friendsList)
   const onSubmit = (values) => {
     const message = {
       type: 'chat_message',
@@ -48,7 +46,7 @@ const ChatPage = ({ webSocket }) => {
     setMessages([...messages, message])
     webSocket.send(JSON.stringify(message))
   }
-
+  console.log(friendsList)
   return (
     <div className={css.chatContainer}>
       <div className={css.chatBar}>

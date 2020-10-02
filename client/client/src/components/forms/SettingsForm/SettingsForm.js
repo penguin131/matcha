@@ -1,16 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Form, Field } from 'react-final-form'
 import Loader from '../../Loader/Loader'
 import css from '../authForms.module.less'
 import settingsCss from './SettingsForm.module.less'
 
-const SettingsForm = ({onSubmit, data }) => {
-  const [isFormLoading, setFormIsLoading] = useState(false)
-  const {
-    biography,
-    sex,
-    sex_preferences,
-  } = data
+const SettingsForm = ({isFormLoading, onSubmit, data, url }) => {
+  const { biography, sex, sex_preferences} = data
 
   return (
     <div className={css.authFormContainer}>{
@@ -22,7 +17,7 @@ const SettingsForm = ({onSubmit, data }) => {
               "biography": e.biography,
               "sex_preferences": e.sexPreferences,
             }
-            onSubmit(data, setFormIsLoading)
+            onSubmit(url, data)
           }}
           mutators={{
             setLoading: (args, state, utils) => {

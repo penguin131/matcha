@@ -1,11 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import Loader from '../../Loader/Loader'
 
-const ChangeEmailForm = ({ onSubmit }) => {
-  const [isLoading, setIsLoading] = useState(false)
-  
+const ChangeEmailForm = ({ onSubmit, isFormLoading, url }) => {  
   return (
     <div className={css.authFormContainer}>
       <Form
@@ -14,7 +12,7 @@ const ChangeEmailForm = ({ onSubmit }) => {
             "new_email": e.newEmail,
             "password": e.password
           }
-          onSubmit(data, setIsLoading)
+          onSubmit(url, data)
         }}
         mutators={{
           setLoading: (args, state, utils) => {
@@ -53,7 +51,7 @@ const ChangeEmailForm = ({ onSubmit }) => {
               )}
             </Field>
             <div className={css.loaderBlock}>
-                {isLoading && <Loader/>}
+                {isFormLoading && <Loader/>}
             </div>
             <div className={css.buttons}>
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>

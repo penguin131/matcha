@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useEffect } from 'react'
 import Header from '../Header/Header'
 import Navigation from '../Navigation/Navigation'
 import MainPage from '../../../pages/MainPage/MainPage'
@@ -12,10 +12,11 @@ import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import css from './Main.module.css'
 import { ws } from '../../../services/backendUrl'
 import { useGetAxiosFetch, usePostAxiosFetch } from '../../../services/useAxiosFetch'
-import { userProfileForLoginUrl, userPhotosUrl, updateUserProfileUrl, geolocationServiceUrl } from '../../../services/services'
+import { userProfileUrl, userPhotosUrl, updateUserProfileUrl, geolocationServiceUrl } from '../../../services/services'
 
 const token = localStorage.token
 const webSocket = new WebSocket(`${ws}${token}`)
+const user = localStorage.currentUser
 
 const Main = ({isAuth, setIsAuth}) => {
   const config = {headers: {'Authorization': token}}
@@ -25,9 +26,9 @@ const Main = ({isAuth, setIsAuth}) => {
   const [{}, updateUserProfile] = usePostAxiosFetch(config)
 
   useEffect(() => {
-    fetchUserProfile(userProfileForLoginUrl)
-    fetchUserPhotos(userPhotosUrl)
-  }, [])
+    fetchUserProfile(`${userProfileUrl}/${user}`)
+    fetchUserPhotos(`${userPhotosUrl}/${user}`)
+  }, [fetchUserProfile, fetchUserPhotos])
 
   useEffect(() => {
     const options = {

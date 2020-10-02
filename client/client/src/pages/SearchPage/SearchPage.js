@@ -1,42 +1,37 @@
 import React, {useState, useEffect} from 'react'
-import * as services from '../../services/services'
+import {} from '../../services/services'
 import ProfileCard from '../../components/ProfileCard/ProfileCard'
 import css from './SearchPage.module.less'
-import axios from 'axios'
 import Button from '../../components/Button/Button'
+import { useGetAxiosFetch, usePostAxiosFetch } from '../../services/useAxiosFetch'
+import { nextUserProfileUrl, userPhotosUrl } from '../../services/services'
+
+const token = localStorage.token
 
 const SearchPage = () => {
-  const [userProfile, setUserProfile] = useState({})
+  const config = {headers: {'Authorization': token}}
   const [filters, setFilters] = useState({})
-  const [userPhotos, setUserPhotos] = useState([])
-  const [profileIsLoading, setProfileIsLoading] = useState(false)
-  const [imagesIsLoading, setImagesIsLoading] = useState(false)
-
+  const [userProfile, fetchUserProfile] = usePostAxiosFetch(config)
+  const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
+  
+  const fetchData = () => {
+    fetchUserProfile(nextUserProfileUrl, filters).then((r) => {
+      fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
+    })
+  }
+  
   useEffect(() => {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source()
-
-    services.getNextUser(filters, setProfileIsLoading, setUserProfile)
-
-    return () => {
-      source.cancel();
-    };
+    fetchData()
   }, [])
-
-  useEffect(() => {
-    const {login} = userProfile
-
-    services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', login)
-  }, [userProfile])
 
   return (
     <div className={css.searchContainer}>
       <ProfileCard  user={userProfile?.login}
-                    userProfile={userProfile}
-                    userPhotos={userPhotos}
-                    profileIsLoading={profileIsLoading}
-                    imagesIsLoading={imagesIsLoading}/>
-      <Button onClick={() =>  services.getNextUser(filters, setProfileIsLoading, setUserProfile)} label="Next"/>
+                    userProfile={userProfile.data}
+                    userPhotos={userPhotos.data}
+                    profileIsLoading={userProfile.loading}
+                    imagesIsLoading={userPhotos.loading}/>
+      <Button onClick={() =>  fetchData()} label="Next"/>
     </div>
   )
 }

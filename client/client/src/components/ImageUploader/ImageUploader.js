@@ -1,23 +1,27 @@
 import React, {useState} from 'react'
 import ImageUploading from "react-images-uploading"
-import * as services from '../../services/services'
+import {uploadImagesUrl} from '../../services/services'
 import cssButton from '../Button/Button.module.less'
 import ImageItem from '../ImageItem/ImageItem'
+import {usePostAxiosFetch} from '../../services/useAxiosFetch'
+
+const token = localStorage.token
 
 const ImageUploader = ({imgsCount}) => {
-
+  const config = {headers: {'Authorization': token}}
   const [images, setImages] = useState([])
+  const [, uploadImages] = usePostAxiosFetch(config)
   const maxNumber = 5
   const acceptType = ['jpg', 'png']
   const maxFileSize = 3145728
 
-  const onChange = (imageList, addUpdateIndex) => {
+  const onChange = (imageList) => {
     setImages(imageList)
   }
 
-  const uploadImages = (imageList) => {
+  const uploadImagesRequest = (imageList) => {
     const urlsList = imageList.map(image => image.data_url)
-    services.uploadImages(urlsList)
+    uploadImages(uploadImagesUrl, urlsList)
   }
 
   return (
@@ -29,8 +33,8 @@ const ImageUploader = ({imgsCount}) => {
                       acceptType={acceptType}
                       maxFileSize={maxFileSize}
                       dataURLKey="data_url"
-      >{({imageList, onImageUpload, onImageRemove, isDragging, dragProps, errors}) => {
-        const count = (imageList.length + imgsCount) > maxNumber
+      >{({imageList, onImageUpload, onImageRemove, dragProps, errors}) => {
+        const count = (imageList?.length + imgsCount) > maxNumber
 
         return (
           <div>
@@ -59,7 +63,7 @@ const ImageUploader = ({imgsCount}) => {
                 {`Can store maximum ${maxNumber} images`}
               </span>}
             </div>
-            {imageList.length > 0 && imageList.length + imgsCount <= 5 && <button onClick={() => uploadImages(imageList)}>Upload images</button>}
+            {imageList.length > 0 && imageList.length + imgsCount <= 5 && <button onClick={() => uploadImagesRequest(imageList)}>Upload images</button>}
           </div>
         )}}
       </ImageUploading>

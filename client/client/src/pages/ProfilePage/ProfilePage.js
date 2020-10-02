@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from "react";
-import * as services from '../../services/services.js'
-import axios from 'axios'
+import React, { useEffect } from "react";
 import css from './ProfilePage.module.less'
 import "react-image-gallery/styles/css/image-gallery.css";
 import ProfileCard from '../../components/ProfileCard/ProfileCard'
+import { useGetAxiosFetch } from '../../services/useAxiosFetch'
+import { userProfileUrl, userPhotosUrl } from '../../services/services'
+
+const token = localStorage.token
 
 const ProfilePage = ({match}) => {
-  const [userProfile, setUserProfile] = useState({})
-  const [profileIsLoading, setProfileIsLoading] = useState(false)
-  const [imagesIsLoading, setImagesIsLoading] = useState(false)
-  const [userPhotos, setUserPhotos] = useState([])
+  const config = {headers: {'Authorization': token}}
+  const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
+  const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   const user = match.params.login.substring(1, match.params.login.length)
   
-
   useEffect(() => {
     Promise.all([
-      services.fetchData(setProfileIsLoading, setUserProfile, 'getUserProfileForLogin', user),
-      services.fetchData(setImagesIsLoading, setUserPhotos, 'getUserPhotos', user)
+      fetchUserProfile(`${userProfileUrl}/${user}`),
+      fetchUserPhotos(`${userPhotosUrl}/${user}`)
     ])
-  }, [user])
+  }, [fetchUserProfile, fetchUserPhotos])
 
   return (
     <div className={css.mainSectionContainer}>
       <ProfileCard  user={user}
-                    userProfile={userProfile}
-                    userPhotos={userPhotos}
-                    profileIsLoading={profileIsLoading}
-                    imagesIsLoading={imagesIsLoading}/>
+                    userProfile={userProfile.data?.data}
+                    userPhotos={userPhotos.data?.data}
+                    profileIsLoading={userProfile.loading}
+                    imagesIsLoading={userPhotos.loading}/>
     </div>
     
   );

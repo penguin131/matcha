@@ -23,7 +23,7 @@ const Conversation = ({ data, setCurrentChat, index }) => {
 }
 
 const ConversationList = ({ data = [], setCurrentChat, isLoading }) => {
-
+  
   return (
     <div className={css.conversationList}>
       {!isLoading ? (

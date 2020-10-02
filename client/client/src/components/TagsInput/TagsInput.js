@@ -2,9 +2,8 @@ import React, {useState} from 'react'
 import Chip from './Chip/Chip'
 import css from './TagsInput.module.less'
 import Button from '../../components/Button/Button'
-import * as services from '../../services/services'
 
-const TagsInput = ({ data=[] }) => {
+const TagsInput = ({ data = [], url, onSubmit }) => {
   const [chip, setChip] = useState('')
   const [chips, setChips] = useState(data)
 
@@ -33,29 +32,19 @@ const TagsInput = ({ data=[] }) => {
     }
   }
 
-  const onSave = () => {
-    services.updateProfile({
-      tags: chips
-    })
-  }
-
   return (
     <div className={css.chipsBlock}>
       <div className={css.chipsContainer}>
         {chips.map((chip, i) => (
-          <Chip
-            key={i}
-            data={chip}
-            onRemove={() => onRemove(i)}
-          />
+          <Chip key={i}
+                data={chip}
+                onRemove={() => onRemove(i)}/>
         ))}
       </div>
-      <input
-        value={chip}
-        onKeyDown={handleKeyDown}
-        onChange={onChange}
-      />
-      <Button label='Save' onClick={onSave}/>
+      <input  value={chip}
+              onKeyDown={handleKeyDown}
+              onChange={onChange}/>
+      <Button label='Save' onClick={() => onSubmit(url, {tags: chips})}/>
     </div> 
   )
 }
