@@ -1,9 +1,13 @@
+package com;
+
 import com.dictionary.MessageType;
 import com.dto.MessageDto;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
 import com.helper.ServiceHelper;
+import com.service.Intra42Service;
+import com.service.Intra42ServiceImpl;
 import com.service.LogicService;
 import com.sockets.WebSocketHandler;
 import com.sockets.WebSockets;
@@ -13,7 +17,6 @@ import spark.Filter;
 import spark.Spark;
 
 import javax.mail.internet.AddressException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,9 +147,17 @@ public class Endpoint {
 			try {
 				return logicService.getToken(req.body());
 			} catch (AccessDeniedException ex) {
-				halt(403, "403 Forbidden");
+				res.status(404);
 				return ex.getMessage();
 			}
+		});
+
+		get("/testOAUTH2/:code", (request, response) -> {
+			Intra42Service intra42Service = new Intra42ServiceImpl();
+			String token = intra42Service.getToken(request.params(":code"));
+			//todo
+
+			return "";
 		});
 
 		post("/protected/downloadImage", ((req, res) -> {
