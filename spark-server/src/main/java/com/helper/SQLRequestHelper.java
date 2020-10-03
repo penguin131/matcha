@@ -110,7 +110,10 @@ public class SQLRequestHelper {
 		Field[] fields = userProfile.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			field.setAccessible(true);
-			if ("tags".equals(field.getName()) || "newEmail".equals(field.getName())) {
+			if ("tags".equals(field.getName()) ||
+					"newEmail".equals(field.getName()) ||
+					"oldPassword".equals(field.getName()) ||
+					"newPassword".equals(field.getName())) {
 				continue;
 			}
 			if (field.get(userProfile) != null) {
@@ -120,7 +123,7 @@ public class SQLRequestHelper {
 				} else {
 					sb.append(",");
 				}
-				sb.append(field.getName()).append("=?");
+				sb.append(camelCaseToSnakeCase(field.getName())).append("=?");
 			}
 		}
 
@@ -135,8 +138,13 @@ public class SQLRequestHelper {
 		for (Field field : fields) {
 			field.setAccessible(true);
 			if (field.get(userProfile) != null) {
-				if ("newEmail".equals(field.getName())) {
+				if ("newEmail".equals(field.getName()) || //смена почты
+						"oldPassword".equals(field.getName()) || //смена пароля
+						"newPassword".equals(field.getName()) ||
+						"tags".equals(field.getName())) {//теги
 					continue;
+				} else if ("sex".equals(field.getName()) || "sexPreferences".equals(field.getName())) {
+					statement.setInt(counter, Sex.convertStringToCode((String) field.get(userProfile)));
 				} else if (field.getType().equals(String.class)) {
 					statement.setString(counter, (String) field.get(userProfile));
 				} else if (field.getType().equals(Integer.class)) {
@@ -209,5 +217,18 @@ public class SQLRequestHelper {
 					",CTE2.distance";
 		}
 		return orderBy;
+	}
+
+	private static String camelCaseToSnakeCase(String camel) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < camel.length(); i++) {
+			char ch = camel.charAt(i);
+			if (Character.isUpperCase(ch)) {
+				sb.append('_').append(Character.toLowerCase(ch));
+			} else {
+				sb.append(ch);
+			}
+		}
+		return sb.toString();
 	}
 }
