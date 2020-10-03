@@ -31,9 +31,9 @@ const ChatPage = ({ webSocket }) => {
   }, [messages])
 
   useEffect(() => {
-    fetchChatHistory(`${chatHistoryUrl}/${currentChat}`).then(res => res?.data && setMessages(res.data))
+    currentChat && fetchChatHistory(`${chatHistoryUrl}/${currentChat}`).then(res => res?.data && setMessages(res.data))
   }, [currentChat])
-  console.log(friendsList)
+
   const onSubmit = (values) => {
     const message = {
       type: 'chat_message',
@@ -42,11 +42,10 @@ const ChatPage = ({ webSocket }) => {
       to: currentChat,
       date: Date.now(),
     }
-    console.log(messages)
-    setMessages([...messages, message])
+  
     webSocket.send(JSON.stringify(message))
   }
-  console.log(friendsList)
+
   return (
     <div className={css.chatContainer}>
       <div className={css.chatBar}>

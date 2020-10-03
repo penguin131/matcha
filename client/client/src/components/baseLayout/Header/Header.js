@@ -5,8 +5,9 @@ import defaultAva from '../../../imgs/defaultAva.png'
 import { Link } from 'react-router-dom'
 import Loader from '../../../components/Loader/Loader'
 import css from './Header.module.less'
+import Notification from '../../Notifications/Notifications'
 
-const Header = ({ userProfile, userPhotos, isLoading, setIsAuth }) => {
+const Header = ({ userProfile, userPhotos, isLoading, setIsAuth, notification }) => {
 	const mainPhoto = userPhotos?.length > 0 ? userPhotos.find(photo => photo.main) : null
 
 	const logout = () => {
@@ -21,6 +22,7 @@ const Header = ({ userProfile, userPhotos, isLoading, setIsAuth }) => {
 			<div className={css.logo}>
 				<Link to='/'><Logo/></Link>
 			</div>
+			<Notification data={notification}/>
 			<div className={css.userInfo}>
 				{isLoading ? <div><Loader/></div> : <>
 					<div>

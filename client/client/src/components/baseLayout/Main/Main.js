@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../Header/Header'
 import Navigation from '../Navigation/Navigation'
 import MainPage from '../../../pages/MainPage/MainPage'
@@ -24,6 +24,7 @@ const Main = ({isAuth, setIsAuth}) => {
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   const [{}, getUserGeolocation] = useGetAxiosFetch()
   const [{}, updateUserProfile] = usePostAxiosFetch(config)
+  const [notification, setNotification] = useState({})
 
   useEffect(() => {
     fetchUserProfile(`${userProfileUrl}/${user}`)
@@ -73,9 +74,9 @@ const Main = ({isAuth, setIsAuth}) => {
     
     webSocket.onmessage = (message) => {
       const data = JSON.parse(message.data)
-      if (data.type === 'notification') {
-        console.log(data)
-      }
+     
+        setNotification(data)
+   
     }
   
     return () => {
@@ -89,7 +90,8 @@ const Main = ({isAuth, setIsAuth}) => {
       <Header userProfile={userProfile.data?.data}
               userPhotos={userPhotos.data?.data}
               isLoading={userProfile.loading}
-              setIsAuth={setIsAuth}/>
+              setIsAuth={setIsAuth}
+              notification={notification}/>
         <main className={css.mainContainer}>
           <Navigation/>
           <Switch>
