@@ -22,7 +22,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 	private static final String CLIENT_ID = "7ff75fdfa415c5709f7d9257bc163dbd22654eae9a10799daffeb52026b924ac";
 	private static final String CLIENT_SECRET = "d1ff52f973b3b41004e043c783cc6c23a5c6b30d4424b98baabd2fbc83dcf164";
 	private static final String GRANT_TYPE = "authorization_code";
-	private static final String REDIRECT_URI = "http%3A%2F%2Flocalhost%3A8080";
+	private static final String REDIRECT_URI = "http%3A%2F%2Flocalhost%3A3000%2Fredirect";
 
 	@Override
 	public String getToken(String code) {
