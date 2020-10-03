@@ -218,7 +218,9 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         if (dbPassword == null) {
             throw new Exception("Invalid login + password");
         }
-        return Password.check(password, dbPassword);
+        boolean result = Password.check(password, dbPassword);
+        logger.info("checkPassword(): " + result);
+        return result;
     }
 
     @Override
