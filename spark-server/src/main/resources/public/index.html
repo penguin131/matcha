@@ -8,8 +8,9 @@
         var token = document.URL.substr(28);
         console.log('token: ' + token);
         $.ajax({
-            type: 'GET',
-            url: 'http://localhost:8080/testOAUTH2/' + token
+            type: 'POST',
+            url: 'http://localhost:8080/getToken',
+            data: JSON.stringify({ "oauth2_code": token }),
         });
     });
 </script>

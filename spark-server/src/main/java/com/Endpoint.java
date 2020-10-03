@@ -145,7 +145,7 @@ public class Endpoint {
 		//Security
 		post("/getToken", (req, res) -> {
 			try {
-				return logicService.getToken(req.body());
+				return logicService.getToken(req);
 			} catch (AccessDeniedException ex) {
 				res.status(403);
 				return ex.getMessage();
@@ -156,7 +156,6 @@ public class Endpoint {
 			Intra42Service intra42Service = new Intra42ServiceImpl();
 			String token = intra42Service.getToken(request.params(":code"));
 			//todo
-
 			return "";
 		});
 

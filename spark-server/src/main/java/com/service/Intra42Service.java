@@ -1,8 +1,10 @@
 package com.service;
 
+import com.dto.BaseUserProfileDto;
+
 import java.io.IOException;
 
 public interface Intra42Service {
 	String getToken(String code) throws IOException;
-	String getUserForId(String token, String login);
+	BaseUserProfileDto getCurrentUser(String token);
 }

@@ -68,7 +68,7 @@ public interface LogicService {
 	/**
 	 * Токен по данным из тела запроса
 	 */
-	String getToken(String requestBody) throws AccessDeniedException;
+	String getToken(Request request) throws AccessDeniedException;
 
 	/**
 	 * Проставит подтвержденную почту пользователю по его токену

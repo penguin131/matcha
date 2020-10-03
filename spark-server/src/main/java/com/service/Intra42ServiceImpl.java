@@ -1,7 +1,9 @@
 package com.service;
 
+import com.dto.BaseUserProfileDto;
 import com.dto.Oauth2TokenDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,7 +18,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 	private Logger logger = Logger.getLogger(Intra42ServiceImpl.class);
 	private static ObjectMapper mapper = new ObjectMapper();
 	private static final String API42_TOKEN = "https://api.intra.42.fr/oauth/token";
-	private static final String API42_GET_USER = "https://api.intra.42.fr/v2/users/";
+	private static final String API42_CURRENT_USER = "https://api.intra.42.fr/v2/me/";
 	private static final String CLIENT_ID = "7ff75fdfa415c5709f7d9257bc163dbd22654eae9a10799daffeb52026b924ac";
 	private static final String CLIENT_SECRET = "d1ff52f973b3b41004e043c783cc6c23a5c6b30d4424b98baabd2fbc83dcf164";
 	private static final String GRANT_TYPE = "authorization_code";
@@ -44,18 +46,23 @@ public class Intra42ServiceImpl implements Intra42Service {
 	}
 
 	@Override
-	public String getUserForId(String token, String id) {
-		logger.info(String.format("getUserForLogin(token, %s)", id));
-		HttpGet get = new HttpGet(API42_GET_USER + id + "/?access_token=" + token);
+	public BaseUserProfileDto getCurrentUser(String token) {
+		logger.info(String.format("getCurrentUser(%s)", token));
+		HttpGet get = new HttpGet(API42_CURRENT_USER);
+		get.setHeader("Authorization", "Bearer " + token);
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
-			 CloseableHttpResponse response = httpClient.execute(get)){
+			 CloseableHttpResponse response = httpClient.execute(get)) {
 			String result = EntityUtils.toString(response.getEntity());
-			logger.info("Result: " + result);
-
+			ObjectNode node = mapper.readValue(result, ObjectNode.class);
+			BaseUserProfileDto profile = new BaseUserProfileDto();
+			profile.setLogin(node.get("login").asText());
+			profile.setEmail(node.get("email").asText());
+			profile.setSex("male");
+			profile.setPassword("oauth2");
+			return profile;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-
 		return null;
 	}
 }

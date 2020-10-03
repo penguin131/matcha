@@ -14,6 +14,7 @@ import com.helper.ValidateHelper;
 import com.mail.MailService;
 import com.security.SecurityHelper;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import spark.Request;
 
 import javax.mail.MessagingException;
@@ -27,7 +28,9 @@ import java.util.List;
 import static com.security.JWTHelper.createJWT;
 
 public class LogicServiceImpl implements LogicService {
+	private Logger logger = Logger.getLogger(LogicServiceImpl.class);
 	private DatabaseService databaseService = ServiceHelper.getDatabaseService();
+	private Intra42Service intra42Service = new Intra42ServiceImpl();
 	private ObjectMapper mapper = new ObjectMapper();
 	private static final long TTL = 1000000000;
 
@@ -198,15 +201,36 @@ public class LogicServiceImpl implements LogicService {
 	}
 
 	@Override
-	public String getToken(String requestBody) throws AccessDeniedException {
+	public String getToken(Request request) throws AccessDeniedException {
 		try {
-			CredentialsDto credentials = mapper.readValue(requestBody, CredentialsDto.class);
-			String login = credentials.getLogin();
-			String password = credentials.getPassword();
-			if (databaseService.checkPassword(login, password)) {
-				String token = createJWT(login, "securityService", "security", TTL);
-				databaseService.updateLastAuthDate(login, System.currentTimeMillis());
-				return token;
+			AuthDataDto authData = mapper.readValue(request.body(), AuthDataDto.class);
+			if (authData.getOauth2Code() == null) {
+				String login = authData.getLogin();
+				String password = authData.getPassword();
+				if (databaseService.checkPassword(login, password)) {
+					String token = createJWT(login, "securityService", "security", TTL);
+					databaseService.updateLastAuthDate(login, System.currentTimeMillis());
+					return token;
+				}
+			} else {
+				String intra42Token = intra42Service.getToken(authData.getOauth2Code());
+				BaseUserProfileDto user = intra42Service.getCurrentUser(intra42Token);
+				UserProfileDto databaseUser = databaseService.getUserProfileForLogin(user.getLogin(), null);
+				if (databaseUser != null) {
+					logger.info("User already exists");
+					String token = createJWT(user.getLogin(), "securityService", "security", TTL);
+					databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
+					return token;
+				} else {//Если юзера еще нет, то создаю
+					logger.info("Create new user.");
+					String hash = SecurityHelper.generateHash();
+					databaseService.createUserProfile(user, hash);
+					MailService.sendConfirmationEmail(
+							user.getEmail(),
+							hash,
+							request.url().substring(0, request.url().indexOf("getToken")) + "protected/",
+							"verification/");
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
