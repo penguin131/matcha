@@ -72,6 +72,7 @@ public class JWTHelper {
     }
 
     public static String getUserNameFromToken(String jwt) throws Exception {
+        logger.info("getUserNameFromToken(): " + jwt);
         return JWTHelper.decodeJWT(jwt).getId();
     }
 }
