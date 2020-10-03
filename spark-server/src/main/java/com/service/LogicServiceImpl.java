@@ -103,12 +103,13 @@ public class LogicServiceImpl implements LogicService {
 			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
 			notification.setFrom(from);
-			notification.setMsgText(from + " liked you!");
+			notification.setMsgText("liked you!");
 			WebSockets.sendMessage(null, notification);
 			//Если лайк совпал, то дополнительное уведомление
 			if (result) {
 				notification.setTo(from);
-				notification.setMsgText("New match with user " + to);
+				notification.setFrom(to);
+				notification.setMsgText("added to your friends list!");
 				WebSockets.sendMessage(null, notification);
 			}
 		} catch (ValidateException ex) {
@@ -127,7 +128,7 @@ public class LogicServiceImpl implements LogicService {
 			notification.setType(MessageType.NOTIFICATION.getName());
 			notification.setTo(to);
 			notification.setFrom(from);
-			notification.setMsgText(from + " disliked you!");
+			notification.setMsgText("disliked you!");
 			WebSockets.sendMessage(null, notification);
 		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
@@ -360,7 +361,7 @@ public class LogicServiceImpl implements LogicService {
 					login,
 					nextUser.getLogin(),
 					MessageType.NOTIFICATION.getName(),
-					"User " + login + " watch you profile!");
+					"watch you profile!");
 			WebSockets.sendMessage(null, notification);
 
 			return mapper.writeValueAsString(nextUser);
