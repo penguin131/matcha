@@ -24,7 +24,7 @@ const Header = ({ userProfile, userPhotos, isLoading, setIsAuth, notification })
 			</div>
 			<Notification data={notification}/>
 			<div className={css.userInfo}>
-				{isLoading ? <div><Loader/></div> : <>
+				{isLoading ? <div className={css.loaderBlock}><Loader/></div> : <>
 					<div>
 						<div>{userProfile?.login || '-'}</div>
 						<div className={css.rating}>rating: {userProfile?.rating || '-'}</div>
@@ -37,9 +37,8 @@ const Header = ({ userProfile, userPhotos, isLoading, setIsAuth, notification })
 							/>
 						</Link>
 					</div>
-					<div onClick={logout} className={css.logout}><Logout/></div>
 				</>}
-				
+				<div onClick={logout} className={css.logout}><Logout/></div>			
 			</div>
 		</header>
 	)

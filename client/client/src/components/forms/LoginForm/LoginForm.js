@@ -3,11 +3,13 @@ import { Form, Field } from 'react-final-form'
 import css from '../authForms.module.less'
 import Loader from '../../Loader/Loader'
 import { useHistory } from 'react-router-dom'
+import { redirect } from '../../../services/backendUrl'
 
 const LoginForm = ({ onSubmit, setIsAuth }) => {
   const [isLoading, setIsLoading] = useState(false)
   let history = useHistory()
-
+  const intraLogin = `https://api.intra.42.fr/oauth/authorize?client_id=7ff75fdfa415c5709f7d9257bc163dbd22654eae9a10799daffeb52026b924ac&redirect_uri=http%3A%2F%2F${redirect}&response_type=code`
+  
   return (
     <div className={css.authFormContainer}>
       <Form
@@ -48,6 +50,11 @@ const LoginForm = ({ onSubmit, setIsAuth }) => {
               <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
                 Log in
               </button>
+              <a href={intraLogin}>
+                <button className={css.submitButton} type='button'>
+                  Log in with intra
+                </button>
+              </a>
             </div>
           </form>
         )}

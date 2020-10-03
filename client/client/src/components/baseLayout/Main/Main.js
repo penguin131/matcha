@@ -7,7 +7,9 @@ import ChatPage from '../../../pages/ChatPage/ChatPage'
 import ProfilePage from '../../../pages/ProfilePage/ProfilePage'
 import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import SearchPage from '../../../pages/SearchPage/SearchPage'
-import { Switch } from 'react-router-dom'
+import WatchPage from '../../../pages/WatchPage/WatchPage'
+import LikePage from '../../../pages/LikePage/LikePage'
+import { Switch, Route } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import css from './Main.module.css'
 import { ws } from '../../../services/backendUrl'
@@ -50,6 +52,7 @@ const Main = ({isAuth, setIsAuth}) => {
     const error = async (err) => {
       getUserGeolocation(geolocationServiceUrl)
         .then(res => {
+          console.log(res)
           const coords = res.data.loc.split(',')
           const data = {
             latitude: coords[0],
@@ -115,6 +118,14 @@ const Main = ({isAuth, setIsAuth}) => {
                             path='/search'
                             component={SearchPage}
                             isAuth={isAuth}/>
+            <ProtectedRoute exact
+                            path='/watchedYou'
+                            component={WatchPage}
+                            isAuth={isAuth}/>
+            <ProtectedRoute exact
+                            path='/youLiked'
+                            component={LikePage}
+                            isAuth={isAuth}/>                            
             <ProtectedRoute exact
                             path='/'
                             component={MainPage}

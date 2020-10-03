@@ -13,7 +13,6 @@ const token = localStorage.token
 const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsLoading}) => {
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
-  console.log(userPhotos)
   const images = userPhotos?.data?.map(photo => ({original: photo.data, thumbnail: photo.data})) 
 
   return (

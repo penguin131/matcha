@@ -38,7 +38,8 @@ const AuthPage = ({ setIsAuth }) => {
 				<Switch>
 					<Route	path='/login'
 									component={() => (
-										<LoginForm onSubmit={services.login} setIsAuth={setIsAuth}/>
+										<LoginForm	onSubmit={services.login}
+																setIsAuth={setIsAuth}/>
 									)}/>
 					<Route	path='/join'
 									component={() => (
