@@ -12,6 +12,8 @@ public class InnerProfileDto {
 	@JsonProperty("last_name")
 	private String lastName;
 	private String biography;
+	@JsonProperty("sex")
+	private String sex;
 	@JsonProperty("sex_preferences")
 	private String sexPreferences;
 	private Float latitude;
@@ -144,5 +146,13 @@ public class InnerProfileDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
 	}
 }
