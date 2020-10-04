@@ -33,7 +33,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 				"&client_secret=" + CLIENT_SECRET +
 				"&code=" + code +
 				"&redirect_uri=" + REDIRECT_URI);
-		logger.info("post: " + post.getMethod());
+		logger.info("post: " + post.toString());
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 			 CloseableHttpResponse response = httpClient.execute(post)) {
 			String result = EntityUtils.toString(response.getEntity());
