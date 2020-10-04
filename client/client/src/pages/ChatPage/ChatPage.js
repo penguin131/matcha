@@ -28,11 +28,11 @@ const ChatPage = ({ webSocket }) => {
         setMessages([JSON.parse(message.data), ...messages])
       }
     }
-  }, [messages])
+  }, [messages, webSocket])
 
   useEffect(() => {
     currentChat && fetchChatHistory(`${chatHistoryUrl}/${currentChat}`).then(res => res?.data && setMessages(res.data))
-  }, [currentChat])
+  }, [currentChat, fetchChatHistory])
 
   const onSubmit = (values) => {
     const message = {
@@ -63,13 +63,15 @@ const ChatPage = ({ webSocket }) => {
           
           {/* <TrashLogo className={css.trashLogo}/> */}
         </div>
-        <ChatList
-          currentChat={currentChat}
-          messages={messages}
-          setMessages={setMessages}
-          isLoading={false}
-        />
-        <ChatForm onSubmit={onSubmit}/>
+    
+          <ChatList
+            currentChat={currentChat}
+            messages={messages}
+            setMessages={setMessages}
+            isLoading={false}
+          />
+          <ChatForm onSubmit={onSubmit}/>
+       
       </div>
     </div>
   )

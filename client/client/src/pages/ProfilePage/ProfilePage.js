@@ -11,7 +11,6 @@ const ProfilePage = ({match}) => {
   const config = {headers: {'Authorization': token}}
   const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
-  console.log(match)
   const user = match.params.login.substring(1, match.params.login.length)
   
   useEffect(() => {
@@ -19,7 +18,7 @@ const ProfilePage = ({match}) => {
       fetchUserProfile(`${userProfileUrl}/${user}`),
       fetchUserPhotos(`${userPhotosUrl}/${user}`)
     ])
-  }, [fetchUserProfile, fetchUserPhotos])
+  }, [fetchUserProfile, fetchUserPhotos, user])
 
   return (
     <div className={css.mainSectionContainer}>

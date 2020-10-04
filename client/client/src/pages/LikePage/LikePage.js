@@ -13,8 +13,8 @@ const LikePage = () => {
 
   useEffect(() => {
     sendGetRequest(likedUsersUrl)
-  }, [])
-
+  }, [sendGetRequest])
+ 
   return (
     <div className={css.mainSectionContainer}>
       {loading ?

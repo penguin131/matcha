@@ -9,7 +9,7 @@ import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import SearchPage from '../../../pages/SearchPage/SearchPage'
 import WatchPage from '../../../pages/WatchPage/WatchPage'
 import LikePage from '../../../pages/LikePage/LikePage'
-import { Switch, Route } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import css from './Main.module.css'
 import { ws } from '../../../services/backendUrl'
@@ -24,8 +24,8 @@ const Main = ({isAuth, setIsAuth}) => {
   const config = {headers: {'Authorization': token}}
   const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
-  const [{}, getUserGeolocation] = useGetAxiosFetch()
-  const [{}, updateUserProfile] = usePostAxiosFetch(config)
+  const [, getUserGeolocation] = useGetAxiosFetch()
+  const [, updateUserProfile] = usePostAxiosFetch(config)
   const [notification, setNotification] = useState({})
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const Main = ({isAuth, setIsAuth}) => {
     };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
-  }, [])
+  }, [updateUserProfile, getUserGeolocation])
 
   useEffect(() => {
     webSocket.onopen = () => {

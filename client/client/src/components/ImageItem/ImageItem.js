@@ -1,7 +1,6 @@
 import React from 'react'
 import css from './ImageItem.module.less'
 import buttonCss from '../Button/Button.module.less'
-import * as services from '../../services/services'
 
 const ImageItem = ({dataUrl, onRemove, onSetAvatar, withMainSelect}) => {
 
