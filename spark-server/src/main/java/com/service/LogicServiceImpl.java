@@ -237,7 +237,7 @@ public class LogicServiceImpl implements LogicService {
 					}
 					user.setLogin(user.getLogin() + addition);
 					logger.info("Generated login: " + user.getLogin());
-					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")) + "protected/", true);
+					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")), true);
 				}
 				String token = createJWT(user.getLogin(), "securityService", "security", TTL);
 				databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
