@@ -1,6 +1,7 @@
 package com.service;
 
 import com.dto.BaseUserProfileDto;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -38,11 +39,12 @@ public class Intra42ServiceImpl implements Intra42Service {
 			String result = EntityUtils.toString(response.getEntity());
 			logger.info("Result: " + result);
 			ObjectNode node = mapper.readValue(result, ObjectNode.class);
-			return node.get("access_token").asText();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			throw new Exception("Error getting token from intra42");
+			JsonNode jsonNode = node.get("access_token");
+			if (jsonNode != null) {
+				return jsonNode.asText();
+			}
 		}
+		throw new Exception("Error getting token from intra42");
 	}
 
 	@Override
