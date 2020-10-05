@@ -147,6 +147,7 @@ public class Endpoint {
 			try {
 				return logicService.getToken(req);
 			} catch (AccessDeniedException ex) {
+				logger.info("getToken() AccessDeniedException!");
 				ex.printStackTrace();
 				res.status(403);
 				return ex.getMessage();
