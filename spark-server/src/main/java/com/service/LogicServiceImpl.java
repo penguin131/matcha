@@ -212,6 +212,7 @@ public class LogicServiceImpl implements LogicService {
 	@Override
 	public String getToken(Request request) throws AccessDeniedException {
 		try {
+			TokenDto tokenDto = new TokenDto();
 			AuthDataDto authData = mapper.readValue(request.body(), AuthDataDto.class);
 			if (authData.getOauth2Code() == null) {//Если авторизация по логину и паролю
 				String login = authData.getLogin();
@@ -219,7 +220,9 @@ public class LogicServiceImpl implements LogicService {
 				if (databaseService.checkPassword(login, password)) {
 					String token = createJWT(login, "securityService", "security", TTL);
 					databaseService.updateLastAuthDate(login, System.currentTimeMillis());
-					return token;
+					tokenDto.setLogin(login);
+					tokenDto.setToken(token);
+					return mapper.writeValueAsString(tokenDto);
 				}
 			} else {//Если авторизация через токен из интры
 				String intra42Token = intra42Service.getToken(authData.getOauth2Code());
@@ -242,9 +245,11 @@ public class LogicServiceImpl implements LogicService {
 						"securityService",
 						"security",
 						TTL);
+				tokenDto.setToken(token);
+				tokenDto.setLogin(login);
 				databaseService.updateLastAuthDate(login, System.currentTimeMillis());
-				logger.info("New token: " + token);
-				return token;
+				logger.info("New token: " + mapper.writeValueAsString(tokenDto));
+				return mapper.writeValueAsString(tokenDto);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

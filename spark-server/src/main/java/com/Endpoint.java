@@ -6,8 +6,6 @@ import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
 import com.helper.ServiceHelper;
-import com.service.Intra42Service;
-import com.service.Intra42ServiceImpl;
 import com.service.LogicService;
 import com.sockets.WebSocketHandler;
 import com.sockets.WebSockets;
@@ -147,8 +145,6 @@ public class Endpoint {
 			try {
 				return logicService.getToken(req);
 			} catch (AccessDeniedException ex) {
-				logger.info("getToken() AccessDeniedException!");
-				ex.printStackTrace();
 				res.status(403);
 				return ex.getMessage();
 			}
