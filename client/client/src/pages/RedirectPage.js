@@ -14,6 +14,8 @@ const RedirectPage = ({ setIsAuth }) => {
     key && sendPostRequest(loginUrl, {'oauth2_code': key})
       .then(r => {
         if (r?.data) {
+          localStorage.setItem('token', r.data.token)
+          localStorage.setItem('currentUser', r.data.login)
           history.push('/')
           setIsAuth(true)
         } 
