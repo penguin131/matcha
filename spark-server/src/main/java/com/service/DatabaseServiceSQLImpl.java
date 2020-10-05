@@ -31,16 +31,17 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws JsonProcessingException, SQLException {
+    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken, Boolean oauth) throws JsonProcessingException, SQLException {
         logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "insert into \"spark_db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed) " +
-                        "VALUES (?, ?, ?, ?, ?, false )");
+                "insert into \"spark_db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed, intra_auth) " +
+                        "VALUES (?, ?, ?, ?, ?, false , ?)");
         preparedStatement.setString(1, userProfileDto.getLogin());
         preparedStatement.setString(2, userProfileDto.getPassword());
         preparedStatement.setString(3, userProfileDto.getEmail());
         preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
         preparedStatement.setString(5, confirmedToken);
+        preparedStatement.setBoolean(6, oauth);
         preparedStatement.execute();
         logger.info(mapper.writeValueAsString(userProfileDto));
     }

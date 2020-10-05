@@ -18,7 +18,10 @@ import org.apache.log4j.Logger;
 import spark.Request;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -53,21 +56,27 @@ public class LogicServiceImpl implements LogicService {
 	public void createUserProfile(Request request) throws ValidateException {
 		try {
 			BaseUserProfileDto user = mapper.readValue(request.body(), BaseUserProfileDto.class);
-			ValidateHelper.validateBaseUserProfile(user);
-			user.setPassword(Password.getSaltedHash(user.getPassword()));
-			String hash = SecurityHelper.generateHash();
-			databaseService.createUserProfile(user, hash);
-			MailService.sendConfirmationEmail(
-					user.getEmail(),
-					hash,
-					request.url().substring(0, request.url().indexOf("createUserProfile")),
-					"verification/");
+			createProfile(user, request.url().substring(0, request.url().indexOf("createUserProfile")), false);
 		} catch (IOException | MessagingException | SQLException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
 			ex.printStackTrace();
 		} catch (ValidateException ex) {
 			ex.printStackTrace();
 			throw ex;
 		}
+	}
+
+	private void createProfile(BaseUserProfileDto user, String url, Boolean oauth)
+			throws MessagingException, SQLException, ValidateException, JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException, UnknownHostException {
+		logger.info("createProfile mode: " + oauth);
+		ValidateHelper.validateBaseUserProfile(user);
+		user.setPassword(Password.getSaltedHash(user.getPassword()));
+		String hash = SecurityHelper.generateHash();
+		databaseService.createUserProfile(user, hash, oauth);
+		MailService.sendConfirmationEmail(
+				user.getEmail(),
+				hash,
+				url,
+				"verification/");
 	}
 
 	@Override
@@ -217,22 +226,23 @@ public class LogicServiceImpl implements LogicService {
 				String intra42Token = intra42Service.getToken(authData.getOauth2Code());
 				BaseUserProfileDto user = intra42Service.getCurrentUser(intra42Token);
 				UserProfileDto databaseUser = databaseService.getUserProfileForLogin(user.getLogin(), null);
-				if (databaseUser != null) {
-					logger.info("User already exists");
-					String token = createJWT(user.getLogin(), "securityService", "security", TTL);
-					databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
-					logger.info("New token: " + token);
-					return token;
-				} else {//Если юзера еще нет, то создаю
-					logger.info("Create new user.");
-					String hash = SecurityHelper.generateHash();
-					databaseService.createUserProfile(user, hash);
-					MailService.sendConfirmationEmail(
-							user.getEmail(),
-							hash,
-							request.url().substring(0, request.url().indexOf("getToken")) + "protected/",
-							"verification/");
+				if (databaseUser == null) {//Если юзера еще нет
+					logger.info("No user with login " + user.getLogin());
+					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")) + "protected/", true);
+				} else if (!databaseUser.getIntraAuth()) {//Если юзер с таким логином уже есть, но он создавался не через oauth2
+					logger.info(String.format("User %s already exists, create new login...", databaseUser.getLogin()));
+					int addition = 1;
+					while ((databaseService.getUserProfileForLogin(user.getLogin() + addition, null)) != null) {
+						addition++;
+					}
+					user.setLogin(user.getLogin() + addition);
+					logger.info("Generated login: " + user.getLogin());
+					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")) + "protected/", true);
 				}
+				String token = createJWT(user.getLogin(), "securityService", "security", TTL);
+				databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
+				logger.info("New token: " + token);
+				return token;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
