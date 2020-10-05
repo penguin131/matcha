@@ -24,14 +24,18 @@ public class WebSocketHandler {
         logger.info("Start connection to web socket");
         userSession.setIdleTimeout(10000000);//примерно 3 часа
         String token = userSession.getUpgradeRequest().getParameterMap().get("token").get(0);
-        String username = JWTHelper.getUserNameFromToken(token);
-        if (StringUtils.isEmpty(username)) {
-            logger.info("Empty username");
-            throw new Exception("Empty username");
+        try {
+            String username = JWTHelper.getUserNameFromToken(token);
+            if (StringUtils.isEmpty(username)) {
+                logger.info("Empty username");
+                throw new Exception("Empty username");
+            }
+            logger.info("put user: " + username);
+            WebSockets.activeUserMap.put(userSession, username);
+            logger.info("User map size: " + WebSockets.activeUserMap.size());
+        } catch (Exception ex) {
+            logger.info("onConnect() error");
         }
-        logger.info("put user: " + username);
-        WebSockets.activeUserMap.put(userSession, username);
-        logger.info("User map size: " + WebSockets.activeUserMap.size());
     }
 
     @OnWebSocketClose
