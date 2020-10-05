@@ -55,7 +55,7 @@ public class LogicServiceImpl implements LogicService {
 	public void createUserProfile(Request request) throws ValidateException {
 		try {
 			BaseUserProfileDto user = mapper.readValue(request.body(), BaseUserProfileDto.class);
-			createProfile(user, request.url().substring(0, request.url().indexOf("createUserProfile")));
+			createProfile(user, request.url().substring(0, request.url().indexOf("createUserProfile")), false);
 		} catch (IOException | MessagingException | SQLException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
 			ex.printStackTrace();
 		} catch (ValidateException ex) {
@@ -64,12 +64,12 @@ public class LogicServiceImpl implements LogicService {
 		}
 	}
 
-	private void createProfile(BaseUserProfileDto user, String url)
+	private void createProfile(BaseUserProfileDto user, String url, boolean fromIntra)
 			throws MessagingException, SQLException, ValidateException, JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException, UnknownHostException {
 		ValidateHelper.validateBaseUserProfile(user);
 		user.setPassword(Password.getSaltedHash(user.getPassword()));
 		String hash = SecurityHelper.generateHash();
-		databaseService.createUserProfile(user, hash);
+		databaseService.createUserProfile(user, hash, fromIntra);
 		MailService.sendConfirmationEmail(
 				user.getEmail(),
 				hash,
@@ -164,9 +164,10 @@ public class LogicServiceImpl implements LogicService {
 				databaseService.updateUserProfile(user, login);
 			}
 			//Смена пароля
-			if (user.getOldPassword() != null && user.getNewPassword() != null) {
-				if (!databaseService.checkPassword(login, user.getOldPassword())) {
-					throw new AccessDeniedException("Invalid login/password");
+			if (!StringUtils.isEmpty(user.getNewPassword())) {
+				UserProfileDto oldProfile = databaseService.getUserProfileForLogin(user.getLogin(), null);
+				if (!oldProfile.getIntraFirst() && !databaseService.checkPassword(login, user.getOldPassword())) {//Если регался с интры, в первый раз не проверяет старый пароль
+					throw new AccessDeniedException("Invalid old password");
 				}
 				databaseService.changePassword(login, Password.getSaltedHash(user.getNewPassword()));
 			}
@@ -234,13 +235,14 @@ public class LogicServiceImpl implements LogicService {
 						user.setLogin(user.getLogin() + addition);
 						logger.info("Generated login: " + user.getLogin());
 					}
-					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")));
+					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")), true);
 				}
-				String token = createJWT(databaseUser == null ? user.getLogin() : databaseUser.getLogin(),
+				String login = databaseUser == null ? user.getLogin() : databaseUser.getLogin();
+				String token = createJWT(login,
 						"securityService",
 						"security",
 						TTL);
-				databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
+				databaseService.updateLastAuthDate(login, System.currentTimeMillis());
 				logger.info("New token: " + token);
 				return token;
 			}

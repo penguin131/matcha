@@ -30,7 +30,7 @@ public interface DatabaseService {
     /**
      * Добавление нового пользовательского профиля
      */
-    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws JsonProcessingException, SQLException;
+    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken, boolean fromIntra) throws JsonProcessingException, SQLException;
 
     /**
      * Вернет первый профиль юзера по login

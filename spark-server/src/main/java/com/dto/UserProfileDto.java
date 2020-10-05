@@ -40,6 +40,8 @@ public class UserProfileDto {
     private long lastAuthDate;
     @JsonProperty("intra_login")
     private String intraLogin;
+    @JsonIgnore//Флаг, в котором true если пользователь создан через интру. При смене пароля проставится false
+    private Boolean intraFirst;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -156,7 +158,8 @@ public class UserProfileDto {
                 rs.getInt("has_dislike") > 0,
                 rs.getString("confirmed_token"),
                 rs.getLong("last_auth_date"),
-                rs.getString("intra_login")
+                rs.getString("intra_login"),
+                rs.getBoolean("intra_first")
         );
         Set<String> tags = new HashSet<>();
         String arrayString = rs.getString("tags");
@@ -209,7 +212,8 @@ public class UserProfileDto {
                           Boolean hasDislike,
                           String confirmedToken,
                           Long lastAuthDate,
-                          String intraLogin) {
+                          String intraLogin,
+                          Boolean intraFirst) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -228,6 +232,7 @@ public class UserProfileDto {
         this.confirmedToken = confirmedToken;
         this.lastAuthDate = lastAuthDate != null ? lastAuthDate : 0;
         this.intraLogin = intraLogin;
+        this.intraFirst = intraFirst;
     }
 
     public UserProfileDto() {
@@ -291,5 +296,13 @@ public class UserProfileDto {
 
     public void setIntraLogin(String intraLogin) {
         this.intraLogin = intraLogin;
+    }
+
+    public Boolean getIntraFirst() {
+        return intraFirst;
+    }
+
+    public void setIntraFirst(Boolean intraFirst) {
+        this.intraFirst = intraFirst;
     }
 }

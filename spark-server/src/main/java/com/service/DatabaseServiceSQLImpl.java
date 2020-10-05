@@ -31,19 +31,20 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken)
+    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken, boolean fromIntra)
             throws JsonProcessingException, SQLException {
         logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into \"spark_db\".t_user_profile " +
-                        " (login, password, email, sex, confirmed_token, confirmed, intra_login) " +
-                        " VALUES (?, ?, ?, ?, ?, false, ?)");
+                        " (login, password, email, sex, confirmed_token, confirmed, intra_login, intra_first) " +
+                        " VALUES (?, ?, ?, ?, ?, false, ?, ?)");
         preparedStatement.setString(1, userProfileDto.getLogin());
         preparedStatement.setString(2, userProfileDto.getPassword());
         preparedStatement.setString(3, userProfileDto.getEmail());
         preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
         preparedStatement.setString(5, confirmedToken);
         preparedStatement.setString(6, userProfileDto.getIntraLogin());
+        preparedStatement.setBoolean(7, fromIntra);
         preparedStatement.execute();
         logger.info(mapper.writeValueAsString(userProfileDto));
     }
@@ -483,7 +484,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     public void changePassword(String login, String password) throws SQLException{
         logger.info(String.format("changePassword(%s, %s)", login, password));
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "update spark_db.t_user_profile set password=? where login=?");
+                "update spark_db.t_user_profile set password=?, intra_first=false where login=?");
         preparedStatement.setString(1, password);
         preparedStatement.setString(2, login);
         preparedStatement.executeUpdate();
