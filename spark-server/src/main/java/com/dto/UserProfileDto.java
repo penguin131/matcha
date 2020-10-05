@@ -38,8 +38,8 @@ public class UserProfileDto {
     private String confirmedToken;
     @JsonProperty("last_auth_date")
     private long lastAuthDate;
-    @JsonProperty("intra_auth")
-    private Boolean intraAuth;
+    @JsonProperty("intra_login")
+    private String intraLogin;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -156,7 +156,7 @@ public class UserProfileDto {
                 rs.getInt("has_dislike") > 0,
                 rs.getString("confirmed_token"),
                 rs.getLong("last_auth_date"),
-                rs.getBoolean("intra_auth")
+                rs.getString("intra_login")
         );
         Set<String> tags = new HashSet<>();
         String arrayString = rs.getString("tags");
@@ -209,7 +209,7 @@ public class UserProfileDto {
                           Boolean hasDislike,
                           String confirmedToken,
                           Long lastAuthDate,
-                          Boolean intraAuth) {
+                          String intraLogin) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -227,7 +227,7 @@ public class UserProfileDto {
         this.hasDislike = hasDislike;
         this.confirmedToken = confirmedToken;
         this.lastAuthDate = lastAuthDate != null ? lastAuthDate : 0;
-        this.intraAuth = intraAuth;
+        this.intraLogin = intraLogin;
     }
 
     public UserProfileDto() {
@@ -285,11 +285,11 @@ public class UserProfileDto {
         this.lastAuthDate = lastAuthDate;
     }
 
-    public Boolean getIntraAuth() {
-        return intraAuth;
+    public String getIntraLogin() {
+        return intraLogin;
     }
 
-    public void setIntraAuth(Boolean intraAuth) {
-        this.intraAuth = intraAuth;
+    public void setIntraLogin(String intraLogin) {
+        this.intraLogin = intraLogin;
     }
 }

@@ -59,6 +59,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 			profile.setEmail(node.get("email").asText());
 			profile.setSex("male");
 			profile.setPassword("oauth2");
+			profile.setIntraLogin(profile.getLogin());
 			return profile;
 		} catch (IOException ex) {
 			ex.printStackTrace();

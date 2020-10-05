@@ -1,6 +1,5 @@
 package com.service;
 
-import com.sockets.WebSockets;
 import com.dictionary.MessageType;
 import com.dto.*;
 import com.exceptions.AccessDeniedException;
@@ -13,12 +12,12 @@ import com.helper.ServiceHelper;
 import com.helper.ValidateHelper;
 import com.mail.MailService;
 import com.security.SecurityHelper;
+import com.sockets.WebSockets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import spark.Request;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
@@ -56,7 +55,7 @@ public class LogicServiceImpl implements LogicService {
 	public void createUserProfile(Request request) throws ValidateException {
 		try {
 			BaseUserProfileDto user = mapper.readValue(request.body(), BaseUserProfileDto.class);
-			createProfile(user, request.url().substring(0, request.url().indexOf("createUserProfile")), false);
+			createProfile(user, request.url().substring(0, request.url().indexOf("createUserProfile")));
 		} catch (IOException | MessagingException | SQLException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
 			ex.printStackTrace();
 		} catch (ValidateException ex) {
@@ -65,13 +64,12 @@ public class LogicServiceImpl implements LogicService {
 		}
 	}
 
-	private void createProfile(BaseUserProfileDto user, String url, Boolean oauth)
+	private void createProfile(BaseUserProfileDto user, String url)
 			throws MessagingException, SQLException, ValidateException, JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException, UnknownHostException {
-		logger.info("createProfile mode: " + oauth);
 		ValidateHelper.validateBaseUserProfile(user);
 		user.setPassword(Password.getSaltedHash(user.getPassword()));
 		String hash = SecurityHelper.generateHash();
-		databaseService.createUserProfile(user, hash, oauth);
+		databaseService.createUserProfile(user, hash);
 		MailService.sendConfirmationEmail(
 				user.getEmail(),
 				hash,
@@ -225,19 +223,18 @@ public class LogicServiceImpl implements LogicService {
 			} else {//Если авторизация через токен из интры
 				String intra42Token = intra42Service.getToken(authData.getOauth2Code());
 				BaseUserProfileDto user = intra42Service.getCurrentUser(intra42Token);
-				UserProfileDto databaseUser = databaseService.getUserProfileForLogin(user.getLogin(), null);
-				if (databaseUser == null) {//Если юзера еще нет
+				UserProfileDto databaseUser = databaseService.getUserProfileForIntraLogin(user.getLogin());
+				if (databaseUser == null) {//Если юзера еще нет, то добавляю
 					logger.info("No user with login " + user.getLogin());
-					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")) + "protected/", true);
-				} else if (!databaseUser.getIntraAuth()) {//Если юзер с таким логином уже есть, но он создавался не через oauth2
-					logger.info(String.format("User %s already exists, create new login...", databaseUser.getLogin()));
-					int addition = 1;
-					while ((databaseService.getUserProfileForLogin(user.getLogin() + addition, null)) != null) {
-						addition++;
+					if (getUserProfileForLogin(user.getLogin(), null) != null) {//если логин занят, то приписываю циферку в конце
+						int addition = 1;
+						while ((databaseService.getUserProfileForLogin(user.getLogin() + addition, null)) != null) {
+							addition++;
+						}
+						user.setLogin(user.getLogin() + addition);
+						logger.info("Generated login: " + user.getLogin());
 					}
-					user.setLogin(user.getLogin() + addition);
-					logger.info("Generated login: " + user.getLogin());
-					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")), true);
+					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")));
 				}
 				String token = createJWT(user.getLogin(), "securityService", "security", TTL);
 				databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());

@@ -30,7 +30,7 @@ public interface DatabaseService {
     /**
      * Добавление нового пользовательского профиля
      */
-    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken, Boolean oauth) throws JsonProcessingException, SQLException;
+    void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken) throws JsonProcessingException, SQLException;
 
     /**
      * Вернет первый профиль юзера по login
@@ -38,6 +38,14 @@ public interface DatabaseService {
      * @return UserProfileDto
      */
     UserProfileDto getUserProfileForLogin(String login, String from) throws SQLException, JsonProcessingException;
+
+
+    /**
+     * Вернет первый профиль юзера по intraLogin
+     * @param login login in PathVariable
+     * @return UserProfileDto
+     */
+    UserProfileDto getUserProfileForIntraLogin(String login) throws SQLException, JsonProcessingException;
 
     /**
      * Вернет всех друзей с последним сообщением

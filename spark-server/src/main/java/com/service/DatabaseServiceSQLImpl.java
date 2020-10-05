@@ -31,17 +31,19 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken, Boolean oauth) throws JsonProcessingException, SQLException {
+    public void createUserProfile(BaseUserProfileDto userProfileDto, String confirmedToken)
+            throws JsonProcessingException, SQLException {
         logger.info(String.format("createUserProfile(%s, %s)", mapper.writeValueAsString(userProfileDto), confirmedToken));
         PreparedStatement preparedStatement = connection.prepareStatement(
-                "insert into \"spark_db\".t_user_profile (login, password, email, sex, confirmed_token, confirmed, intra_auth) " +
-                        "VALUES (?, ?, ?, ?, ?, false , ?)");
+                "insert into \"spark_db\".t_user_profile " +
+                        " (login, password, email, sex, confirmed_token, confirmed, intra_login) " +
+                        " VALUES (?, ?, ?, ?, ?, false, ?)");
         preparedStatement.setString(1, userProfileDto.getLogin());
         preparedStatement.setString(2, userProfileDto.getPassword());
         preparedStatement.setString(3, userProfileDto.getEmail());
         preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
         preparedStatement.setString(5, confirmedToken);
-        preparedStatement.setBoolean(6, oauth);
+        preparedStatement.setString(5, userProfileDto.getIntraLogin());
         preparedStatement.execute();
         logger.info(mapper.writeValueAsString(userProfileDto));
     }
@@ -82,6 +84,28 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             logger.info("No user profile with login: " + login);
         }
         saveGetUserProfileHistory(login, from);
+        return userProfile;
+    }
+
+    @Override
+    public UserProfileDto getUserProfileForIntraLogin(String login) throws SQLException, JsonProcessingException {
+        logger.info(String.format("getUserProfileForIntraLogin(%s)", login));
+        UserProfileDto userProfile = null;
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "select *" +
+                " ,0 as photo " +
+                " ,0 as has_like" +
+                " ,0 as has_dislike" +
+                " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
+                " from \"spark_db\".t_user_profile where intra_login=?");
+        preparedStatement.setString(1, login);
+        ResultSet rs = preparedStatement.executeQuery();
+        if (rs.next()) {
+            userProfile = UserProfileDto.getInstance(rs);
+            logger.info("userProfile :\n" + mapper.writeValueAsString(userProfile));
+        } else {
+            logger.info("No user profile with intra_login: " + login);
+        }
         return userProfile;
     }
 
