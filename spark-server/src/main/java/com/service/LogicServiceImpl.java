@@ -221,6 +221,7 @@ public class LogicServiceImpl implements LogicService {
 					logger.info("User already exists");
 					String token = createJWT(user.getLogin(), "securityService", "security", TTL);
 					databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
+					logger.info("New token: " + token);
 					return token;
 				} else {//Если юзера еще нет, то создаю
 					logger.info("Create new user.");
