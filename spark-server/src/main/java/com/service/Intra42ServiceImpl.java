@@ -4,6 +4,8 @@ import com.dto.BaseUserProfileDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -34,7 +36,10 @@ public class Intra42ServiceImpl implements Intra42Service {
 				"&code=" + code +
 				"&redirect_uri=" + REDIRECT_URI);
 		logger.info("post: " + post.toString());
-		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+		try (CloseableHttpClient httpClient = HttpClients.custom()
+							.setDefaultRequestConfig(RequestConfig.custom()
+							.setCookieSpec(CookieSpecs.STANDARD).build())
+							.build();
 			 CloseableHttpResponse response = httpClient.execute(post)) {
 			String result = EntityUtils.toString(response.getEntity());
 			logger.info("Result: " + result);
@@ -52,7 +57,10 @@ public class Intra42ServiceImpl implements Intra42Service {
 		logger.info(String.format("getCurrentUser(%s)", token));
 		HttpGet get = new HttpGet(API42_CURRENT_USER);
 		get.setHeader("Authorization", "Bearer " + token);
-		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+		try (CloseableHttpClient httpClient = HttpClients.custom()
+						.setDefaultRequestConfig(RequestConfig.custom()
+						.setCookieSpec(CookieSpecs.STANDARD).build())
+						.build();
 			 CloseableHttpResponse response = httpClient.execute(get)) {
 			String result = EntityUtils.toString(response.getEntity());
 			ObjectNode node = mapper.readValue(result, ObjectNode.class);
