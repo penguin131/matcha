@@ -1,3 +1,5 @@
+
+
 BEGIN;
 
 DO $$
@@ -27,12 +29,11 @@ $$;
 
 COMMIT;
 
-
 --
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.3
+-- Dumped from database version 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 12.3
 
 SET statement_timeout = 0;
@@ -46,12 +47,12 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
--- DROP DATABASE IF EXISTS postgres;
+--DROP DATABASE IF EXISTS postgres;
 --
 -- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
 --
 
--- CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
+--CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C.UTF-8' LC_CTYPE = 'C.UTF-8';
 
 
 ALTER DATABASE postgres OWNER TO postgres;
@@ -94,9 +95,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE spark_db.t_complaint (
-    id_complaint integer NOT NULL,
-    from_user integer NOT NULL,
-    to_user integer NOT NULL
+                                      id_complaint integer NOT NULL,
+                                      from_user integer NOT NULL,
+                                      to_user integer NOT NULL
 );
 
 
@@ -129,10 +130,10 @@ ALTER SEQUENCE spark_db.t_complaint_id_complaint_seq OWNED BY spark_db.t_complai
 --
 
 CREATE TABLE spark_db.t_image (
-    id_image integer NOT NULL,
-    user_id integer NOT NULL,
-    is_main boolean DEFAULT false NOT NULL,
-    bytes character varying(4000000)
+                                  id_image integer NOT NULL,
+                                  user_id integer NOT NULL,
+                                  is_main boolean DEFAULT false NOT NULL,
+                                  bytes character varying(4000000)
 );
 
 
@@ -165,9 +166,9 @@ ALTER SEQUENCE spark_db.t_image_id_image_seq OWNED BY spark_db.t_image.id_image;
 --
 
 CREATE TABLE spark_db.t_looked_user (
-    id_looked_user integer NOT NULL,
-    from_user integer NOT NULL,
-    to_user integer NOT NULL
+                                        id_looked_user integer NOT NULL,
+                                        from_user integer NOT NULL,
+                                        to_user integer NOT NULL
 );
 
 
@@ -200,11 +201,11 @@ ALTER SEQUENCE spark_db.t_looked_user_id_looked_user_seq OWNED BY spark_db.t_loo
 --
 
 CREATE TABLE spark_db.t_message (
-    id_message integer NOT NULL,
-    text character varying(2048),
-    date bigint,
-    "from" integer,
-    "to" integer
+                                    id_message integer NOT NULL,
+                                    text character varying(2048),
+                                    date bigint,
+                                    "from" integer,
+                                    "to" integer
 );
 
 
@@ -237,10 +238,10 @@ ALTER SEQUENCE spark_db.t_message_id_message_seq OWNED BY spark_db.t_message.id_
 --
 
 CREATE TABLE spark_db.t_search_data (
-    search_data_id integer NOT NULL,
-    filter_hash integer NOT NULL,
-    user_id integer NOT NULL,
-    number integer
+                                        search_data_id integer NOT NULL,
+                                        filter_hash integer NOT NULL,
+                                        user_id integer NOT NULL,
+                                        number integer
 );
 
 
@@ -273,9 +274,9 @@ ALTER SEQUENCE spark_db.t_search_data_search_data_id_seq OWNED BY spark_db.t_sea
 --
 
 CREATE TABLE spark_db.t_tag (
-    tag_td integer NOT NULL,
-    name character varying(128) NOT NULL,
-    user_id integer NOT NULL
+                                tag_td integer NOT NULL,
+                                name character varying(128) NOT NULL,
+                                user_id integer NOT NULL
 );
 
 
@@ -308,10 +309,10 @@ ALTER SEQUENCE spark_db.t_tag_tag_td_seq OWNED BY spark_db.t_tag.tag_td;
 --
 
 CREATE TABLE spark_db.t_user_filter (
-    user_filter_id integer NOT NULL,
-    from_user_id integer NOT NULL,
-    filter_hash integer NOT NULL,
-    counter integer DEFAULT 0 NOT NULL
+                                        user_filter_id integer NOT NULL,
+                                        from_user_id integer NOT NULL,
+                                        filter_hash integer NOT NULL,
+                                        counter integer DEFAULT 0 NOT NULL
 );
 
 
@@ -344,23 +345,25 @@ ALTER SEQUENCE spark_db.t_user_filter_user_filter_id_seq OWNED BY spark_db.t_use
 --
 
 CREATE TABLE spark_db.t_user_profile (
-    user_profile_id integer NOT NULL,
-    login character varying(256) NOT NULL,
-    password character varying(93) NOT NULL,
-    email character varying(256),
-    first_name character varying(256),
-    last_name character varying(256),
-    confirmed boolean DEFAULT false NOT NULL,
-    biography character varying(2048),
-    sex integer NOT NULL,
-    sex_preferences integer,
-    confirmed_token character varying(40),
-    latitude numeric(25,15) DEFAULT 0.0,
-    longitude numeric(25,15) DEFAULT 0.0,
-    rating integer DEFAULT 0,
-    age integer,
-    new_mail character varying(256),
-    last_auth_date bigint DEFAULT '1601144834213'::bigint NOT NULL
+                                         user_profile_id integer NOT NULL,
+                                         login character varying(256) NOT NULL,
+                                         password character varying(93) NOT NULL,
+                                         email character varying(256),
+                                         first_name character varying(256),
+                                         last_name character varying(256),
+                                         confirmed boolean DEFAULT false NOT NULL,
+                                         biography character varying(2048),
+                                         sex integer NOT NULL,
+                                         sex_preferences integer,
+                                         confirmed_token character varying(40),
+                                         latitude numeric(25,15) DEFAULT 0.0,
+                                         longitude numeric(25,15) DEFAULT 0.0,
+                                         rating integer DEFAULT 0,
+                                         age integer,
+                                         new_mail character varying(256),
+                                         last_auth_date bigint DEFAULT '1601144834213'::bigint NOT NULL,
+                                         intra_login character varying(256),
+                                         intra_first boolean DEFAULT false
 );
 
 
@@ -393,10 +396,10 @@ ALTER SEQUENCE spark_db.t_user_profile_user_profile_id_seq OWNED BY spark_db.t_u
 --
 
 CREATE TABLE spark_db.t_users_unity (
-    t_users_unity_id integer NOT NULL,
-    user1_id integer,
-    user2_id integer,
-    confirmed boolean DEFAULT false
+                                        t_users_unity_id integer NOT NULL,
+                                        user1_id integer,
+                                        user2_id integer,
+                                        confirmed boolean DEFAULT false
 );
 
 
@@ -491,89 +494,39 @@ ALTER TABLE ONLY spark_db.t_users_unity ALTER COLUMN t_users_unity_id SET DEFAUL
 -- Data for Name: t_complaint; Type: TABLE DATA; Schema: spark_db; Owner: sammy
 --
 
-
-
---
--- Data for Name: t_image; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_looked_user; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_message; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_search_data; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_tag; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_user_filter; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_user_profile; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
---
--- Data for Name: t_users_unity; Type: TABLE DATA; Schema: spark_db; Owner: sammy
---
-
-
-
 --
 -- Name: t_complaint_id_complaint_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_complaint_id_complaint_seq', 19, true);
+SELECT pg_catalog.setval('spark_db.t_complaint_id_complaint_seq', 23, true);
 
 
 --
 -- Name: t_image_id_image_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_image_id_image_seq', 824, true);
+SELECT pg_catalog.setval('spark_db.t_image_id_image_seq', 826, true);
 
 
 --
 -- Name: t_looked_user_id_looked_user_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_looked_user_id_looked_user_seq', 35, true);
+SELECT pg_catalog.setval('spark_db.t_looked_user_id_looked_user_seq', 118, true);
 
 
 --
 -- Name: t_message_id_message_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_message_id_message_seq', 197, true);
+SELECT pg_catalog.setval('spark_db.t_message_id_message_seq', 233, true);
 
 
 --
 -- Name: t_search_data_search_data_id_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_search_data_search_data_id_seq', 11112, true);
+SELECT pg_catalog.setval('spark_db.t_search_data_search_data_id_seq', 13118, true);
 
 
 --
@@ -587,21 +540,21 @@ SELECT pg_catalog.setval('spark_db.t_tag_tag_td_seq', 1173, true);
 -- Name: t_user_filter_user_filter_id_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_user_filter_user_filter_id_seq', 23, true);
+SELECT pg_catalog.setval('spark_db.t_user_filter_user_filter_id_seq', 27, true);
 
 
 --
 -- Name: t_user_profile_user_profile_id_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_user_profile_user_profile_id_seq', 1073, true);
+SELECT pg_catalog.setval('spark_db.t_user_profile_user_profile_id_seq', 1081, true);
 
 
 --
 -- Name: t_users_unity_t_users_unity_id_seq; Type: SEQUENCE SET; Schema: spark_db; Owner: sammy
 --
 
-SELECT pg_catalog.setval('spark_db.t_users_unity_t_users_unity_id_seq', 45, true);
+SELECT pg_catalog.setval('spark_db.t_users_unity_t_users_unity_id_seq', 49, true);
 
 
 --

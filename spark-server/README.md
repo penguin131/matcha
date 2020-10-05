@@ -1,6 +1,6 @@
 <b>For start:</b><br>
 
-1)run docker-compose up -d for create database <br>
+1)run "docker-compose up -d" for create database(with sudo on ubuntu) <br>
 2)Configure application.properties database url <br>
 3)run mvn clean package <br>
 4)run mvn exec:java <br>
@@ -8,11 +8,8 @@
 API https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#<br>
 <br>
 todo:<br>
-перепроверить развертывание всего с нуля
+
 залить все в мейн ветку, когда будет готов фронт
-перепроверить генерацию скульных запросов
-убрать NPE при OAUTH2 когда токен устаревший
-Закинуть все в докер
 
 
 че тестить:
