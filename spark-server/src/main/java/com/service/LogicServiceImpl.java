@@ -205,7 +205,7 @@ public class LogicServiceImpl implements LogicService {
 	public String getToken(Request request) throws AccessDeniedException {
 		try {
 			AuthDataDto authData = mapper.readValue(request.body(), AuthDataDto.class);
-			if (authData.getOauth2Code() == null) {
+			if (authData.getOauth2Code() == null) {//Если авторизация по логину и паролю
 				String login = authData.getLogin();
 				String password = authData.getPassword();
 				if (databaseService.checkPassword(login, password)) {
@@ -213,7 +213,7 @@ public class LogicServiceImpl implements LogicService {
 					databaseService.updateLastAuthDate(login, System.currentTimeMillis());
 					return token;
 				}
-			} else {
+			} else {//Если авторизация через токен из интры
 				String intra42Token = intra42Service.getToken(authData.getOauth2Code());
 				BaseUserProfileDto user = intra42Service.getCurrentUser(intra42Token);
 				UserProfileDto databaseUser = databaseService.getUserProfileForLogin(user.getLogin(), null);

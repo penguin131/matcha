@@ -152,13 +152,6 @@ public class Endpoint {
 			}
 		});
 
-		get("/testOAUTH2/:code", (request, response) -> {
-			Intra42Service intra42Service = new Intra42ServiceImpl();
-			String token = intra42Service.getToken(request.params(":code"));
-			//todo
-			return "";
-		});
-
 		post("/protected/downloadImage", ((req, res) -> {
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			logicService.downloadImage(login, req.bodyAsBytes());

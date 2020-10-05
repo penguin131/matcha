@@ -1,7 +1,6 @@
 package com.service;
 
 import com.dto.BaseUserProfileDto;
-import com.dto.Oauth2TokenDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,7 +24,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 	private static final String REDIRECT_URI = "http%3A%2F%2Flocalhost%3A3000%2Fredirect";
 
 	@Override
-	public String getToken(String code) {
+	public String getToken(String code) throws Exception {
 		logger.info(String.format("getToken(%s)", code));
 		HttpPost post = new HttpPost(API42_TOKEN +
 				"?grant_type=" + GRANT_TYPE +
@@ -38,12 +37,12 @@ public class Intra42ServiceImpl implements Intra42Service {
 			 CloseableHttpResponse response = httpClient.execute(post)) {
 			String result = EntityUtils.toString(response.getEntity());
 			logger.info("Result: " + result);
-			Oauth2TokenDto tokenDto = mapper.readValue(result, Oauth2TokenDto.class);
-			return tokenDto.getAccessToken();
+			ObjectNode node = mapper.readValue(result, ObjectNode.class);
+			return node.get("access_token").asText();
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			throw new Exception("Error getting token from intra42");
 		}
-		return null;
 	}
 
 	@Override
