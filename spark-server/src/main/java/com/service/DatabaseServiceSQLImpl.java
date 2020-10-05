@@ -43,7 +43,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         preparedStatement.setString(3, userProfileDto.getEmail());
         preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
         preparedStatement.setString(5, confirmedToken);
-        preparedStatement.setString(5, userProfileDto.getIntraLogin());
+        preparedStatement.setString(6, userProfileDto.getIntraLogin());
         preparedStatement.execute();
         logger.info(mapper.writeValueAsString(userProfileDto));
     }
