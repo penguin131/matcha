@@ -46,7 +46,7 @@ public class Intra42ServiceImpl implements Intra42Service {
 	}
 
 	@Override
-	public BaseUserProfileDto getCurrentUser(String token) {
+	public BaseUserProfileDto getCurrentUser(String token) throws Exception {
 		logger.info(String.format("getCurrentUser(%s)", token));
 		HttpGet get = new HttpGet(API42_CURRENT_USER);
 		get.setHeader("Authorization", "Bearer " + token);
@@ -64,6 +64,6 @@ public class Intra42ServiceImpl implements Intra42Service {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		throw new Exception("Intra API error");
 	}
 }

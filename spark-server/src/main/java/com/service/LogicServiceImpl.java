@@ -236,7 +236,10 @@ public class LogicServiceImpl implements LogicService {
 					}
 					createProfile(user, request.url().substring(0, request.url().indexOf("getToken")));
 				}
-				String token = createJWT(user.getLogin(), "securityService", "security", TTL);
+				String token = createJWT(databaseUser == null ? user.getLogin() : databaseUser.getLogin(),
+						"securityService",
+						"security",
+						TTL);
 				databaseService.updateLastAuthDate(user.getLogin(), System.currentTimeMillis());
 				logger.info("New token: " + token);
 				return token;
@@ -244,7 +247,7 @@ public class LogicServiceImpl implements LogicService {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		throw new AccessDeniedException("Invalid login/password");
+		throw new AccessDeniedException("Invalid auth data");
 	}
 
 	@Override
