@@ -161,7 +161,7 @@ public class Endpoint {
 				String login = getUserNameFromToken(req.headers("Authorization"));
 				logicService.deleteImage(login, req.params(":id"));
 			} catch (AccessDeniedException ex) {
-				res.status(404);
+				res.status(403);
 			}
 			return "";
 		}));
@@ -231,11 +231,11 @@ public class Endpoint {
 				currentTime = System.currentTimeMillis();
 			} catch (Exception ex) {
 				logger.info("before() Exception: " + ex.getMessage());
-				halt(403, "403 Forbidden");
+				response.status(403);
 			}
-			if (currentTime > claims.getExpiration().getTime()) {
+			if (claims == null || currentTime > claims.getExpiration().getTime()) {
 				logger.info("Token timed out.");
-				halt(403, "403 Forbidden");
+				response.status(403);
 			}
 		});
 		init();

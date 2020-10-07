@@ -26,3 +26,6 @@ todo:<br>
 потестить поиск друзей с фильтром и прочее
 
 
+
+
+todo halt with headers
