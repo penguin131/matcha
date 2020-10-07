@@ -208,6 +208,8 @@ public class Endpoint {
 			return "";
 		}));
 
+		get("/forbidden", (request, response) -> "");
+
 		before((request, response) -> {
 			if ("OPTIONS".equals(request.requestMethod()))
 				return;
@@ -231,11 +233,11 @@ public class Endpoint {
 				currentTime = System.currentTimeMillis();
 			} catch (Exception ex) {
 				logger.info("before() Exception: " + ex.getMessage());
-				response.status(403);
+				response.redirect("/forbidden", 403);
 			}
 			if (claims == null || currentTime > claims.getExpiration().getTime()) {
 				logger.info("Token timed out.");
-				response.status(403);
+				response.redirect("/forbidden", 403);
 			}
 		});
 		init();
