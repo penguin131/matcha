@@ -21,11 +21,13 @@ const ChatPage = ({ webSocket }) => {
   }, [fetchFriendsList])
   
   useEffect(() => {
-    webSocket.onmessage = (message) => {
-      const data = JSON.parse(message.data)
-
-      if (data.type === 'chat_message') {
-        setMessages([JSON.parse(message.data), ...messages])
+    if (webSocket) {
+      webSocket.onmessage = (message) => {
+        const data = JSON.parse(message.data)
+  
+        if (data.type === 'chat_message') {
+          setMessages([JSON.parse(message.data), ...messages])
+        }
       }
     }
   }, [messages, webSocket])

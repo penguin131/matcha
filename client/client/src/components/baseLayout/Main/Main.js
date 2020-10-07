@@ -16,21 +16,22 @@ import { ws } from '../../../services/backendUrl'
 import { useGetAxiosFetch, usePostAxiosFetch } from '../../../services/useAxiosFetch'
 import { userProfileUrl, userPhotosUrl, updateUserProfileUrl, geolocationServiceUrl } from '../../../services/services'
 
-const token = localStorage.token
-const webSocket = new WebSocket(`${ws}${token}`)
-const user = localStorage.currentUser
-
 const Main = ({isAuth, setIsAuth}) => {
+  const token = localStorage.token
+  const user = localStorage.currentUser
+
   const config = {headers: {'Authorization': token}}
   const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   const [, getUserGeolocation] = useGetAxiosFetch()
   const [, updateUserProfile] = usePostAxiosFetch(config)
   const [notification, setNotification] = useState({})
+  
 
+  const [webSocket, setWebSocket] = useState(null)
   useEffect(() => {
-    fetchUserProfile(`${userProfileUrl}/${user}`)
-    fetchUserPhotos(`${userPhotosUrl}/${user}`)
+    user && fetchUserProfile(`${userProfileUrl}/${user}`)
+    user && fetchUserPhotos(`${userPhotosUrl}/${user}`)
   }, [fetchUserProfile, fetchUserPhotos])
 
   useEffect(() => {
@@ -67,26 +68,32 @@ const Main = ({isAuth, setIsAuth}) => {
   }, [updateUserProfile, getUserGeolocation])
 
   useEffect(() => {
-    webSocket.onopen = () => {
-      console.log('connected')
-    }
+    setWebSocket(new WebSocket(`${ws}${token}`))
+  }, [])
 
-    webSocket.onclose = () => {
-      console.log('closed')
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.onopen = () => {
+        console.log('connected')
+      }
+  
+      webSocket.onclose = () => {
+        console.log('closed')
+      }
+      
+      webSocket.onmessage = (message) => {
+        const data = JSON.parse(message.data)
+
+        setNotification(data)
+      }
+    
+      return () => {
+        webSocket.close()
+        console.log('closed')
+      }
     }
     
-    webSocket.onmessage = (message) => {
-      const data = JSON.parse(message.data)
-     
-        setNotification(data)
-   
-    }
-  
-    return () => {
-      webSocket.close()
-      console.log('closed')
-    }
-  }, [])
+  }, [webSocket])
 
   return (
     <div className={css.appContainer}>

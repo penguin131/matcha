@@ -49,11 +49,12 @@ export const login = async (values, setIsLoading, history, setIsAuth) => {
     await axios.post(`${url}getToken`,data)
       .then(res => {
         localStorage.currentUser = values.username
+        localStorage.setItem('token', res.data.token)
+        
         setIsLoading(false)
         setIsAuth(true)
-        history.push('/')
-        localStorage.setItem('token', res.data)
-      })
+        
+      }).then(() => history.push('/'))
   } catch(e) {
     setIsLoading(false)
     console.log(e)

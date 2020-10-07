@@ -16,8 +16,8 @@ const RedirectPage = ({ setIsAuth }) => {
         if (r?.data) {
           localStorage.setItem('token', r.data.token)
           localStorage.setItem('currentUser', r.data.login)
-          history.push('/')
           setIsAuth(true)
+          setTimeout(() => history.push('/') , 1000); 
         } 
       })
   }, [key, history, sendPostRequest, setIsAuth])
