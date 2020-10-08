@@ -223,19 +223,20 @@ public class Endpoint {
 		before("/protected/*", (request, response) -> {
 			if ("OPTIONS".equals(request.requestMethod()))
 				return;
-			Claims claims = null;
-			long currentTime = 0;
+			Claims claims;
+			long currentTime;
 			try {
 				String JWTToken = request.headers("Authorization");
 				claims = decodeJWT(JWTToken);
 				currentTime = System.currentTimeMillis();
 			} catch (Exception ex) {
 				logger.info("before() Exception: " + ex.getMessage());
-				halt(403);
+				response.status(403);
+				return;
 			}
 			if (currentTime > claims.getExpiration().getTime()) {
 				logger.info("Token timed out.");
-				halt(403);
+				response.status(403);
 			}
 		});
 		init();

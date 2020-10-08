@@ -196,7 +196,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         preparedStatement.setString(1, from);
         preparedStatement.setString(2, to);
         preparedStatement.execute();
-        logger.info("complaint created");
+        logger.info("complaint function success");
     }
 
     @Override
