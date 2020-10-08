@@ -10,9 +10,8 @@ import TagsInput from '../../components/TagsInput/TagsInput'
 import {useGetAxiosFetch, usePostAxiosFetch} from '../../services/useAxiosFetch'
 import {deleteImageUrl, setAvatarUrl, updateUserProfileUrl} from '../../services/services'
 
-const token = localStorage.token
-
 const SettingsPage = ({data}) => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const { userProfile = {}, userPhotos = [], isLoading = false } = data
   const { first_name, last_name, login, tags } = userProfile;

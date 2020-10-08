@@ -34,13 +34,14 @@ const TagsInput = ({ data = [], url, onSubmit }) => {
 
   return (
     <div className={css.chipsBlock}>
-      <div className={css.chipsContainer}>
+      Tags:
+      {chips.length > 0 && <div className={css.chipsContainer}>
         {chips.map((chip, i) => (
           <Chip key={i}
                 data={chip}
                 onRemove={() => onRemove(i)}/>
         ))}
-      </div>
+      </div>}
       <input  value={chip}
               onKeyDown={handleKeyDown}
               onChange={onChange}/>

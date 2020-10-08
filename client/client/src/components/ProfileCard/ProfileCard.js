@@ -8,9 +8,8 @@ import Chip from '../TagsInput/Chip/Chip'
 import {setLikeUrl, setDislikeUrl} from '../../services/services'
 import {useGetAxiosFetch} from '../../services/useAxiosFetch'
 
-const token = localStorage.token
-
 const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsLoading}) => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const images = userPhotos?.data?.map(photo => ({original: photo.data, thumbnail: photo.data})) 

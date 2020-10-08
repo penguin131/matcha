@@ -5,20 +5,19 @@ import {useGetAxiosFetch} from '../../services/useAxiosFetch'
 import {lookedUsersUrl} from '../../services/services'
 import css from './WatchPage.module.less'
 
-const token = localStorage.token
-
 const WatchPage = () => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [{data, loading}, sendGetRequest] = useGetAxiosFetch(config)
 
   useEffect(() => {
     sendGetRequest(lookedUsersUrl)
   }, [sendGetRequest])
-
+  console.log(data)
   return (
     <div className={css.mainSectionContainer}>
       {loading ?
-        <div><Loader/></div> :
+        <div className={css.loader}><Loader/></div> :
         data?.data?.map((profile, i) => (
           <ProfileCard  key={i}
                         user={profile.login}

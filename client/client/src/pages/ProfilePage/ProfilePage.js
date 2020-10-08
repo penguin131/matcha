@@ -5,9 +5,8 @@ import ProfileCard from '../../components/ProfileCard/ProfileCard'
 import { useGetAxiosFetch } from '../../services/useAxiosFetch'
 import { userProfileUrl, userPhotosUrl } from '../../services/services'
 
-const token = localStorage.token
-
 const ProfilePage = ({match}) => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)

@@ -6,9 +6,8 @@ import Button from '../../components/Button/Button'
 import { useGetAxiosFetch, usePostAxiosFetch } from '../../services/useAxiosFetch'
 import { nextUserProfileUrl, userPhotosUrl } from '../../services/services'
 
-const token = localStorage.token
-
 const SearchPage = () => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [filters, setFilters] = useState({})
   const [userProfile, fetchUserProfile] = usePostAxiosFetch(config)
@@ -16,7 +15,8 @@ const SearchPage = () => {
   
   const fetchData = () => {
     fetchUserProfile(nextUserProfileUrl, filters).then((r) => {
-      fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
+      console.log(r)
+      r?.data && fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
     })
   }
   

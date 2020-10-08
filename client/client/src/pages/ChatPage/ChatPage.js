@@ -7,9 +7,8 @@ import css from './ChatPage.module.less'
 import { useGetAxiosFetch } from '../../services/useAxiosFetch'
 import { allFriendsUrl, chatHistoryUrl } from '../../services/services' 
 
-const token = localStorage.token
-
 const ChatPage = ({ webSocket }) => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [friendsList, fetchFriendsList] = useGetAxiosFetch(config)
   const [, fetchChatHistory] = useGetAxiosFetch(config)

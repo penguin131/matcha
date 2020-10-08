@@ -5,9 +5,8 @@ import cssButton from '../Button/Button.module.less'
 import ImageItem from '../ImageItem/ImageItem'
 import {usePostAxiosFetch} from '../../services/useAxiosFetch'
 
-const token = localStorage.token
-
 const ImageUploader = ({imgsCount}) => {
+  const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [images, setImages] = useState([])
   const [, uploadImages] = usePostAxiosFetch(config)
