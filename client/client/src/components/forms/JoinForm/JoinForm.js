@@ -38,34 +38,46 @@ const JoinForm = ({ onSubmit }) => {
         }}
         render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit} className={css.finalForm}>
-            <Field name="username">
+            <Field name='username'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="text" placeholder="Username" />
+                  <input  {...input}
+                          type='text'
+                          placeholder='Username'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="email">
+            <Field name='email'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="email" placeholder="Email" />
+                  <input  {...input}
+                          type='email'
+                          placeholder='Email'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="password">
+            <Field name='password'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="Password" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='Password'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="confirm">
+            <Field name='confirm'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="Confirm" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='Confirm'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
@@ -74,7 +86,7 @@ const JoinForm = ({ onSubmit }) => {
                 {isLoading && <Loader/>}
             </div>
             <div className={css.buttons}>
-              <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
+              <button className={css.submitButton} type='submit' disabled={submitting || pristine}>
                 Join us
               </button>
             </div>

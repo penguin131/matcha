@@ -44,7 +44,8 @@ const TagsInput = ({ data = [], url, onSubmit }) => {
       </div>}
       <input  value={chip}
               onKeyDown={handleKeyDown}
-              onChange={onChange}/>
+              onChange={onChange}
+              autoComplete='off'/>
       <Button label='Save' onClick={() => onSubmit(url, {tags: chips})}/>
     </div> 
   )

@@ -9,8 +9,8 @@ const ChangeEmailForm = ({ onSubmit, isFormLoading, url }) => {
       <Form
         onSubmit={e => {
           const data = {
-            "new_email": e.newEmail,
-            "password": e.password
+            'new_email': e.newEmail,
+            'password': e.password
           }
           onSubmit(url, data)
         }}
@@ -34,18 +34,24 @@ const ChangeEmailForm = ({ onSubmit, isFormLoading, url }) => {
         }}
         render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit} className={css.finalForm}>
-            <Field name="newEmail">
+            <Field name='newEmail'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="email" placeholder="Email" />
+                  <input  {...input}
+                          type='email'
+                          placeholder='Email'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="password">
+            <Field name='password'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="Password" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='Password'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
@@ -54,7 +60,7 @@ const ChangeEmailForm = ({ onSubmit, isFormLoading, url }) => {
                 {isFormLoading && <Loader/>}
             </div>
             <div className={css.buttons}>
-              <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
+              <button className={css.submitButton} type='submit' disabled={submitting || pristine}>
                 Change email
               </button>
             </div>

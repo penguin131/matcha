@@ -32,7 +32,7 @@ const Main = ({isAuth, setIsAuth}) => {
   useEffect(() => {
     user && fetchUserProfile(`${userProfileUrl}/${user}`)
     user && fetchUserPhotos(`${userPhotosUrl}/${user}`)
-  }, [fetchUserProfile, fetchUserPhotos])
+  }, [fetchUserProfile, fetchUserPhotos, user])
 
   useEffect(() => {
     const options = {
@@ -69,7 +69,7 @@ const Main = ({isAuth, setIsAuth}) => {
 
   useEffect(() => {
     setWebSocket(new WebSocket(`${ws}${token}`))
-  }, [])
+  }, [token])
 
   useEffect(() => {
     if (webSocket) {

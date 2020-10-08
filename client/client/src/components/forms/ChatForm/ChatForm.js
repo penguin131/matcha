@@ -14,7 +14,10 @@ const ChatForm = ({ onSubmit }) => {
           >
             <Field name='message'>
               {({ input }) => (
-                <input {...input} className={css.text} placeholder='message...'/>  
+                <input  {...input}
+                        className={css.text}
+                        placeholder='message...'
+                        autoComplete='off'/>  
               )}
             </Field>
             <button type="submit" className={css.button} disabled={submitting || pristine}>

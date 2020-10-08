@@ -9,13 +9,12 @@ import { nextUserProfileUrl, userPhotosUrl } from '../../services/services'
 const SearchPage = () => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
-  const [filters, setFilters] = useState({})
+  const [filters/* , setFilters */] = useState({})
   const [userProfile, fetchUserProfile] = usePostAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   
   const fetchData = () => {
     fetchUserProfile(nextUserProfileUrl, filters).then((r) => {
-      console.log(r)
       r?.data && fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
     })
   }

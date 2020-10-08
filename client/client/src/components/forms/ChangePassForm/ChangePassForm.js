@@ -9,8 +9,8 @@ const ChangePassForm = ({ onSubmit, isFormLoading, url }) => {
       <Form
         onSubmit={e => {
           const data = {
-            "old_password": e.oldPassword,
-            "new_password": e.newPassword,
+            'old_password': e.oldPassword,
+            'new_password': e.newPassword,
           }
           onSubmit(url, data)
         }}
@@ -41,26 +41,35 @@ const ChangePassForm = ({ onSubmit, isFormLoading, url }) => {
         }}
         render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit} className={css.finalForm}>
-            <Field name="oldPassword">
+            <Field name='oldPassword'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="Old password" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='Old password'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="newPassword">
+            <Field name='newPassword'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="New password" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='New password'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
-            <Field name="confirm">
+            <Field name='confirm'>
               {({ input, meta }) => (
                 <div className={css.fieldString}>
-                  <input {...input} type="password" placeholder="Confirm" />
+                  <input  {...input}
+                          type='password'
+                          placeholder='Confirm'
+                          autoComplete='off'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
@@ -69,7 +78,7 @@ const ChangePassForm = ({ onSubmit, isFormLoading, url }) => {
                 {isFormLoading && <Loader/>}
             </div>
             <div className={css.buttons}>
-              <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
+              <button className={css.submitButton} type='submit' disabled={submitting || pristine}>
                 Change password
               </button>
             </div>
