@@ -49,6 +49,9 @@ public class Endpoint {
 		//REST
 		get("/protected/hello", (req, res) -> "Hello world!");
 		get("/protected/getAllUsers", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getAllUsers(login);
 		});
@@ -63,32 +66,50 @@ public class Endpoint {
 		});
 
 		get("/protected/getUserProfileForLogin/:login", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getUserProfileForLogin(req.params(":login"), login);
 		});
 
 		get("/protected/getAllFriends", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getAllFriendsForLogin(login);
 		});
 
 		get("/protected/getAllLikedUsers", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getAllLikedUsers(login);
 		});
 
 		get("/protected/getAllLookedUsers", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getAllLookedUsers(login);
 		});
 
 		get("/protected/getUsersWithFilter", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getUsersWithFilter(req.body(), login);
 		});
 
 		get("/protected/setLike/:to", (req, res) -> {
 			try {
+				if (res.status() == 403){
+					return "";
+				}
 				String from = getUserNameFromToken(req.headers("Authorization"));
 				String to = req.params(":to");
 				logicService.setLike(from, to);
@@ -99,6 +120,9 @@ public class Endpoint {
 		});
 
 		get("/protected/setComplaint/:to", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String from = getUserNameFromToken(req.headers("Authorization"));
 			String to = req.params(":to");
 			logicService.setComplaint(from, to);
@@ -106,12 +130,21 @@ public class Endpoint {
 		});
 
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			logicService.deleteUserProfileForLogin(req.params(":login"));
 			return "";
 		});
 
 		post("/protected/updateUserProfile", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			try {
+				if (res.status() == 403){
+					return "";
+				}
 				String from = getUserNameFromToken(req.headers("Authorization"));
 				logicService.updateUserProfile(req, from);
 				return "";
@@ -124,6 +157,9 @@ public class Endpoint {
 		});
 
 		post("/protected/updateCoordinates", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			logicService.updateUserCoordinates(req.body(), login);
 			return "";
@@ -136,6 +172,9 @@ public class Endpoint {
 		get("/changeMail/:hash", (req, res) -> logicService.updateUserMail(req.params(":hash")));
 
 		get("/protected/getChatHistory/:user", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String user = getUserNameFromToken(req.headers("Authorization"));
 			return logicService.getChatHistory(user, req.params(":user"));
 		});
@@ -151,6 +190,9 @@ public class Endpoint {
 		});
 
 		post("/protected/downloadImage", ((req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
 			logicService.downloadImage(login, req.bodyAsBytes());
 			return "";
@@ -158,6 +200,9 @@ public class Endpoint {
 
 		get("/protected/deleteImage/:id", ((req, res) -> {
 			try {
+				if (res.status() == 403){
+					return "";
+				}
 				String login = getUserNameFromToken(req.headers("Authorization"));
 				logicService.deleteImage(login, req.params(":id"));
 			} catch (AccessDeniedException ex) {
@@ -172,12 +217,20 @@ public class Endpoint {
 		}));
 
 		get("/protected/setAvatar/:imageId", (request, response) -> {
+			if (response.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			logicService.setMainImage(request.params(":imageId"), login);
 			return "";
 		});
 
-		get("/protected/getUserPhotos/:login", (request, response) -> logicService.getUserPhotos(request.params(":login")));
+		get("/protected/getUserPhotos/:login", (request, response) -> {
+			if (response.status() == 403){
+				return "";
+			}
+			return logicService.getUserPhotos(request.params(":login"));
+		});
 
 		post("/saveMessage", (req, res) -> {
 			logicService.saveChatMessage(req.body());
@@ -185,6 +238,9 @@ public class Endpoint {
 		});
 
 		post("/protected/getNextUser", ((request, response) -> {
+			if (response.status() == 403){
+				return "";
+			}
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			return logicService.getNextUser(login, request.body());
 		}));
