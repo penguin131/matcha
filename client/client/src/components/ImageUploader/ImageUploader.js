@@ -4,6 +4,7 @@ import {uploadImagesUrl} from '../../services/services'
 import cssButton from '../Button/Button.module.less'
 import ImageItem from '../ImageItem/ImageItem'
 import {usePostAxiosFetch} from '../../services/useAxiosFetch'
+import css from './ImageUploader.module.less'
 
 const ImageUploader = ({imgsCount}) => {
   const token = localStorage.token
@@ -24,7 +25,7 @@ const ImageUploader = ({imgsCount}) => {
   }
 
   return (
-    <div>
+    <div className={css.uploader}>
       <ImageUploading multiple
                       value={images}
                       onChange={onChange}

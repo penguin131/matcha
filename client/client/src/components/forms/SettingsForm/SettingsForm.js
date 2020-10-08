@@ -4,7 +4,7 @@ import Loader from '../../Loader/Loader'
 import css from '../authForms.module.less'
 import settingsCss from './SettingsForm.module.less'
 
-const SettingsForm = ({isFormLoading, onSubmit, data, url }) => {
+const SettingsForm = ({isFormLoading, onSubmit, data, url}) => {
   const { biography, sex, sex_preferences} = data
 
   return (
@@ -13,9 +13,9 @@ const SettingsForm = ({isFormLoading, onSubmit, data, url }) => {
         <Form
           onSubmit={e => {
             const data = {
-              "sex": e.sex,
-              "biography": e.biography,
-              "sex_preferences": e.sexPreferences,
+              'sex': e.sex,
+              'biography': e.biography,
+              'sex_preferences': e.sexPreferences,
             }
             onSubmit(url, data)
           }}
@@ -31,48 +31,40 @@ const SettingsForm = ({isFormLoading, onSubmit, data, url }) => {
             sexPreferences: sex_preferences,
           }}
           
-        render={({handleSubmit, form, submitting, pristine, values }) => (
+        render={({handleSubmit, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit} className={css.finalForm}>
-            <Field name="biography">
+            <Field name='biography'>
               {({ input, meta }) => (
                 <div className={settingsCss.settingsTextarea}>
-                  <textarea {...input} type="text" placeholder="Biography"/>
+                  <textarea {...input} type='text' placeholder='Biography'/>
                   {meta.error && meta.touched && <span>{meta.error}</span>}
                 </div>
               )}
             </Field>
             <div>Sex:</div>
             <div>
-              <Field
-                name="sex"
-                component="input"
-                type="radio"
-                value="male"
-              /> male
-              <Field
-                name="sex"
-                component="input"
-                type="radio"
-                value="female"
-              /> female
+              <Field  name='sex'
+                      component='input'
+                      type='radio'
+                      value='male'/> male
+              <Field  name='sex'
+                      component='input'
+                      type='radio'
+                      value='female'/> female
             </div>
             <div>Sex preferences:</div>
             <div>
-              <Field
-                name="sexPreferences"
-                component="input"
-                type="radio"
-                value="male"
-              /> male
-              <Field
-                name="sexPreferences"
-                component="input"
-                type="radio"
-                value="female"
-              /> female
+              <Field  name='sexPreferences'
+                      component='input'
+                      type='radio'
+                      value='male'/> male
+              <Field  name='sexPreferences'
+                      component='input'
+                      type='radio'
+                      value='female'/> female
             </div>
             <div className={css.buttons}>
-              <button className={css.submitButton} type="submit" disabled={submitting || pristine}>
+              <button className={css.submitButton} type='submit' disabled={submitting || pristine}>
                   Save
               </button>
             </div>

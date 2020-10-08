@@ -114,7 +114,7 @@ const Main = ({isAuth, setIsAuth}) => {
             <ProtectedRoute exact
                             path='/settings'
                             component={() => (
-                              <SettingsPage data={{userProfile, userPhotos, isLoading: userProfile.loading}}/>
+                              <SettingsPage data={{userProfile, userPhotos}}/>
                             )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact

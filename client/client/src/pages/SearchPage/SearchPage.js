@@ -30,7 +30,7 @@ const SearchPage = () => {
                     userPhotos={userPhotos.data}
                     profileIsLoading={userProfile.loading}
                     imagesIsLoading={userPhotos.loading}/>
-      <Button onClick={() =>  fetchData()} label="Next"/>
+      {userProfile.data && <Button onClick={() =>  fetchData()} label="Next"/>}
     </div>
   )
 }

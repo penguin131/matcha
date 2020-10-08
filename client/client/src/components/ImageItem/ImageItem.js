@@ -6,9 +6,10 @@ const ImageItem = ({dataUrl, onRemove, onSetAvatar, withMainSelect}) => {
 
   return (
     <div className={css.imageItem}>
-      <img src={dataUrl} alt='uploading img' width='100'/>
-      <div>
-        <button onClick={onRemove}
+      <img src={dataUrl} alt='uploading img'/>
+      <div className={css.contextMenu}>
+        <div className={css.contextButtons}>
+<button onClick={onRemove}
                 className={buttonCss.button}>
           Remove</button>
         {withMainSelect &&
@@ -16,6 +17,8 @@ const ImageItem = ({dataUrl, onRemove, onSetAvatar, withMainSelect}) => {
                   className={buttonCss.button}>
             Set avatar
           </button>}
+        </div>
+        
       </div>
     </div>
   )

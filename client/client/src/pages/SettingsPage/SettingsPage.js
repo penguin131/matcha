@@ -13,17 +13,16 @@ import {deleteImageUrl, setAvatarUrl, updateUserProfileUrl} from '../../services
 const SettingsPage = ({data}) => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
-  const { userProfile = {}, userPhotos = [], isLoading = false } = data
-  const { first_name, last_name, login, tags } = userProfile;
+  const { userProfile, userPhotos} = data
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [responseData, sendPostRequest] = usePostAxiosFetch(config)
-
+  console.log(userProfile)
   return (
     <div className={css.settingsContainer}>
-      {isLoading ? <div className={css.loaderBlock}><Loader/></div> : (
+      {userProfile.loading ? <div className={css.loaderBlock}><Loader/></div> : (
       <>
         <div className={css.userName}>
-          {`${first_name || '-'} ${login || '-'} ${last_name || '-'}`}
+          {`${userProfile?.data?.data.first_name || '-'} ${userProfile?.data?.data.login || '-'} ${userProfile?.data?.data.last_name || '-'}`}
         </div>
         <div className={css.imagesBlock}>
           <div className={css.imagesList}>
@@ -32,21 +31,20 @@ const SettingsPage = ({data}) => {
                           dataUrl={photo.data}
                           onRemove={() => sendGetRequest(`${deleteImageUrl}/${photo.imageId}`)}
                           onSetAvatar={() => sendGetRequest(`${setAvatarUrl}/${photo.imageId}`)}
-                          withMainSelect/>
-              )
+                          withMainSelect/>)
             )}
           </div>
           
           <ImageUploader imgsCount={userPhotos?.data?.data?.length}/>
         </div>
         
-        <SettingsForm onSubmit={sendPostRequest}
+        {userProfile.data && <SettingsForm onSubmit={sendPostRequest}
                       url={updateUserProfileUrl}
-                      data={userProfile}
-                      isFormLoading={responseData.loading}/>
-        <TagsInput  onSubmit={sendPostRequest}
+                      data={userProfile.data.data}
+                      isFormLoading={responseData.loading}/>}
+        {userProfile.data && <TagsInput  onSubmit={sendPostRequest}
                     url={updateUserProfileUrl}
-                    data={tags}/>
+                    data={userProfile.data.data.tags}/>}
         <ChangeEmailForm  onSubmit={sendPostRequest}
                           isFormLoading={responseData.loading}/>
         <ChangePassForm onSubmit={sendPostRequest}
