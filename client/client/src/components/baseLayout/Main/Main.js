@@ -40,7 +40,7 @@ const Main = ({isAuth, setIsAuth}) => {
       setAvatar(photos.find(photo => photo.main) || null)
     }
     
-  }, [userPhotos?.data?.data])
+  }, [userPhotos])
 
   useEffect(() => {
     const options = {
