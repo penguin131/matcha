@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import SettingsForm from '../../components/forms/SettingsForm/SettingsForm'
 import ChangeEmailForm from '../../components/forms/ChangeEmailForm/ChangeEmailForm'
 import ChangePassForm from '../../components/forms/ChangePassForm/ChangePassForm'
@@ -9,14 +9,25 @@ import ImageItem from '../../components/ImageItem/ImageItem'
 import TagsInput from '../../components/TagsInput/TagsInput'
 import {useGetAxiosFetch, usePostAxiosFetch} from '../../services/useAxiosFetch'
 import {deleteImageUrl, setAvatarUrl, updateUserProfileUrl} from '../../services/services'
+import _ from 'lodash'
 
-const SettingsPage = ({data}) => {
+const SettingsPage = ({data, setAvatar}) => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
-  const { userProfile, userPhotos} = data
+  const { userProfile } = data
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [responseData, sendPostRequest] = usePostAxiosFetch(config)
-  
+  const [userPhotos, setUserPhotos] = useState(data.userPhotos?.data?.data || null)
+
+  const onSetAvatar = async (photo) => {
+    await sendGetRequest(`${setAvatarUrl}/${photo.imageId}`) 
+    setAvatar(photo)
+  }
+
+  const onRemoveImage = async (photo, i) => {
+    await sendGetRequest(`${deleteImageUrl}/${photo.imageId}`)
+    setUserPhotos(_.remove(userPhotos, (uPhoto) => uPhoto.imageId !== photo.imageId))
+  }
   
   return (
     <div className={css.settingsContainer}>
@@ -27,16 +38,16 @@ const SettingsPage = ({data}) => {
         </div>
         <div className={css.imagesBlock}>
           <div className={css.imagesList}>
-            {userPhotos?.data?.data?.map((photo, i) => (
+            {userPhotos?.map((photo, i) => (
               <ImageItem  key={i}
                           dataUrl={photo.data}
-                          onRemove={() => sendGetRequest(`${deleteImageUrl}/${photo.imageId}`)}
-                          onSetAvatar={() => sendGetRequest(`${setAvatarUrl}/${photo.imageId}`)}
+                          onRemove={() => onRemoveImage(photo, i)}
+                          onSetAvatar={() => onSetAvatar(photo)}
                           withMainSelect/>)
             )}
           </div>
           
-          <ImageUploader imgsCount={userPhotos?.data?.data?.length}/>
+          <ImageUploader imgsCount={userPhotos?.length}/>
         </div>
         
         {userProfile.data && <SettingsForm onSubmit={sendPostRequest}

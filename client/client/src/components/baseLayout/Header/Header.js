@@ -7,9 +7,7 @@ import Loader from '../../../components/Loader/Loader'
 import css from './Header.module.less'
 import Notification from '../../Notifications/Notifications'
 
-const Header = ({ userProfile, userPhotos, isLoading, setIsAuth, notification }) => {
-	const mainPhoto = userPhotos?.length > 0 ? userPhotos.find(photo => photo.main) : null
-
+const Header = ({ userProfile, isLoading, setIsAuth, notification, avatar }) => {
 	const logout = () => {
 		setIsAuth(false)
 		localStorage.removeItem('currentUser')
@@ -33,7 +31,7 @@ const Header = ({ userProfile, userPhotos, isLoading, setIsAuth, notification })
 						<Link to='/settings'>
 							<img	className={css.userAva}
 										alt=""
-										src={mainPhoto ? mainPhoto.data : defaultAva}
+										src={avatar ? avatar.data : defaultAva}
 							/>
 						</Link>
 					</div>

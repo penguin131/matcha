@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import Loader from '../../components/Loader/Loader'
 import css from './ProfileCard.module.less'
 import {ReactComponent as LikeLogo} from '../../imgs/like.svg'
@@ -12,16 +12,29 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
+  const [likeStatus, setLikeStatus] = useState(null)
+
   const images = userPhotos?.data?.map(photo => ({
     original: photo.data,
     thumbnail: photo.data,
     originalClass: css.galleryImage,
     thumbnailClass: css.thumbnailImage,
-
     main: photo.data.main
   })) 
-  const mainImage = images?.find(image => image.main)
+  
+  const onLike = async (user) => {
+    await sendGetRequest(`${setLikeUrl}/${user}`)
+    setLikeStatus('liked')
+  }
 
+  const onDislike = async () => {
+    await sendGetRequest(`${setDislikeUrl}/${user}`)
+    setLikeStatus('disliked')
+  }
+  
+  useEffect(() => {
+    setLikeStatus(userProfile?.has_like ? 'liked' : userProfile?.has_dislike ? 'disliked' : null)
+  }, [userProfile])
   return (
     <>
       <div className={css.profileInfoContainer}>
@@ -47,11 +60,11 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
           ))}
         </div>
           <div className={css.likePanel}>
-            <div  className={`${css.likeElement} ${userProfile?.has_like ? css.activeLike : css.like}`}
-                  onClick={() => (sendGetRequest(`${setLikeUrl}/${user}`))}>
+            <div  className={`${css.likeElement} ${likeStatus === 'liked' ? css.activeLike : css.like}`}
+                  onClick={() => onLike(user)}>
                     <LikeLogo/></div>
-            <div  className={`${css.likeElement} ${userProfile?.has_dislike ? css.activeDislike : css.dislike}`}
-                  onClick={() => (sendGetRequest(`${setDislikeUrl}/${user}`))}>
+            <div  className={`${css.likeElement} ${likeStatus === 'disliked'? css.activeDislike : css.dislike}`}
+                  onClick={() => onDislike(user)}>
                     <DislikeLogo/></div>
           </div>
         </div>

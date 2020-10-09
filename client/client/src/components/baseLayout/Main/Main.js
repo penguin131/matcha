@@ -26,13 +26,21 @@ const Main = ({isAuth, setIsAuth}) => {
   const [, getUserGeolocation] = useGetAxiosFetch()
   const [, updateUserProfile] = usePostAxiosFetch(config)
   const [notification, setNotification] = useState({})
-  
-
+  const [avatar, setAvatar] = useState(null)
   const [webSocket, setWebSocket] = useState(null)
+
   useEffect(() => {
     user && fetchUserProfile(`${userProfileUrl}/${user}`)
     user && fetchUserPhotos(`${userPhotosUrl}/${user}`)
   }, [fetchUserProfile, fetchUserPhotos, user])
+
+  useEffect(() => {
+    const photos = userPhotos?.data?.data
+    if (photos) {
+      setAvatar(photos.find(photo => photo.main) || null)
+    }
+    
+  }, [userPhotos?.data?.data])
 
   useEffect(() => {
     const options = {
@@ -98,10 +106,10 @@ const Main = ({isAuth, setIsAuth}) => {
   return (
     <div className={css.appContainer}>
       <Header userProfile={userProfile.data?.data}
-              userPhotos={userPhotos.data?.data}
               isLoading={userProfile.loading}
               setIsAuth={setIsAuth}
-              notification={notification}/>
+              notification={notification}
+              avatar={avatar}/>
         <main className={css.mainContainer}>
           <Navigation/>
           <Switch>
@@ -114,7 +122,8 @@ const Main = ({isAuth, setIsAuth}) => {
             <ProtectedRoute exact
                             path='/settings'
                             component={() => (
-                              <SettingsPage data={{userProfile, userPhotos}}/>
+                              <SettingsPage data={{userProfile, userPhotos}}
+                                            setAvatar={setAvatar}/>
                             )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact
