@@ -9,27 +9,40 @@
   .loader {
     margin-top: 150px;
   }
-  
-  .userInfo {
-    max-height: 300px;
-    max-width: 600px;
-    min-width: 300px;
-    overflow: scroll;
-    padding: 0 20px;
-    margin-top: 10px;
-    text-align: center;
-  }
-  .userName {
+  .galleryImage {
+    height: 400px;
+    width: 350px;
     display: flex;
-    justify-content: center;
-    margin: 20px 0;
+
+   justify-content: center;
+   flex-direction: column;
+   div {
+     height: 400px;
+   }
+   img {
+     height: 100%;
+   }
+  }
+  .thumbnailImage {
+    width: 80px;
+    max-height: 80px;
+
+    img {
+      height: 100%;
+    }
   }
   .likePanel {
     margin-top: 20px;
     display: flex;
+    justify-content: center;
     .likeElement {
       cursor: pointer;
+      svg {
+        height: 50px;
+        width: 50px;
+      }
     }
+    
     .like {
       svg:active{
         path {
@@ -59,18 +72,28 @@
       }
     }
   }
+  .userInfo {
+    width: 400px;
+    min-height: 150px;
+    max-height: 150px;
+    overflow-y: scroll;
+    padding: 0 20px;
+    margin-top: 10px;
+    text-align: center;
+    word-wrap: break-word;
+  }
+  .userName {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
 }	
 .tags {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 350px;
+  flex-wrap: wrap;
 }
-.galleryContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 20vh;
-  .carousel-root {
-    max-height: 100px;
-  }
-}
+

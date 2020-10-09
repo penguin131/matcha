@@ -25,7 +25,7 @@ const ImageUploader = ({imgsCount}) => {
   }
 
   return (
-    <div className={css.uploader}>
+    <div className={css.uploaderBlock}>
       <ImageUploading multiple
                       value={images}
                       onChange={onChange}
@@ -46,7 +46,7 @@ const ImageUploader = ({imgsCount}) => {
               <ImageItem
                 key={i}
                 dataUrl={image.data_url}
-                onClick={() => onImageRemove(i)}
+                onRemove={() => onImageRemove(i)}
               />
             ))}
             <div>
@@ -63,7 +63,10 @@ const ImageUploader = ({imgsCount}) => {
                 {`Can store maximum ${maxNumber} images`}
               </span>}
             </div>
-            {imageList.length > 0 && imageList.length + imgsCount <= 5 && <button onClick={() => uploadImagesRequest(imageList)}>Upload images</button>}
+            {imageList.length > 0 && imageList.length + imgsCount <= 5 &&
+            <button className={cssButton.button}
+                    onClick={() => uploadImagesRequest(imageList)}>
+              Upload images</button>}
           </div>
         )}}
       </ImageUploading>

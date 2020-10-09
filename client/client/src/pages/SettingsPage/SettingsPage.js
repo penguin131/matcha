@@ -16,7 +16,8 @@ const SettingsPage = ({data}) => {
   const { userProfile, userPhotos} = data
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [responseData, sendPostRequest] = usePostAxiosFetch(config)
-  console.log(userProfile)
+  
+  
   return (
     <div className={css.settingsContainer}>
       {userProfile.loading ? <div className={css.loaderBlock}><Loader/></div> : (

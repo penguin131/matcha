@@ -12,26 +12,33 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
-  const images = userPhotos?.data?.map(photo => ({original: photo.data, thumbnail: photo.data})) 
+  const images = userPhotos?.data?.map(photo => ({
+    original: photo.data,
+    thumbnail: photo.data,
+    originalClass: css.galleryImage,
+    thumbnailClass: css.thumbnailImage,
+
+    main: photo.data.main
+  })) 
+  const mainImage = images?.find(image => image.main)
 
   return (
     <>
       <div className={css.profileInfoContainer}>
         {profileIsLoading ? <div className={css.loader}><Loader/></div> : <>
-          <div className={css.userName}>{`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}</div>
+          <div className={css.userName}>
+            {`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}
+          </div>
           <div>rating: {userProfile?.rating}</div>
           <div>sex: {userProfile?.sex}</div>
-          <div className={css.userInfo}>{`${userProfile?.biography || '-'}`}</div>
-          <div className={css.likePanel}>
-            <div  className={`${css.likeElement} ${userProfile?.has_like ? css.activeLike : css.like}`}
-                  onClick={() => (sendGetRequest(`${setLikeUrl}/${user}`))
-                  }><LikeLogo/></div>
-            <div  className={`${css.likeElement} ${userProfile?.has_dislike ? css.activeDislike : css.dislike}`}
-                  onClick={() => (sendGetRequest(`${setDislikeUrl}/${user}`))
-                  }><DislikeLogo/></div>
-          </div>
-        </> }
-        <div className={css.tags}>
+          <div className={css.galleryContainer}>
+          {imagesIsLoading ? <div className={css.loader}><Loader/></div> : images?.length > 0 ? 
+            <ImageGallery items={images}
+                          showNav={images.length > 0}
+                          showFullscreenButton={false}
+                          showPlayButton={false}
+                          showThumbnails={false}/> : null}
+          <div className={css.tags}>
           {userProfile?.tags?.map((tag, i) => (
             <Chip
               key={i}
@@ -39,10 +46,20 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
             />
           ))}
         </div>
-        <div className={css.galleryContainer}>
-          {imagesIsLoading ? <div className={css.loader}><Loader/></div> : images?.length > 0 ? 
-            <ImageGallery items={images} /> : null}
+          <div className={css.likePanel}>
+            <div  className={`${css.likeElement} ${userProfile?.has_like ? css.activeLike : css.like}`}
+                  onClick={() => (sendGetRequest(`${setLikeUrl}/${user}`))}>
+                    <LikeLogo/></div>
+            <div  className={`${css.likeElement} ${userProfile?.has_dislike ? css.activeDislike : css.dislike}`}
+                  onClick={() => (sendGetRequest(`${setDislikeUrl}/${user}`))}>
+                    <DislikeLogo/></div>
+          </div>
         </div>
+          <div className={css.userInfo}>{`${userProfile?.biography || '-'}`}</div>
+          
+        </>}
+        
+        
       </div>
     </>
   );

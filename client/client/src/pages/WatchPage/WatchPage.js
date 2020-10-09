@@ -13,7 +13,7 @@ const WatchPage = () => {
   useEffect(() => {
     sendGetRequest(lookedUsersUrl)
   }, [sendGetRequest])
-  console.log(data)
+
   return (
     <div className={css.mainSectionContainer}>
       {loading ?

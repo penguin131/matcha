@@ -9,9 +9,9 @@ const ImageItem = ({dataUrl, onRemove, onSetAvatar, withMainSelect}) => {
       <img src={dataUrl} alt='uploading img'/>
       <div className={css.contextMenu}>
         <div className={css.contextButtons}>
-<button onClick={onRemove}
-                className={buttonCss.button}>
-          Remove</button>
+          <button onClick={onRemove}
+                  className={buttonCss.button}>
+            Remove</button>
         {withMainSelect &&
           <button onClick={onSetAvatar}
                   className={buttonCss.button}>
