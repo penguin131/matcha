@@ -13,6 +13,7 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [likeStatus, setLikeStatus] = useState(null)
+  const [viewBio, setViewBio] = useState(false)
 
   const images = userPhotos?.data?.map(photo => ({
     original: photo.data,
@@ -35,6 +36,7 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
   useEffect(() => {
     setLikeStatus(userProfile?.has_like ? 'liked' : userProfile?.has_dislike ? 'disliked' : null)
   }, [userProfile])
+
   return (
     <>
       <div className={css.profileInfoContainer}>
@@ -45,20 +47,13 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
           <div>rating: {userProfile?.rating}</div>
           <div>sex: {userProfile?.sex}</div>
           <div className={css.galleryContainer}>
-          {imagesIsLoading ? <div className={css.loader}><Loader/></div> : images?.length > 0 ? 
-            <ImageGallery items={images}
-                          showNav={images.length > 0}
-                          showFullscreenButton={false}
-                          showPlayButton={false}
-                          showThumbnails={false}/> : null}
-          <div className={css.tags}>
-          {userProfile?.tags?.map((tag, i) => (
-            <Chip
-              key={i}
-              data={tag}
-            />
-          ))}
-        </div>
+            {imagesIsLoading ? <div className={css.loader}><Loader/></div> : images?.length > 0 ? 
+              <ImageGallery items={images}
+                            showNav={images.length > 0}
+                            showFullscreenButton={false}
+                            showPlayButton={false}
+                            showThumbnails={false}/> : null}
+          </div>
           <div className={css.likePanel}>
             <div  className={`${css.likeElement} ${likeStatus === 'liked' ? css.activeLike : css.like}`}
                   onClick={() => onLike(user)}>
@@ -67,12 +62,22 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
                   onClick={() => onDislike(user)}>
                     <DislikeLogo/></div>
           </div>
-        </div>
-          <div className={css.userInfo}>{`${userProfile?.biography || '-'}`}</div>
-          
+          <div  className={css.bioBlock}
+                onClick={() => setViewBio(!viewBio)}>
+            {`---${viewBio ? 'hide' : 'show more'}---`}
+          </div>
+          {viewBio && <>
+            <div className={css.tags}>
+              {userProfile?.tags?.map((tag, i) => (
+                <Chip key={i}
+                      data={tag}/>
+              ))}
+            </div>
+            <div className={css.userInfo}>
+              {`${userProfile?.biography || '-'}`}
+            </div>
+          </>}
         </>}
-        
-        
       </div>
     </>
   );
