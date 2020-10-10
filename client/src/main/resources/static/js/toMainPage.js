@@ -1,3 +1,0 @@
-function toMainPage() {
-    location.href = '/';
-}
