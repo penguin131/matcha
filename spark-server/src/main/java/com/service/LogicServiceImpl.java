@@ -196,7 +196,7 @@ public class LogicServiceImpl implements LogicService {
 				logger.info("checkAvatar() false");
 				return;
 			}
-			databaseService.setComplaint(from, to);
+			databaseService.setFakeComplaint(from, to);
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
