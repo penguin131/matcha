@@ -20,23 +20,28 @@ const SearchPage = () => {
       r?.data && fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
     })
   }
-  
+
   useEffect(() => {
     fetchData()
   }, [])
-console.log(filters)
+
   return (
     <div className={css.searchContainer}>
       <div className={css.sortBlock}>
         <SortForm filters={filters} setFilters={setFilters}/>
         <FilterForm filters={filters} setFilters={setFilters}/>
       </div>
-      <ProfileCard  user={userProfile.data?.login}
-                    userProfile={userProfile.data}
-                    userPhotos={userPhotos.data}
-                    profileIsLoading={userProfile.loading}
-                    imagesIsLoading={userPhotos.loading}/>
-      {userProfile.data && <Button onClick={() =>  fetchData()} label="Next"/>}
+      {userProfile.data ? <>
+        <ProfileCard  user={userProfile.data?.login}
+                      userProfile={userProfile.data}
+                      userPhotos={userPhotos.data}
+                      profileIsLoading={userProfile.loading}
+                      imagesIsLoading={userPhotos.loading}/>
+        <Button onClick={() =>  fetchData()} label="Next"/>
+      </> : <>
+        {'no matches found'}
+          <Button onClick={() =>  fetchData()} label="Next"/>
+        </>}
     </div>
   )
 }
