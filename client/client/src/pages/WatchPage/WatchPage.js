@@ -8,7 +8,7 @@ import css from './WatchPage.module.less'
 const WatchPage = () => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
-  const [{data, loading}, sendGetRequest] = useGetAxiosFetch(config)
+  const [data, sendGetRequest] = useGetAxiosFetch(config)
 
   useEffect(() => {
     sendGetRequest(lookedUsersUrl)
@@ -16,12 +16,13 @@ const WatchPage = () => {
 
   return (
     <div className={css.mainSectionContainer}>
-      {loading ?
+      {data.loading ?
         <div className={css.loader}><Loader/></div> :
-        data?.data?.map((profile, i) => (
+        data?.data?.data?.map((profile, i) => (
           <ProfileCard  key={i}
                         user={profile.login}
-                        userProfile={profile}/>
+                        userProfile={profile}
+                        disableLike/>
         ))}
     </div>
   )

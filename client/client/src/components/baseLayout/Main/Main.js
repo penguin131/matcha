@@ -41,8 +41,7 @@ const Main = ({isAuth, setIsAuth}) => {
     if (photos) {
       setAvatar(photos.find(photo => photo.main) || null)
     }
-    
-  }, [userPhotos])
+  }, [])
 
   useEffect(() => {
     const options = {

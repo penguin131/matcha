@@ -7,14 +7,15 @@ import ImageGallery from 'react-image-gallery';
 import Chip from '../TagsInput/Chip/Chip'
 import {setLikeUrl, setDislikeUrl} from '../../services/services'
 import {useGetAxiosFetch} from '../../services/useAxiosFetch'
+import { Link } from 'react-router-dom'
+import moment from 'moment'
 
-const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsLoading}) => {
+const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsLoading, disableLike, match}) => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [likeStatus, setLikeStatus] = useState(null)
   const [viewBio, setViewBio] = useState(false)
-
   const images = userPhotos?.data?.map(photo => ({
     original: photo.data,
     thumbnail: photo.data,
@@ -23,6 +24,8 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
     main: photo.data.main
   })) 
   
+  const formatDate = (date) => moment(date).format('MMM Do')
+
   const onLike = async (user) => {
     await sendGetRequest(`${setLikeUrl}/${user}`)
     setLikeStatus('liked')
@@ -32,7 +35,7 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
     await sendGetRequest(`${setDislikeUrl}/${user}`)
     setLikeStatus('disliked')
   }
-  
+
   useEffect(() => {
     setLikeStatus(userProfile?.has_like ? 'liked' : userProfile?.has_dislike ? 'disliked' : null)
   }, [userProfile])
@@ -41,9 +44,11 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
     <>
       <div className={css.profileInfoContainer}>
         {profileIsLoading ? <div className={css.loader}><Loader/></div> : <>
-          <div className={css.userName}>
-            {`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}
-          </div>
+          
+          {match?.path !== '/profile/:login' ? <Link to={`profile/:${userProfile?.login}`}>
+            <div className={css.userName}>{`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}</div>
+          </Link> : <div className={css.userName}></div>}
+          <div>{userProfile?.is_online ? 'Online' : `Last login ${formatDate(userProfile.last_auth_date)}`}</div>
           <div>rating: {userProfile?.rating}</div>
           <div>sex: {userProfile?.sex}</div>
           <div className={css.galleryContainer}>
@@ -54,14 +59,14 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
                             showPlayButton={false}
                             showThumbnails={false}/> : null}
           </div>
-          <div className={css.likePanel}>
+          {!disableLike && <div className={css.likePanel}>
             <div  className={`${css.likeElement} ${likeStatus === 'liked' ? css.activeLike : css.like}`}
                   onClick={() => onLike(user)}>
                     <LikeLogo/></div>
             <div  className={`${css.likeElement} ${likeStatus === 'disliked'? css.activeDislike : css.dislike}`}
                   onClick={() => onDislike(user)}>
                     <DislikeLogo/></div>
-          </div>
+          </div>}
           <div  className={css.bioBlock}
                 onClick={() => setViewBio(!viewBio)}>
             {`---${viewBio ? 'hide' : 'show more'}---`}

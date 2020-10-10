@@ -19,13 +19,15 @@ const ProfilePage = ({match}) => {
     ])
   }, [fetchUserProfile, fetchUserPhotos, user])
 
+
   return (
     <div className={css.mainSectionContainer}>
       <ProfileCard  user={user}
                     userProfile={userProfile.data?.data}
-                    userPhotos={userPhotos.data?.data}
+                    userPhotos={userPhotos.data}
                     profileIsLoading={userProfile.loading}
-                    imagesIsLoading={userPhotos.loading}/>
+                    imagesIsLoading={userPhotos.loading}
+                    match={match}/>
     </div>
     
   );

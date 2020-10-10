@@ -21,7 +21,8 @@ const LikePage = () => {
         data?.data?.map((profile, i) => (
           <ProfileCard  key={i}
                         user={profile.login}
-                        userProfile={profile}/>
+                        userProfile={profile}
+                        disableLike/>
         ))}
     </div>
   )
