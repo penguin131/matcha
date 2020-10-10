@@ -138,6 +138,10 @@ public class LogicServiceImpl implements LogicService {
 				logger.info("checkAvatar() false");
 				return;
 			}
+			UserProfileDto profile = databaseService.getUserProfileForLogin(to, from);
+			if (profile.getHasDislike()) {
+				databaseService.setComplaint(from, to);
+			}
 			boolean result = databaseService.setLike(from, to);
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
@@ -177,6 +181,10 @@ public class LogicServiceImpl implements LogicService {
 				logger.info("checkAvatar() false");
 				return;
 			}
+			UserProfileDto profile = databaseService.getUserProfileForLogin(to, from);
+			if (profile.getHasLike()) {
+				databaseService.setLike(from, to);
+			}
 			databaseService.setComplaint(from, to);
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
@@ -184,7 +192,7 @@ public class LogicServiceImpl implements LogicService {
 			notification.setFrom(from);
 			notification.setMsgText("disliked you!");
 			WebSockets.sendMessage(null, notification);
-		} catch (SQLException | IOException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
