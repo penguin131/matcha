@@ -5,6 +5,7 @@ import { ReactComponent as WatchLogo} from '../../imgs/watch.svg'
 import { ReactComponent as SearchLogo} from '../../imgs/search.svg'
 import { ReactComponent as SettingsLogo} from '../../imgs/settings.svg'
 import { ReactComponent as LikedLogo} from '../../imgs/match.svg'
+import { ReactComponent as GeoLogo} from '../../imgs/geo.svg'
 
 const MainPage = () => {
   return (
@@ -14,6 +15,7 @@ const MainPage = () => {
       <div className={css.element}><div><ChatsLogo/></div> - Chats with the matched people</div>
       <div className={css.element}><div><WatchLogo/></div> - People who have reviewed your profile</div>
       <div className={css.element}><div><LikedLogo/></div> - Your profile settings </div>
+      <div className={css.element}><div><GeoLogo/></div> - Map of users </div>
       <div className={css.element}><div><SettingsLogo/></div> - People you like</div>
     </section>
   )

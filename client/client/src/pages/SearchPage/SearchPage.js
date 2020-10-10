@@ -16,7 +16,7 @@ const SearchPage = () => {
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   
   const fetchData = () => {
-    fetchUserProfile(nextUserProfileUrl, {filters}).then((r) => {
+    fetchUserProfile(nextUserProfileUrl, {...filters}).then((r) => {
       r?.data && fetchUserPhotos(`${userPhotosUrl}/${r.data.login}`)
     })
   }

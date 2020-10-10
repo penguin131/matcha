@@ -9,24 +9,24 @@ const SortForm = ({ filters, setFilters }) => {
         setFilters({...filters, ...e})
       }}
       initialValues={{
-        sort: 'age',
+        sort_type: 'age',
       }}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
           <div className={css.inputsBlock}>
-            <Field  name='sort'
+            <Field  name='sort_type'
                     component='input'
                     type='radio'
                     value='age'/> age
-            <Field  name='sort'
+            <Field  name='sort_type'
                     component='input'
                     type='radio'
                     value='location'/> location
-            <Field  name='sort'
+            <Field  name='sort_type'
                     component='input'
                     type='radio'
                     value='fameRating'/> rating
-            <Field  name='sort'
+            <Field  name='sort_type'
                     component='input'
                     type='radio'
                     value='commonTags'/> common tags
