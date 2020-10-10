@@ -3,6 +3,7 @@ package com.dto;
 import com.dictionary.Sex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sockets.WebSockets;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
@@ -42,6 +43,8 @@ public class UserProfileDto {
     private String intraLogin;
     @JsonIgnore//Флаг, в котором true если пользователь создан через интру. При смене пароля проставится false
     private Boolean intraFirst;
+    @JsonProperty("is_online")
+    private Boolean isOnline;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -170,6 +173,7 @@ public class UserProfileDto {
             }
         }
         user.setTags(tags);
+        user.setOnline(WebSockets.checkUserOnline(user.getLogin()));
         return user;
     }
 
@@ -304,5 +308,13 @@ public class UserProfileDto {
 
     public void setIntraFirst(Boolean intraFirst) {
         this.intraFirst = intraFirst;
+    }
+
+    public Boolean getOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(Boolean online) {
+        isOnline = online;
     }
 }
