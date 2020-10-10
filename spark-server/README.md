@@ -28,5 +28,4 @@ todo:<br>
 
 
 //сегодня
-todo halt with headers
 потестить правки на фронте

@@ -14,6 +14,11 @@ public interface LogicService {
 	 */
 	String getAllUsers(String login);
 
+	/*
+	Массив всех координат
+	 */
+	String getAllCoordinates();
+
 	/**
 	 * Добавление нового пользовательского профиля
 	 */

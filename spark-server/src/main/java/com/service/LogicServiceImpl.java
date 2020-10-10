@@ -52,6 +52,26 @@ public class LogicServiceImpl implements LogicService {
 	}
 
 	@Override
+	public String getAllCoordinates() {
+		try {
+			List<UserProfileDto> users = databaseService.getAllUsers(null);
+			List<CoordinateDto> coordinates = new ArrayList<>();
+
+			for (UserProfileDto user : users) {
+				CoordinateDto coordinate = new CoordinateDto();
+				coordinate.setLatitude(user.getLatitude());
+				coordinate.setLongitude(user.getLongitude());
+				coordinates.add(coordinate);
+			}
+			return mapper.writeValueAsString(coordinates);
+		} catch (SQLException | JsonProcessingException ex) {
+			ex.printStackTrace();
+			return "[]";
+		}
+
+	}
+
+	@Override
 	public void createUserProfile(Request request) throws ValidateException {
 		try {
 			BaseUserProfileDto user = mapper.readValue(request.body(), BaseUserProfileDto.class);
@@ -65,7 +85,14 @@ public class LogicServiceImpl implements LogicService {
 	}
 
 	private void createProfile(BaseUserProfileDto user, String url, boolean fromIntra)
-			throws MessagingException, SQLException, ValidateException, JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException, UnknownHostException {
+			throws MessagingException,
+			SQLException,
+			ValidateException,
+			JsonProcessingException,
+			InvalidKeySpecException,
+			NoSuchAlgorithmException,
+			UnsupportedEncodingException,
+			UnknownHostException {
 		ValidateHelper.validateBaseUserProfile(user);
 		user.setPassword(Password.getSaltedHash(user.getPassword()));
 		String hash = SecurityHelper.generateHash();

@@ -56,6 +56,13 @@ public class Endpoint {
 			return logicService.getAllUsers(login);
 		});
 
+		get("/protected/getAllCoordinates", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
+			return logicService.getAllCoordinates();
+		});
+
 		post("/createUserProfile", (req, res) -> {
 			try {
 				logicService.createUserProfile(req);
