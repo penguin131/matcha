@@ -533,6 +533,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 "     ,1 as has_like\n" +
                 "     ,0 as has_dislike\n" +
                 "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                "     ,0 as fake_counter" +
                 " from spark_db.t_user_profile t1\n" +
                 " join spark_db.t_users_unity t2 on (t1.user_profile_id=t2.user1_id)\n" +
                 " join spark_db.t_user_profile t3 on (t3.user_profile_id=t2.user2_id)\n" +
