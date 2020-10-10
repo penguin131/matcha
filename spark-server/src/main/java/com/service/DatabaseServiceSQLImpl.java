@@ -408,7 +408,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
 
     @Override
     public List<UserProfileDto> getUsersWithFilter(UserFilterDto filter, String from)
-            throws SQLException, JsonProcessingException {
+            throws SQLException {
         logger.info(String.format("getUserWithFilter(%s, %s)", filter == null ? "null" : filter.toString(), from));
         List<UserProfileDto> profiles = new ArrayList<>();
         PreparedStatement preparedStatement = connection.prepareStatement(generateUserSearchRequest(filter, from));
@@ -419,7 +419,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             UserProfileDto userProfile = UserProfileDto.getInstance(rs);
             profiles.add(userProfile);
         }
-        logger.info("getUsersWithFilter() result:\n" + mapper.writeValueAsString(profiles));
         return profiles;
     }
 
@@ -556,7 +555,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             UserProfileDto userProfile = UserProfileDto.getInstance(rs);
             profiles.add(userProfile);
         }
-        logger.info("getAllLikedUsers() result: " + mapper.writeValueAsString(profiles));
         return profiles;
     }
 
@@ -580,7 +578,6 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         while (rs.next()) {
             profiles.add(UserProfileDto.getInstance(rs));
         }
-        logger.info("getAllLookedUsers() result: " + mapper.writeValueAsString(profiles));
         return profiles;
     }
 }
