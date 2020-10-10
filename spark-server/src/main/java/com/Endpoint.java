@@ -1,14 +1,11 @@
 package com;
 
-import com.dictionary.MessageType;
-import com.dto.MessageDto;
 import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.helper.Config;
 import com.helper.ServiceHelper;
 import com.service.LogicService;
 import com.sockets.WebSocketHandler;
-import com.sockets.WebSockets;
 import io.jsonwebtoken.Claims;
 import org.apache.log4j.Logger;
 import spark.Filter;
