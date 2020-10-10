@@ -20,7 +20,7 @@ import { userProfileUrl, userPhotosUrl, updateUserProfileUrl, geolocationService
 const Main = ({isAuth, setIsAuth}) => {
   const token = localStorage.token
   const user = localStorage.currentUser
-
+  const customGeolocation = localStorage?.customGeolocation
   const config = {headers: {'Authorization': token}}
   const [userProfile, fetchUserProfile] = useGetAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
@@ -75,7 +75,7 @@ const Main = ({isAuth, setIsAuth}) => {
         })
     };
 
-    navigator.geolocation.getCurrentPosition(success, error, options);
+    !customGeolocation && navigator.geolocation.getCurrentPosition(success, error, options);
   }, [updateUserProfile, getUserGeolocation])
 
   useEffect(() => {

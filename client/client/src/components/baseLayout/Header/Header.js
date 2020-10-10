@@ -13,6 +13,9 @@ const Header = ({ userProfile, isLoading, setIsAuth, notification, avatar }) => 
 		localStorage.removeItem('currentUser')
 		localStorage.removeItem('token')
 		localStorage.removeItem('currentChat')
+		localStorage.removeItem('customGeolocation')
+		localStorage.removeItem('customLongitude')
+		localStorage.removeItem('customLatitude')
 	}
 
 	return (

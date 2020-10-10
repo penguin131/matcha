@@ -5,7 +5,7 @@ import {ReactComponent as LikeLogo} from '../../imgs/like.svg'
 import {ReactComponent as DislikeLogo} from '../../imgs/dislike.svg'
 import ImageGallery from 'react-image-gallery';
 import Chip from '../TagsInput/Chip/Chip'
-import {setLikeUrl, setDislikeUrl} from '../../services/services'
+import {setLikeUrl, setDislikeUrl, reportUrl} from '../../services/services'
 import {useGetAxiosFetch} from '../../services/useAxiosFetch'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
@@ -83,6 +83,7 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
             <div className={css.userInfo}>
               {`${userProfile?.biography || '-'}`}
             </div>
+            <button type="button" onClick={() => sendGetRequest(`${reportUrl}/${userProfile.login}`)}>Report</button>
           </>}
         </>}
       </div>
