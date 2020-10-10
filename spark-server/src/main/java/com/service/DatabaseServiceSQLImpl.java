@@ -38,14 +38,15 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into \"spark_db\".t_user_profile " +
                         " (login, password, email, sex, confirmed_token, confirmed, intra_login, intra_first) " +
-                        " VALUES (?, ?, ?, ?, ?, false, ?, ?)");
+                        " VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         preparedStatement.setString(1, userProfileDto.getLogin());
         preparedStatement.setString(2, userProfileDto.getPassword());
         preparedStatement.setString(3, userProfileDto.getEmail());
         preparedStatement.setInt(4, Sex.convertStringToCode(userProfileDto.getSex()));
         preparedStatement.setString(5, confirmedToken);
-        preparedStatement.setString(6, userProfileDto.getIntraLogin());
-        preparedStatement.setBoolean(7, fromIntra);
+        preparedStatement.setBoolean(6, fromIntra);
+        preparedStatement.setString(7, userProfileDto.getIntraLogin());
+        preparedStatement.setBoolean(8, fromIntra);
         preparedStatement.execute();
         logger.info(mapper.writeValueAsString(userProfileDto));
     }
