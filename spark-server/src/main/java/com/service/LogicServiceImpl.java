@@ -41,13 +41,13 @@ public class LogicServiceImpl implements LogicService {
 		try {
 			List<UserProfileDto> users = databaseService.getAllUsers(login);
 			if (users.size() == 0) {
-				return "";
+				return "[]";
 			} else {
 				return mapper.writeValueAsString(users);
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 
@@ -119,13 +119,13 @@ public class LogicServiceImpl implements LogicService {
 		try {
 			List<FriendDto> friendList = databaseService.getAllFriendsForLogin(login);
 			if (friendList.size() == 0) {
-				return "";
+				return "[]";
 			} else {
 				return mapper.writeValueAsString(friendList);
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 
@@ -305,7 +305,7 @@ public class LogicServiceImpl implements LogicService {
 			return mapper.writeValueAsString(messages);
 		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 
@@ -359,13 +359,11 @@ public class LogicServiceImpl implements LogicService {
 			List<UserPhotoDto> photos = databaseService.getUserPhotos(user);
  			if (photos.size() > 0) {
 				return mapper.writeValueAsString(photos);
-			} else {
-				return mapper.writeValueAsString(new ArrayList<>());
 			}
 		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
 		}
-		return "";
+		return "[]";
 	}
 
 	@Override
@@ -375,7 +373,7 @@ public class LogicServiceImpl implements LogicService {
 			return mapper.writeValueAsString(databaseService.getUsersWithFilter(filterDto, login));
 		} catch (SQLException | IOException ex) {
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 
@@ -433,13 +431,13 @@ public class LogicServiceImpl implements LogicService {
 		try {
 			List<UserProfileDto> users = databaseService.getAllLikedUsers(login);
 			if (users.size() == 0) {
-				return "";
+				return "[]";
 			} else {
 				return mapper.writeValueAsString(users);
 			}
 		} catch (SQLException | JsonProcessingException ex){
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 
@@ -447,13 +445,13 @@ public class LogicServiceImpl implements LogicService {
 		try {
 			List<UserProfileDto> users = databaseService.getAllLookedUsers(login);
 			if (users.size() == 0) {
-				return "";
+				return "[]";
 			} else {
 				return mapper.writeValueAsString(users);
 			}
 		} catch (SQLException | JsonProcessingException ex){
 			ex.printStackTrace();
-			return "";
+			return "[]";
 		}
 	}
 }
