@@ -16,8 +16,7 @@ export const setDislikeUrl = `${url}protected/setComplaint`
 export const likedUsersUrl = `${url}protected/getAllLikedUsers`
 export const lookedUsersUrl = `${url}protected/getAllLookedUsers`
 export const loginUrl = `${url}getToken`
-/* 
-export const joinUrl = `${url}createUserProfile` */
+export const coordinatesUrl = `${url}protected/getAllCoordinates`
 
 export const join = async (values, setIsLoading) => {
   const data = {

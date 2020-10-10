@@ -10,6 +10,8 @@ import { ReactComponent as WatchLogo} from '../../../imgs/watch.svg'
 import { ReactComponent as SearchLogo} from '../../../imgs/search.svg'
 import { ReactComponent as SettingsLogo} from '../../../imgs/settings.svg'
 import { ReactComponent as LikedLogo} from '../../../imgs/match.svg'
+import { ReactComponent as GeoLogo} from '../../../imgs/geo.svg'
+import { ReactComponent as GeoActiveLogo} from '../../../imgs/geoActive.svg'
 import css from './Navigation.module.less'
 
 const Navigation = () => {
@@ -28,6 +30,9 @@ const Navigation = () => {
       </Link>
       <Link to={'/youLiked'}>
         {tab === '/youLiked' ?  <LikedActiveLogo/> : <LikedLogo/>}
+      </Link>
+      <Link to={'/map'}>
+        {tab === '/map' ?  <GeoActiveLogo/> : <GeoLogo/>}
       </Link>
       <Link to={'/settings'}>
         {tab === '/settings' ?  <SettingsActiveLogo/> : <SettingsLogo/>}

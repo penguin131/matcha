@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-/* import css from './Notifications.module.less' */
+import css from './Notifications.module.less'
 
 const Notifications = ({ data }) => {
   let notification = null
@@ -18,7 +18,7 @@ const Notifications = ({ data }) => {
   }
 
   return (
-    notification ? <div>{notification}</div> : null
+    notification ? <div className={css.notification}>{notification}</div> : null
   )
 }
 

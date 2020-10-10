@@ -5,9 +5,8 @@ import { ReactComponent as WatchLogo} from '../../imgs/watch.svg'
 import { ReactComponent as SearchLogo} from '../../imgs/search.svg'
 import { ReactComponent as SettingsLogo} from '../../imgs/settings.svg'
 import { ReactComponent as LikedLogo} from '../../imgs/match.svg'
-import GoogleApiWrapper from '../../components/MapContainer/MapContainer'
 
-const MainPage = ({ geolocation }) => {
+const MainPage = () => {
   return (
     <section className={css.mainSectionContainer}>
       <div className={css.title}>Here you will find: </div>
@@ -16,7 +15,6 @@ const MainPage = ({ geolocation }) => {
       <div className={css.element}><div><WatchLogo/></div> - People who have reviewed your profile</div>
       <div className={css.element}><div><LikedLogo/></div> - Your profile settings </div>
       <div className={css.element}><div><SettingsLogo/></div> - People you like</div>
-      <GoogleApiWrapper geolocation={geolocation}/>
     </section>
   )
 }

@@ -9,6 +9,7 @@ import NotFoundPage from '../../../pages/NotFoundPage/NotFoundPage'
 import SearchPage from '../../../pages/SearchPage/SearchPage'
 import WatchPage from '../../../pages/WatchPage/WatchPage'
 import LikePage from '../../../pages/LikePage/LikePage'
+import MapPage from '../../../pages/MapPage/MapPage'
 import { Switch } from 'react-router-dom'
 import ProtectedRoute from '../../ProtectedRoute/ProtectedRoute'
 import css from './Main.module.css'
@@ -143,12 +144,16 @@ const Main = ({isAuth, setIsAuth}) => {
             <ProtectedRoute exact
                             path='/youLiked'
                             component={LikePage}
-                            isAuth={isAuth}/>                            
+                            isAuth={isAuth}/>
+            <ProtectedRoute exact
+                            path='/map'
+                            component={() => (
+                              <MapPage geolocation={geolocation}/>
+                            )}
+                            isAuth={isAuth}/>                         
             <ProtectedRoute exact
                             path='/'
-                            component={() => (
-                              <MainPage geolocation={geolocation}/>
-                            )}
+                            component={MainPage}
                             isAuth={isAuth}/>
             <ProtectedRoute exact
                             path='/*'
