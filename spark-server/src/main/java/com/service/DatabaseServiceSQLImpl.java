@@ -377,7 +377,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void setMainImage(String imageId, String userLogin) throws SQLException {
+    public void setMainImage(String imageId, String userLogin) throws SQLException, NumberFormatException {
         logger.info(String.format("setMainImage(%s)", imageId));
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "update \"spark_db\".t_image set is_main=false " +

@@ -389,7 +389,7 @@ public class LogicServiceImpl implements LogicService {
 	public void setMainImage(String imageId, String userLogin) {
 		try {
 			databaseService.setMainImage(imageId, userLogin);
-		} catch (SQLException ex) {
+		} catch (SQLException | NumberFormatException ex) {
 			ex.printStackTrace();
 		}
 	}
