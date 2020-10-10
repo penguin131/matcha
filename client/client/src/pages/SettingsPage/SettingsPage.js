@@ -47,7 +47,7 @@ const SettingsPage = ({data, setAvatar}) => {
             )}
           </div>
           
-          <ImageUploader imgsCount={userPhotos?.length}/>
+          <ImageUploader userPhotos={userPhotos} setUserPhotos={setUserPhotos}/>
         </div>
         
         {userProfile.data && <SettingsForm onSubmit={sendPostRequest}

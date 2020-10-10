@@ -46,9 +46,11 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
         {profileIsLoading ? <div className={css.loader}><Loader/></div> : <>
           
           {match?.path !== '/profile/:login' ? <Link to={`profile/:${userProfile?.login}`}>
-            <div className={css.userName}>{`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}</div>
+            <div className={css.userName}>
+              {`${userProfile?.first_name || '-'} ${userProfile?.login || '-'} ${userProfile?.last_name || '-'}`}
+            </div>
           </Link> : <div className={css.userName}></div>}
-          <div>{userProfile?.is_online ? 'Online' : `Last login ${formatDate(userProfile.last_auth_date)}`}</div>
+          <div>{userProfile?.is_online ? 'Online' : `Last login ${formatDate(userProfile?.last_auth_date)}`}</div>
           <div>rating: {userProfile?.rating}</div>
           <div>sex: {userProfile?.sex}</div>
           <div className={css.galleryContainer}>
