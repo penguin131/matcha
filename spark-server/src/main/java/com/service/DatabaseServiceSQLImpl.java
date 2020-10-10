@@ -311,7 +311,8 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                         " join \"spark_db\".t_user_profile t2 on (t1.\"from\"=t2.user_profile_id)\n" +
                         " join \"spark_db\".t_user_profile t3 on (t1.\"to\"=t3.user_profile_id)\n" +
                         " where t2.login=? and t3.login=? or t2.login=? and t3.login=?\n" +
-                        " order by t1.date desc");
+                        " order by t1.date desc" +
+                        " limit 50");
         preparedStatement.setString(1, user1);
         preparedStatement.setString(2, user2);
         preparedStatement.setString(3, user2);
