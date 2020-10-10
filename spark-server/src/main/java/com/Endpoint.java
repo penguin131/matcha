@@ -23,6 +23,8 @@ import static com.security.JWTHelper.getUserNameFromToken;
 import static spark.Spark.*;
 
 public class Endpoint {
+	private static Logger logger = Logger.getLogger(Endpoint.class);
+	private static LogicService logicService = ServiceHelper.getLogicService();
 	private static final Map<String, String> corsHeaders = new HashMap<>();
 	static {
 		corsHeaders.put("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
@@ -36,25 +38,17 @@ public class Endpoint {
 		Spark.after(filter);
 	}
 
-	public static void main(String[] args) {
-		//Инициализация стартовых обьектов
-		Logger logger = Logger.getLogger(Endpoint.class);
-		LogicService logicService = ServiceHelper.getLogicService();
+	private static void initStartObjects() {
 		port(8080);
 		staticFiles.location("/public");
 		webSocket("/chat", WebSocketHandler.class);
 		Config.configureLogger();
-
 		applyFilters();
-		//REST
-		get("/protected/hello", (req, res) -> "Hello world!");
-		get("/protected/getAllUsers", (req, res) -> {
-			if (res.status() == 403){
-				return "";
-			}
-			String login = getUserNameFromToken(req.headers("Authorization"));
-			return logicService.getAllUsers(login);
-		});
+	}
+
+
+	public static void main(String[] args) {
+		initStartObjects();
 
 		get("/protected/getAllCoordinates", (req, res) -> {
 			if (res.status() == 403){
@@ -249,36 +243,12 @@ public class Endpoint {
 			return logicService.getUserPhotos(request.params(":login"));
 		});
 
-		post("/saveMessage", (req, res) -> {
-			logicService.saveChatMessage(req.body());
-			return "";
-		});
-
 		post("/protected/getNextUser", ((request, response) -> {
 			if (response.status() == 403){
 				return "";
 			}
 			String login = getUserNameFromToken(request.headers("Authorization"));
 			return logicService.getNextUser(login, request.body());
-		}));
-
-		post("/notification", ((request, response) -> {
-			MessageDto notification = new MessageDto();
-			notification.setTo("bfalmer");
-			notification.setType(MessageType.NOTIFICATION.getName());
-			notification.setMsgText("Test notification");
-			WebSockets.sendMessage(null, notification);
-			return "";
-		}));
-
-		post("/testChat", ((request, response) -> {
-			MessageDto notification = new MessageDto();
-			notification.setTo("bfalmer");
-			notification.setFrom("smight");
-			notification.setType(MessageType.CHAT_MESSAGE.getName());
-			notification.setMsgText("Test chat message");
-			WebSockets.sendMessage(null, notification);
-			return "";
 		}));
 
 		before((request, response) -> {
