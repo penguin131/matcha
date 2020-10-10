@@ -202,8 +202,7 @@ public class Endpoint {
 				return "";
 			}
 			String login = getUserNameFromToken(req.headers("Authorization"));
-			logicService.downloadImage(login, req.bodyAsBytes());
-			return "";
+			return logicService.downloadImage(login, req.bodyAsBytes());
 		}));
 
 		get("/protected/deleteImage/:id", ((req, res) -> {

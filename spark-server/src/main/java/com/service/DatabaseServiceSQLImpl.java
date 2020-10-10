@@ -346,14 +346,26 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     }
 
     @Override
-    public void saveImage(String user, String image) throws SQLException {
+    public int saveImage(String user, String image) throws SQLException {
         logger.info(String.format("saveImage(%s)", user));
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into \"spark_db\".t_image (user_id, bytes) values" +
-                        " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?)");
+                        " ((select user_profile_id from \"spark_db\".t_user_profile where login=? limit 1), ?)",
+                Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, user);
         preparedStatement.setString(2, image);
-        preparedStatement.execute();
+        int affectedRows = preparedStatement.executeUpdate();
+        if (affectedRows == 0) {
+            throw new SQLException("Creating user failed, no rows affected.");
+        }
+        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            }
+            else {
+                throw new SQLException("Creating user failed, no ID obtained.");
+            }
+        }
     }
 
     @Override

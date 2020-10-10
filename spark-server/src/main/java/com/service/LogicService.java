@@ -101,7 +101,7 @@ public interface LogicService {
 	/**
 	 * Сохраняет в БД запись о картинке, прикрепляется к пользователю. Сохраняет картинку на сервере.
 	 */
-	void downloadImage(String login, byte[] image);
+	String downloadImage(String login, byte[] image);
 
 	byte[] getImage(String name);
 

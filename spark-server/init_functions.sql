@@ -1,7 +1,7 @@
 
 -----============================= COMPLAINT=================================---------
 
-create function public.set_complaint("from" character varying, "to" character varying) returns void
+create function set_complaint("from" character varying, "to" character varying) returns void
     language plpgsql
 as
 $$
@@ -38,11 +38,11 @@ BEGIN
 end
 $$;
 
-alter function public.set_complaint(varchar, varchar) owner to sammy;
+alter function set_complaint(varchar, varchar) owner to sammy;
 
 
 --------------============================ LIKE =======================-------
-create function public.set_like("from" character varying, "to" character varying) returns boolean
+create function set_like("from" character varying, "to" character varying) returns boolean
     language plpgsql
 as
 $$
@@ -141,11 +141,12 @@ begin
 end
 $$;
 
-alter function public.set_like(varchar, varchar) owner to sammy;
+alter function set_like(varchar, varchar) owner to sammy;
+
 
 
 ------------================= GET DISTANCE ==============================----
-create function public.wsg84_get_distance(lat1 numeric, long1 numeric, lat2 numeric, long2 numeric) returns numeric
+create function wsg84_get_distance(lat1 numeric, long1 numeric, lat2 numeric, long2 numeric) returns numeric
     language plpgsql
 as
 $$
@@ -166,5 +167,6 @@ BEGIN
 end
 $$;
 
-alter function public.wsg84_get_distance(numeric, numeric, numeric, numeric) owner to sammy;
+alter function wsg84_get_distance(numeric, numeric, numeric, numeric) owner to sammy;
+
 

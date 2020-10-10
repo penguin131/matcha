@@ -233,7 +233,7 @@ public class LogicServiceImpl implements LogicService {
 			}
 			//Смена пароля
 			if (!StringUtils.isEmpty(user.getNewPassword())) {
-				UserProfileDto oldProfile = databaseService.getUserProfileForLogin(user.getLogin(), null);
+				UserProfileDto oldProfile = databaseService.getUserProfileForLogin(login, null);
 				if (!oldProfile.getIntraFirst() && !databaseService.checkPassword(login, user.getOldPassword())) {//Если регался с интры, в первый раз не проверяет старый пароль
 					throw new AccessDeniedException("Invalid old password");
 				}
@@ -360,15 +360,18 @@ public class LogicServiceImpl implements LogicService {
 		}
 	}
 
-	public void downloadImage(String login, byte[] data) {
+	public String downloadImage(String login, byte[] data) {
+		List<Integer> imagesId = new ArrayList<>();
 		try {
 			String[] dataArray = new String(data).split("\"");
 			for (int i = 1; i < dataArray.length; i+= 2) {
-				databaseService.saveImage(login, dataArray[i]);
+				imagesId.add(databaseService.saveImage(login, dataArray[i]));
 			}
-		} catch (SQLException ex) {
+			logger.info("images id: " + mapper.writeValueAsString(imagesId));
+		} catch (SQLException | JsonProcessingException ex) {
 			ex.printStackTrace();
 		}
+		return imagesId.toString();
 	}
 
 	//Не дает удалить чужие фотки
