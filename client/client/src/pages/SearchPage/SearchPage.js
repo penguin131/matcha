@@ -25,7 +25,7 @@ const SearchPage = () => {
     fetchData()
   }, [])
 
-  console.log(userProfile)
+  console.log(filters)
 
   return (
     <div className={css.searchContainer}>

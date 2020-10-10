@@ -10,10 +10,15 @@ const FilterForm = ({ filters, setFilters }) => {
   return (
     <Form
       onSubmit={e => {
-        const tagsArr = e.tags.replace(/\s+/g, '').trim().split(',')
+        const tagsArr = e.tags?.replace(/\s+/g, '').trim().split(',') || []
         setFilters({...filters, ...e, tags: tagsArr})
       }}
-      initialValues={{}}
+      initialValues={{
+        ageGap: null,
+        ratingGap: null,
+        tags: [],
+        locationGap: null,
+      }}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
           <div className={css.inputsBlock}>

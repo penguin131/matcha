@@ -29,7 +29,7 @@ const SortForm = ({ filters, setFilters }) => {
             <Field  name='sort'
                     component='input'
                     type='radio'
-                    value='commotTags'/> common tags
+                    value='commonTags'/> common tags
             <button type='submit' disabled={submitting || pristine}>
               Save
             </button>
