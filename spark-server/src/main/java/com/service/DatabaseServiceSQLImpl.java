@@ -539,7 +539,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 "     ,(select count(*) from spark_db.t_users_unity where t3.user_profile_id=user2_id and user1_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login)\n" +
                 "                                                      or t3.user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login) and t_users_unity.confirmed=true) as has_like\n" +
                 "     ,(select count(*) from spark_db.t_complaint where t3.user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login)) as has_dislike\n" +
-                "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t2.user_profile_id) as tags\n" +
                 " from spark_db.t_looked_user t1\n" +
                 "                     join spark_db.t_user_profile t2 on (t1.from_user=t2.user_profile_id)\n" +
                 "                     join spark_db.t_user_profile t3 on (t1.to_user=t3.user_profile_id)\n" +

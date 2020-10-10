@@ -134,7 +134,7 @@ public class LogicServiceImpl implements LogicService {
 	@Override
 	public void setLike(String from, String to) throws ValidateException {
 		try {
-			if (!checkAvatar(from)) {
+			if (noAvatar(from)) {
 				logger.info("checkAvatar() false");
 				return;
 			}
@@ -160,19 +160,20 @@ public class LogicServiceImpl implements LogicService {
 		}
 	}
 
-	private boolean checkAvatar(String login) throws SQLException {
+	private boolean noAvatar(String login) throws SQLException {
 		List<UserPhotoDto> photos = databaseService.getUserPhotos(login);
 		for (UserPhotoDto photo : photos) {
-			if (photo.isMain())
-				return true;
+			if (photo.isMain()) {
+				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	public void setComplaint(String from, String to) {
 		try {
-			if (!checkAvatar(from)) {
+			if (noAvatar(from)) {
 				logger.info("checkAvatar() false");
 				return;
 			}
