@@ -29,3 +29,10 @@ todo:<br>
 
 //сегодня
 потестить правки на фронте
+
+статус онлайна в профиле+
+банан
+фильтр на пол по умолчанию
+не подтвержденная учетка++
+A user that doesn't have a profile picture can't like another user.
+

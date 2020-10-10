@@ -97,11 +97,13 @@ public class LogicServiceImpl implements LogicService {
 		user.setPassword(Password.getSaltedHash(user.getPassword()));
 		String hash = SecurityHelper.generateHash();
 		databaseService.createUserProfile(user, hash, fromIntra);
-		MailService.sendConfirmationEmail(
-				user.getEmail(),
-				hash,
-				url,
-				"verification/");
+		if (!fromIntra) {
+			MailService.sendConfirmationEmail(
+					user.getEmail(),
+					hash,
+					url,
+					"verification/");
+		}
 	}
 
 	@Override

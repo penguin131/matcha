@@ -3,6 +3,7 @@ package com.service;
 import com.dictionary.MessageType;
 import com.dictionary.Sex;
 import com.dto.*;
+import com.exceptions.AccessDeniedException;
 import com.exceptions.ValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -240,9 +241,13 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
     @Override
     public boolean checkPassword(String login, String password) throws Exception {
         logger.info(String.format("checkPassword() login: %s, password: %s", login, password));
+        UserProfileDto user = getUserProfileForLogin(login, null);
+        if (!user.getConfirmed()) {
+            throw new AccessDeniedException("Not verified account");
+        }
         String dbPassword = getUserPassword(login);
         if (dbPassword == null) {
-            throw new Exception("Invalid login + password");
+            throw new AccessDeniedException("Invalid login + password");
         }
         boolean result = Password.check(password, dbPassword);
         logger.info("checkPassword(): " + result);

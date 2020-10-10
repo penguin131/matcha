@@ -36,4 +36,13 @@ public class WebSockets {
         message.setMsgText(text);
         return message;
     }
+
+    public static boolean checkUserOnline(String login) {
+        for (Map.Entry<Session, String> entry : activeUserMap.entrySet()) {
+            if (login.equals(entry.getValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
