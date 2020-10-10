@@ -190,6 +190,19 @@ public class LogicServiceImpl implements LogicService {
 	}
 
 	@Override
+	public void setComplaintAboutFake(String from, String to) {
+		try {
+			if (noAvatar(from)) {
+				logger.info("checkAvatar() false");
+				return;
+			}
+			databaseService.setComplaint(from, to);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
 	public void deleteUserProfileForLogin(String login) {
 		try {
 			databaseService.deleteUserProfileForLogin(login);

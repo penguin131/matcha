@@ -84,6 +84,7 @@ public class SQLRequestHelper {
 				"     ,(select  count(*) from spark_db.t_complaint where u.user_profile_id=to_user) as has_dislike\n" +
 				"     ,CTE2.distance\n" +
 				" ,(select json_agg(name) from spark_db.t_tag where user_id=u.user_profile_id) as tags" +
+				" ,0 as fake_counter" +
 				" from \"spark_db\".t_user_profile u\n" +
 				" join CTE2 on CTE2.user_profile_id=u.user_profile_id");
 		addConditions(sb, filter, login, orderBy);

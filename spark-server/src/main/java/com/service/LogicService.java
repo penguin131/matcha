@@ -56,6 +56,11 @@ public interface LogicService {
 	void setComplaint(String from, String to);
 
 	/**
+	 * Ставит жалобу на фейк
+	 */
+	void setComplaintAboutFake(String from, String to);
+
+	/**
 	 * Удаляет профиль юзера по login
 	 */
 	void deleteUserProfileForLogin(String login);

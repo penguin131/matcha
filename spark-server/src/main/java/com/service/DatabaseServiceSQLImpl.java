@@ -74,6 +74,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 "or user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?) and t_users_unity.confirmed=true) as has_like" +
                 " ,(select count(*) from spark_db.t_complaint where user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=?)) as has_dislike" +
                 " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
+                " ,(select count(*) from spark_db.t_fake where to_user=user_profile_id) as fake_counter" +
                 " from \"spark_db\".t_user_profile where login=?");
         preparedStatement.setString(1, from);
         preparedStatement.setString(2, from);
@@ -100,6 +101,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 " ,0 as has_like" +
                 " ,0 as has_dislike" +
                 " ,(select json_agg(name) from spark_db.t_tag where user_id=user_profile_id) as tags" +
+                " ,0 as fake_counter" +
                 " from \"spark_db\".t_user_profile where intra_login=?");
         preparedStatement.setString(1, login);
         ResultSet rs = preparedStatement.executeQuery();
@@ -199,6 +201,31 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         preparedStatement.setString(2, to);
         preparedStatement.execute();
         logger.info("complaint function success");
+    }
+
+    @Override
+    public void setFakeComplaint(String from, String to) throws SQLException {
+        logger.info(String.format("setFakeComplaint(%s, %s)", from, to));
+        PreparedStatement preparedStatement1 = connection.prepareStatement(
+                "select * from spark_db.t_fake\n" +
+                " where from_user=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                "   and to_user=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)");
+        preparedStatement1.setString(1, from);
+        preparedStatement1.setString(2, to);
+        ResultSet rs = preparedStatement1.executeQuery();
+        if (rs.next()) {
+            logger.info("fake complaint already exists!");
+            return;
+        }
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "insert into spark_db.t_fake (from_user, to_user) \n" +
+                " VALUES \n" +
+                " ((select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                " ,(select user_profile_id from spark_db.t_user_profile where login=? limit 1))");
+        preparedStatement.setString(1, from);
+        preparedStatement.setString(2, to);
+        preparedStatement.execute();
+        logger.info("setFakeComplaint success");
     }
 
     @Override
@@ -456,7 +483,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             if (rs.next()) {
                 String login2 = rs.getString("login");
                 UserProfileDto user = getUserProfileForLogin(login2, login);
-                if (!user.getHasDislike()) {
+                if (!user.getHasDislike() && user.getFakeCounter() < 3) {
                     return user;
                 }
             } else {
@@ -516,6 +543,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 "     ,1 as has_like\n" +
                 "     ,0 as has_dislike\n" +
                 "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t3.user_profile_id) as tags\n" +
+                "     ,0 as fake_counter" +
                 " from spark_db.t_user_profile t1\n" +
                 " join spark_db.t_users_unity t2 on (t1.user_profile_id=t2.user2_id and t2.confirmed=true)\n" +
                 " join spark_db.t_user_profile t3 on (t3.user_profile_id=t2.user1_id)\n" +
@@ -541,6 +569,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
                 "                                                      or t3.user_profile_id=user1_id and user2_id=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login) and t_users_unity.confirmed=true) as has_like\n" +
                 "     ,(select count(*) from spark_db.t_complaint where t3.user_profile_id=to_user and from_user=(select up.user_profile_id from spark_db.t_user_profile up where up.login=t2.login)) as has_dislike\n" +
                 "     ,(select json_agg(t.name) from spark_db.t_tag t where t.user_id=t2.user_profile_id) as tags\n" +
+                "     ,0 as fake_counter" +
                 " from spark_db.t_looked_user t1\n" +
                 "                     join spark_db.t_user_profile t2 on (t1.from_user=t2.user_profile_id)\n" +
                 "                     join spark_db.t_user_profile t3 on (t1.to_user=t3.user_profile_id)\n" +

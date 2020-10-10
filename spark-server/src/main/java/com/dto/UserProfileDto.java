@@ -45,6 +45,8 @@ public class UserProfileDto {
     private Boolean intraFirst;
     @JsonProperty("is_online")
     private Boolean isOnline;
+    @JsonIgnore
+    private Integer fakeCounter;
 
     public String getSexPreferences() {
         return sexPreferences;
@@ -162,7 +164,8 @@ public class UserProfileDto {
                 rs.getString("confirmed_token"),
                 rs.getLong("last_auth_date"),
                 rs.getString("intra_login"),
-                rs.getBoolean("intra_first")
+                rs.getBoolean("intra_first"),
+                rs.getInt("fake_counter")
         );
         Set<String> tags = new HashSet<>();
         String arrayString = rs.getString("tags");
@@ -217,7 +220,8 @@ public class UserProfileDto {
                           String confirmedToken,
                           Long lastAuthDate,
                           String intraLogin,
-                          Boolean intraFirst) {
+                          Boolean intraFirst,
+                          Integer fakeCounter) {
         this.setSex(sex);
         this.setSexPreferences(sexPreferences);
         this.setBiography(biography);
@@ -237,6 +241,7 @@ public class UserProfileDto {
         this.lastAuthDate = lastAuthDate != null ? lastAuthDate : 0;
         this.intraLogin = intraLogin;
         this.intraFirst = intraFirst;
+        this.fakeCounter = fakeCounter;
     }
 
     public UserProfileDto() {
@@ -316,5 +321,13 @@ public class UserProfileDto {
 
     public void setOnline(Boolean online) {
         isOnline = online;
+    }
+
+    public Integer getFakeCounter() {
+        return fakeCounter;
+    }
+
+    public void setFakeCounter(Integer fakeCounter) {
+        this.fakeCounter = fakeCounter;
     }
 }

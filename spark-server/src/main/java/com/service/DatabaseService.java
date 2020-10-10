@@ -60,9 +60,11 @@ public interface DatabaseService {
     boolean setLike(String from, String to) throws Exception;
 
     /**
-     * Ставит жалобу, влияет на рейтинг
+     * Ставит дизлайк, влияет на рейтинг
      */
     void setComplaint(String from, String to) throws SQLException;
+
+    void setFakeComplaint(String from, String to) throws SQLException;
 
     /**
      * Удаляет профиль юзера по login

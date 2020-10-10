@@ -136,6 +136,16 @@ public class Endpoint {
 			return "";
 		});
 
+		get("/protected/complaintAboutFake/:to", (req, res) -> {
+			if (res.status() == 403){
+				return "";
+			}
+			String from = getUserNameFromToken(req.headers("Authorization"));
+			String to = req.params(":to");
+			logicService.setComplaintAboutFake(from, to);
+			return "";
+		});
+
 		get("/protected/deleteUserProfileForLogin/:login", (req, res) -> {
 			if (res.status() == 403){
 				return "";
