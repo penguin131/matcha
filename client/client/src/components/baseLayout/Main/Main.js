@@ -36,12 +36,13 @@ const Main = ({isAuth, setIsAuth}) => {
     user && fetchUserPhotos(`${userPhotosUrl}/${user}`)
   }, [fetchUserProfile, fetchUserPhotos, user])
 
+  const photos = userPhotos?.data?.data
+
   useEffect(() => {
-    const photos = userPhotos?.data?.data
     if (photos) {
       setAvatar(photos.find(photo => photo.main) || null)
     }
-  }, [])
+  }, [photos])
 
   useEffect(() => {
     const options = {
