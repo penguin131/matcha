@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 public class UserFilterDto {
 	private Integer distance;
 	@JsonIgnore
@@ -18,7 +20,8 @@ public class UserFilterDto {
 	@JsonProperty("age_min")
 	private Integer ageMin;
 	@JsonProperty("sort_type")
-	private String sortType;//distance, rating, tags. Rating first default
+	private String sortType;//distance, rating, tags, age, ageDesc Rating first default
+	private List<String> tags;
 
 	public UserFilterDto() {
 	}
@@ -76,12 +79,25 @@ public class UserFilterDto {
 			return sortType;
 		} else if (SortType.DISTANCE.getName().equals(sortType)) {
 			return sortType;
+		} else if (SortType.AGE.getName().equals(sortType)) {
+			return sortType;
+		} else if (SortType.AGE_DESC.getName().equals(sortType)) {
+			return sortType;
 		}
 		return SortType.RATING.getName();
 	}
 
 	public void setSortType(String sortType) {
 		this.sortType = sortType;
+	}
+
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 	@Override
@@ -95,7 +111,14 @@ public class UserFilterDto {
 	}
 
 	public boolean hasFields() {
-		return distance != null || sexPreferences != null || sex != null || rating != null || ageMax != null || ageMin != null || sortType != null;
+		return distance != null ||
+				sexPreferences != null ||
+				sex != null ||
+				rating != null ||
+				ageMax != null ||
+				ageMin != null ||
+				sortType != null ||
+				(tags != null && tags.size() > 0);
 	}
 
 	@Override
@@ -110,6 +133,7 @@ public class UserFilterDto {
 		hash = 31 * hash + (ageMax != null ? ageMax : 0);
 		hash = 31 * hash + (ageMin != null ? ageMin : 0);
 		hash = 31 * hash + (sortType != null ? sortType.hashCode() : 0);
+		hash = 31 * hash + (tags != null && tags.size() > 0 ? tags.hashCode() : 0);
 		return hash;
 	}
 }

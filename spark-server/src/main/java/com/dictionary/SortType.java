@@ -3,7 +3,9 @@ package com.dictionary;
 public enum SortType {
 	DISTANCE("distance"),
 	RATING("rating"),
-	TAGS("tags");
+	TAGS("tags"),
+	AGE("age"),
+	AGE_DESC("ageDesc");
 
 	private String name;
 

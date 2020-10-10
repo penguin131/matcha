@@ -441,7 +441,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
         int hash = (filter == null || !filter.hasFields() ? 0 : filter.hashCode());
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "select count(*) from spark_db.t_user_filter\n" +
-                        " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=?) and filter_hash=?");
+                " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=?) and filter_hash=?");
         preparedStatement.setString(1, login);
         preparedStatement.setInt(2, hash);
         ResultSet rs = preparedStatement.executeQuery();
@@ -456,7 +456,7 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             logger.info("Insert values into t_user_filter.");
             preparedStatement = connection.prepareStatement(
                     "insert into spark_db.t_user_filter (from_user_id, filter_hash)\n" +
-                            " (select user_profile_id,? from spark_db.t_user_profile where login=? limit 1)");
+                    " (select user_profile_id,? from spark_db.t_user_profile where login=? limit 1)");
             preparedStatement.setInt(1, hash);
             preparedStatement.setString(2, login);
             preparedStatement.execute();
@@ -472,23 +472,23 @@ public class DatabaseServiceSQLImpl implements DatabaseService {
             //увеличиваю счетчик
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "update spark_db.t_user_filter set counter=counter+1\n" +
-                            " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
-                            "  and filter_hash=?;\n");
+                    " where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                    "  and filter_hash=?;\n");
             preparedStatement.setString(1, login);
             preparedStatement.setInt(2, hash);
             preparedStatement.execute();
             //вытаскиваю следующего юзера
             preparedStatement = connection.prepareStatement(
                     " with CTE as (\n" +
-                            "    select * from spark_db.t_user_filter\n" +
-                            "        where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
-                            "          and filter_hash=?\n" +
-                            "    limit 1\n" +
-                            " )\n" +
-                            " select t1.login from spark_db.t_user_profile t1\n" +
-                            " where t1.user_profile_id=(select t2.user_id from spark_db.t_search_data t2 " +
-                            " where t2.number=(select counter from CTE) and t2.filter_hash=(select filter_hash from CTE)\n" +
-                            "    limit 1);\n");
+                    "    select * from spark_db.t_user_filter\n" +
+                    "        where from_user_id=(select user_profile_id from spark_db.t_user_profile where login=? limit 1)\n" +
+                    "          and filter_hash=?\n" +
+                    "    limit 1\n" +
+                    " )\n" +
+                    " select t1.login from spark_db.t_user_profile t1\n" +
+                    " where t1.user_profile_id=(select t2.user_id from spark_db.t_search_data t2 " +
+                    " where t2.number=(select counter from CTE) and t2.filter_hash=(select filter_hash from CTE)\n" +
+                    "    limit 1);\n");
             preparedStatement.setString(1, login);
             preparedStatement.setInt(2, hash);
             ResultSet rs = preparedStatement.executeQuery();

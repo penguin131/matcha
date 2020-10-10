@@ -40,6 +40,11 @@ public class SQLRequestHelper {
 			if (filter.getAgeMin() != null) {
 				sb.append(" and age>=?");
 			}
+			if (filter.getTags() != null && filter.getTags().size() > 0) {
+				sb.append(" and (select count(*) from spark_db.t_tag where u.user_profile_id=user_id and name in (?))=")
+						.append(filter.getTags().size());
+
+			}
 		}
 		sb.append(orderBy);
 	}
@@ -101,7 +106,11 @@ public class SQLRequestHelper {
 		if (filter.getSex() != null) statement.setInt(counter++, Sex.convertStringToCode(filter.getSex()));
 		if (filter.getRating() != null) statement.setInt(counter++, filter.getRating());
 		if (filter.getAgeMax() != null) statement.setInt(counter++, filter.getAgeMax());
-		if (filter.getAgeMin() != null) statement.setInt(counter, filter.getAgeMin());
+		if (filter.getAgeMin() != null) statement.setInt(counter++, filter.getAgeMin());
+		if (filter.getTags() != null && filter.getTags().size() > 0) {
+			String stringList = filter.getTags().toString();
+			statement.setString(counter, stringList.substring(1, stringList.length() - 1));
+		}
 	}
 
 	public static String generateUpdateUserRequest(InnerProfileDto userProfile) throws IllegalAccessException {
@@ -199,7 +208,6 @@ public class SQLRequestHelper {
 	}
 
 	private static String createOrderBy(UserFilterDto filter) {
-
 		String orderBy;
 		if (filter != null && "tags".equals(filter.getSortType())) {
 			orderBy = " order by (select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
@@ -207,15 +215,13 @@ public class SQLRequestHelper {
 					" ,rating desc\n" +
 					",CTE2.distance";
 		} else if (filter != null && "distance".equals(filter.getSortType())) {
-			orderBy = " order by CTE2.distance\n" +
-					" ,rating desc\n" +
-					",(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
-					"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n";
+			orderBy = " order by CTE2.distance";
+		} else if (filter != null && "age".equals(filter.getSortType())) {
+			orderBy = " order by age";
+		} else if (filter != null && "ageDesc".equals(filter.getSortType())) {
+			orderBy = " order by age desc";
 		} else {
-			orderBy = " order by rating desc\n" +
-					" ,(select count(*) from spark_db.t_tag t1, spark_db.t_tag t2\n" +
-					"    where t1.user_id=(select user_profile_id from CTE) and t2.user_id=u.user_profile_id and t1.name=t2.name) desc\n" +
-					",CTE2.distance";
+			orderBy = " order by rating desc";
 		}
 		return orderBy;
 	}
