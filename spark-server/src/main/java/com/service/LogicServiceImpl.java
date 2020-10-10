@@ -414,6 +414,7 @@ public class LogicServiceImpl implements LogicService {
 			if (!StringUtils.isEmpty(filter)) {
 				filterDto = mapper.readValue(filter, UserFilterDto.class);
 			}
+			filterDto = upgradeFilter(filterDto, login);
 			databaseService.createSearchData(filterDto, login);
 			UserProfileDto nextUser = databaseService.nextUserWithFilter(filterDto, login);
 			if (nextUser == null) {
@@ -432,6 +433,18 @@ public class LogicServiceImpl implements LogicService {
 			ex.printStackTrace();
 			return "";
 		}
+	}
+
+	private UserFilterDto upgradeFilter(UserFilterDto oldFilter, String login) throws SQLException, JsonProcessingException {
+		UserProfileDto userProfile = databaseService.getUserProfileForLogin(login, null);
+		if (userProfile.getSexPreferences() != null || userProfile.getSex() != null) {
+			if (oldFilter == null) {
+				oldFilter = new UserFilterDto();
+			}
+			oldFilter.setSex(userProfile.getSexPreferences());
+			oldFilter.setSexPreferences(userProfile.getSex());
+		}
+		return oldFilter;
 	}
 
 	public String updateUserMail(String token) {

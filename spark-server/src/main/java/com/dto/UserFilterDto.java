@@ -1,14 +1,16 @@
 package com.dto;
 
 import com.dictionary.SortType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserFilterDto {
 	private Integer distance;
-	@JsonProperty("sex_preferences")
+	@JsonIgnore
 	private String sexPreferences;
+	@JsonIgnore
 	private String sex;
 	private Integer rating;
 	@JsonProperty("age_max")
