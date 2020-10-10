@@ -25,13 +25,14 @@ const SearchPage = () => {
     fetchData()
   }, [])
 
+  console.log(userProfile)
   return (
     <div className={css.searchContainer}>
       <div className={css.sortBlock}>
         <SortForm filters={filters} setFilters={setFilters}/>
         <FilterForm filters={filters} setFilters={setFilters}/>
       </div>
-      <ProfileCard  user={userProfile?.login}
+      <ProfileCard  user={userProfile.data?.login}
                     userProfile={userProfile.data}
                     userPhotos={userPhotos.data}
                     profileIsLoading={userProfile.loading}

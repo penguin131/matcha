@@ -4,13 +4,15 @@ import Loader from '../../Loader/Loader'
 import Button from '../../../components/Button/Button'
 import css from './SettingsForm.module.less'
 
-const NumberInput = ({ input, meta, ...rest }) => (
-  <input {...input} {...rest} type="number" min='0'/>
-);
+const NumberInput = ({ input, meta, ...rest }) => {
+  return (
+    <input {...input} {...rest} type="number" min='0'/>
+  )
+}
 
 const SettingsForm = ({isFormLoading, onSubmit, data, url}) => {
   const { biography, sex, sex_preferences} = data
-  console.log(localStorage.getItem(''))
+
   return (
     <div className={css.authFormContainer}>{
       <>
@@ -43,62 +45,61 @@ const SettingsForm = ({isFormLoading, onSubmit, data, url}) => {
             biography: biography,
             sex: sex,
             sexPreferences: sex_preferences,
-            customGeolocation: localStorage.getItem('customGeolocation'),
-            customLongitude: localStorage.getItem('customLongitude'),
-            customLatitude: localStorage.getItem('customLatitude'),
+            customGeolocation: localStorage.getItem('customGeolocation') || false,
+            longitude: localStorage.getItem('customLongitude'),
+            latitude: localStorage.getItem('customLatitude'),
           }}
           
-        render={({handleSubmit, submitting, pristine, values }) => (
-          <form onSubmit={handleSubmit} className={css.finalForm}>
-            <Field name='biography'>
-              {({ input, meta }) => (
-                <div className={css.settingsTextarea}>
-                  <textarea {...input} type='text' placeholder='Biography'/>
-                  {meta.error && meta.touched && <span>{meta.error}</span>}
-                </div>
-              )}
-            </Field>
-            <div className={css.inputsBlock}>
-              Sex:
-              <Field  name='sex'
-                      component='input'
-                      type='radio'
-                      value='male'/> male
-              <Field  name='sex'
-                      component='input'
-                      type='radio'
-                      value='female'/> female
-            </div>
-            <div className={css.inputsBlock}>
-              Sex preferences:
-              <Field  name='sexPreferences'
-                      component='input'
-                      type='radio'
-                      value='male'/> male
-              <Field  name='sexPreferences'
-                      component='input'
-                      type='radio'
-                      value='female'/> female
-            </div>
+          render={({handleSubmit, submitting, pristine, values }) => (
+            <form onSubmit={handleSubmit} className={css.finalForm}>
+              <Field name='biography'>
+                {({ input, meta }) => (
+                  <div className={css.settingsTextarea}>
+                    <textarea {...input} type='text' placeholder='Biography'/>
+                    {meta.error && meta.touched && <span>{meta.error}</span>}
+                  </div>
+                )}
+              </Field>
+              <div className={css.inputsBlock}>
+                Sex:
+                <Field  name='sex'
+                        component='input'
+                        type='radio'
+                        value='male'/> male
+                <Field  name='sex'
+                        component='input'
+                        type='radio'
+                        value='female'/> female
+              </div>
+              <div className={css.inputsBlock}>
+                Sex preferences:
+                <Field  name='sexPreferences'
+                        component='input'
+                        type='radio'
+                        value='male'/> male
+                <Field  name='sexPreferences'
+                        component='input'
+                        type='radio'
+                        value='female'/> female
+              </div>
 
-            <div className={css.inputsBlock}>
-              <div>
-              Custom geolocation: <Field name='customGeolocation'
-                                            component='input'
-                                            type='radio'
-                                            value={true}/>
+              <div className={css.inputsBlock}>
+                <div>
+                  Custom geolocation: <Field  name='customGeolocation'
+                                              component='input'
+                                              type='checkbox'/>
+                </div>
+                <div>
+                  Longitude:
+                  <Field  name='longitude'
+                          component={NumberInput}/>
+                </div>
+                <div>
+                  Latitude:
+                  <Field  name='latitude'
+                          component={NumberInput}/>
+                </div>
               </div>
-              <div>
-                Longitude:
-                <Field  name='longitude'
-                        component={NumberInput}/>
-              </div>
-              <div>
-                Latitude:
-                <Field  name='latitude'
-                        component={NumberInput}/>
-              </div>
-            </div>
             <div className={css.buttonsBlock}>
               <Button label='Save' className={css.submitButton} type='submit' disabled={submitting || pristine}/>
             </div>

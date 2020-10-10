@@ -21,11 +21,19 @@ const ImageUploader = ({userPhotos, setUserPhotos}) => {
     setImages(imageList)
   }
 
-  const uploadImagesRequest = (imageList) => {
+  const uploadImagesRequest = async (imageList) => {
     const urlsList = imageList.map(image => image.data_url)
-    setUserPhotos([...userPhotos, ...imageList.map(image => ({data: image.data_url}))])
+    let loadedImgIds = []
+  
+    await uploadImages(uploadImagesUrl, urlsList).then(({data}) => {
+      loadedImgIds = [...data]
+      setImages([])
+    })
+
+    setUserPhotos([...userPhotos, ...(imageList.map((image, i) => (
+      {data: image.data_url, imageId: loadedImgIds[i], main: false}
+    )))])
     setUpload(false)
-    uploadImages(uploadImagesUrl, urlsList)
   }
 
   return (

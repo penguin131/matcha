@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import SettingsForm from '../../components/forms/SettingsForm/SettingsForm'
 import ChangeEmailForm from '../../components/forms/ChangeEmailForm/ChangeEmailForm'
 import ChangePassForm from '../../components/forms/ChangePassForm/ChangePassForm'
@@ -17,7 +17,7 @@ const SettingsPage = ({data, setAvatar}) => {
   const { userProfile } = data
   const [, sendGetRequest] = useGetAxiosFetch(config)
   const [responseData, sendPostRequest] = usePostAxiosFetch(config)
-  const [userPhotos, setUserPhotos] = useState(data.userPhotos?.data?.data || null)
+  const [userPhotos, setUserPhotos] = useState(null)
 
   const onSetAvatar = async (photo) => {
     await sendGetRequest(`${setAvatarUrl}/${photo.imageId}`) 
@@ -28,7 +28,10 @@ const SettingsPage = ({data, setAvatar}) => {
     await sendGetRequest(`${deleteImageUrl}/${photo.imageId}`)
     setUserPhotos(_.remove(userPhotos, (uPhoto) => uPhoto.imageId !== photo.imageId))
   }
-  
+
+  useEffect(() => {
+    setUserPhotos(data.userPhotos?.data?.data || null)
+  }, [])
   return (
     <div className={css.settingsContainer}>
       {userProfile.loading ? <div className={css.loaderBlock}><Loader/></div> : (
@@ -58,6 +61,7 @@ const SettingsPage = ({data, setAvatar}) => {
                     url={updateUserProfileUrl}
                     data={userProfile.data.data.tags}/>}
         <ChangeEmailForm  onSubmit={sendPostRequest}
+                          url={updateUserProfileUrl}
                           isFormLoading={responseData.loading}/>
         <ChangePassForm onSubmit={sendPostRequest}
                         url={updateUserProfileUrl}
