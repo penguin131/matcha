@@ -15,27 +15,30 @@ const FilterForm = ({ filters, setFilters }) => {
         setFilters({...filters, ...e, tags: tagsArr})
       }}
       initialValues={{
-        ageGap: null,
-        ratingGap: null,
+        age_max: null,
+        age_min: null,
+        rating: null,
         tags: '',
-        locationGap: null,
+        distance: null,
       }}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
           <div className={css.inputsBlock}>
-            <Field  name="ageGap"
+            <Field  name="age_max"
                     component={NumberInput}
-                    placeholder="Age gap"/>
-            <Field  name="ratingGap"
+                    placeholder="Age max"/>
+            <Field  name="age_min"
                     component={NumberInput}
-                    placeholder="Rating gap"/>
+                    placeholder="Age min"/>
+            <Field  name="rating"
+                    component={NumberInput}
+                    placeholder="Min rating"/>
             <Field  name='tags'
                     component='input'
-                    value='fameRating'
                     placeholder="Tags by commas"/>
-            <Field  name="locationGap"
+            <Field  name="distance"
                     component={NumberInput}
-                    placeholder="Location gap"/>
+                    placeholder="Min distance"/>
           <button type='submit' disabled={submitting || pristine}>
             Save
           </button>

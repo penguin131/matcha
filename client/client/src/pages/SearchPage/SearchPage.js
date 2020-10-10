@@ -11,7 +11,7 @@ import FilterForm from '../../components/forms/FilterForm/FilterForm'
 const SearchPage = () => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState({sort_type: 'rating'})
   const [userProfile, fetchUserProfile] = usePostAxiosFetch(config)
   const [userPhotos, fetchUserPhotos] = useGetAxiosFetch(config)
   
@@ -24,7 +24,7 @@ const SearchPage = () => {
   useEffect(() => {
     fetchData()
   }, [])
-
+console.log(filters)
   return (
     <div className={css.searchContainer}>
       <div className={css.sortBlock}>

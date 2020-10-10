@@ -64,7 +64,6 @@ const Main = ({isAuth, setIsAuth}) => {
     const error = async (err) => {
       getUserGeolocation(geolocationServiceUrl)
         .then(res => {
-          console.log(res)
           const coords = res.data.loc.split(',')
           const data = {
             latitude: coords[0],
