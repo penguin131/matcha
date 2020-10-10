@@ -34,6 +34,7 @@ const Main = ({isAuth, setIsAuth}) => {
   useEffect(() => {
     user && fetchUserProfile(`${userProfileUrl}/${user}`)
     user && fetchUserPhotos(`${userPhotosUrl}/${user}`)
+    console.log(';e;')
   }, [fetchUserProfile, fetchUserPhotos, user])
 
   const photos = userPhotos?.data?.data
@@ -126,7 +127,8 @@ const Main = ({isAuth, setIsAuth}) => {
                             path='/settings'
                             component={() => (
                               <SettingsPage data={{userProfile, userPhotos}}
-                                            setAvatar={setAvatar}/>
+                                            setAvatar={setAvatar}
+                                            fetchUserPhotos={fetchUserPhotos}/>
                             )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact

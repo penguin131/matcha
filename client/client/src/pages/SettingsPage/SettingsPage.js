@@ -10,8 +10,9 @@ import TagsInput from '../../components/TagsInput/TagsInput'
 import {useGetAxiosFetch, usePostAxiosFetch} from '../../services/useAxiosFetch'
 import {deleteImageUrl, setAvatarUrl, updateUserProfileUrl} from '../../services/services'
 import _ from 'lodash'
+import { userPhotosUrl } from '../../services/services'
 
-const SettingsPage = ({data, setAvatar}) => {
+const SettingsPage = ({data, setAvatar, fetchUserPhotos}) => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const { userProfile } = data
@@ -20,7 +21,8 @@ const SettingsPage = ({data, setAvatar}) => {
   const [userPhotos, setUserPhotos] = useState(null)
 
   const onSetAvatar = async (photo) => {
-    await sendGetRequest(`${setAvatarUrl}/${photo.imageId}`) 
+    await sendGetRequest(`${setAvatarUrl}/${photo.imageId}`)
+    await fetchUserPhotos(`${userPhotosUrl}/${userProfile.data?.data.login}`) 
     setAvatar(photo)
   }
 
@@ -32,6 +34,7 @@ const SettingsPage = ({data, setAvatar}) => {
   useEffect(() => {
     setUserPhotos(data.userPhotos?.data?.data || null)
   }, [])
+
   return (
     <div className={css.settingsContainer}>
       {userProfile.loading ? <div className={css.loaderBlock}><Loader/></div> : (
