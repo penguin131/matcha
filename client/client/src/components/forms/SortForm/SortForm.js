@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
+import css from './SortForm.module.less'
 
 const SortForm = ({ filters, setFilters }) => {
   return (
@@ -12,7 +13,7 @@ const SortForm = ({ filters, setFilters }) => {
       }}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className={css.inputsBlock}>
             <Field  name='sort'
                     component='input'
                     type='radio'
@@ -24,15 +25,16 @@ const SortForm = ({ filters, setFilters }) => {
             <Field  name='sort'
                     component='input'
                     type='radio'
-                    value='fameRating'/> fame rating
+                    value='fameRating'/> rating
             <Field  name='sort'
                     component='input'
                     type='radio'
-                    value='commotTags'/> commot tags
-          </div>
-          <button type='submit' disabled={submitting || pristine}>
+                    value='commotTags'/> common tags
+            <button type='submit' disabled={submitting || pristine}>
               Save
-          </button>
+            </button>
+          </div>
+          
         </form>
       )}
     />

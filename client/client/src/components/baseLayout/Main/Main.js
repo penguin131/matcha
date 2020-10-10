@@ -28,6 +28,7 @@ const Main = ({isAuth, setIsAuth}) => {
   const [notification, setNotification] = useState({})
   const [avatar, setAvatar] = useState(null)
   const [webSocket, setWebSocket] = useState(null)
+  const [geolocation, setGeolocation] = useState(null)
 
   useEffect(() => {
     user && fetchUserProfile(`${userProfileUrl}/${user}`)
@@ -55,6 +56,7 @@ const Main = ({isAuth, setIsAuth}) => {
         latitude: crd.latitude,
         longitude: crd.longitude
       }
+      setGeolocation(data)
       updateUserProfile(updateUserProfileUrl, data)
     };
     
@@ -67,7 +69,7 @@ const Main = ({isAuth, setIsAuth}) => {
             latitude: coords[0],
             longitude: coords[1]
           }
-
+          setGeolocation(data)
           updateUserProfile(updateUserProfileUrl, data)
         })
     };
@@ -144,7 +146,9 @@ const Main = ({isAuth, setIsAuth}) => {
                             isAuth={isAuth}/>                            
             <ProtectedRoute exact
                             path='/'
-                            component={MainPage}
+                            component={() => (
+                              <MainPage geolocation={geolocation}/>
+                            )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact
                             path='/*'

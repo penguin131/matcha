@@ -26,13 +26,11 @@ const SearchPage = () => {
   }, [])
 
   console.log(filters)
-  
+
   return (
     <div className={css.searchContainer}>
-      <div>
-        <div>sort:</div>
+      <div className={css.sortBlock}>
         <SortForm filters={filters} setFilters={setFilters}/>
-        <div>filters:</div>
         <FilterForm filters={filters} setFilters={setFilters}/>
       </div>
       <ProfileCard  user={userProfile?.login}

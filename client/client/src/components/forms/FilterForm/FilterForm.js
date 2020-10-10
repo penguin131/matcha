@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, Field } from 'react-final-form'
+import css from './FilterForm.module.less'
 
 const NumberInput = ({ input, meta, ...rest }) => (
   <input {...input} {...rest} type="number" min='0'/>
@@ -15,7 +16,7 @@ const FilterForm = ({ filters, setFilters }) => {
       initialValues={{}}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className={css.inputsBlock}>
             <Field  name="ageGap"
                     component={NumberInput}
                     placeholder="Age gap"/>
@@ -29,10 +30,10 @@ const FilterForm = ({ filters, setFilters }) => {
             <Field  name="locationGap"
                     component={NumberInput}
                     placeholder="Location gap"/>
-          </div>
           <button type='submit' disabled={submitting || pristine}>
-              Save
+            Save
           </button>
+          </div>  
         </form>
       )}
     />
