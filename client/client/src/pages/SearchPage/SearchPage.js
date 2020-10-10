@@ -25,7 +25,6 @@ const SearchPage = () => {
     fetchData()
   }, [])
 
-  console.log(userProfile)
   return (
     <div className={css.searchContainer}>
       <div className={css.sortBlock}>

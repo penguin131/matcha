@@ -26,7 +26,7 @@ const SettingsPage = ({data, setAvatar, fetchUserPhotos}) => {
     setAvatar(photo)
   }
 
-  const onRemoveImage = async (photo, i) => {
+  const onRemoveImage = async (photo) => {
     await sendGetRequest(`${deleteImageUrl}/${photo.imageId}`)
     setUserPhotos(_.remove(userPhotos, (uPhoto) => uPhoto.imageId !== photo.imageId))
   }

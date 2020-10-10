@@ -9,7 +9,7 @@ const SortForm = ({ filters, setFilters }) => {
         setFilters({...filters, ...e})
       }}
       initialValues={{
-        sort_type: 'age',
+        sort_type: 'rating',
       }}
       render={({handleSubmit, submitting, pristine, values }) => (
         <form onSubmit={handleSubmit}>
@@ -17,19 +17,23 @@ const SortForm = ({ filters, setFilters }) => {
             <Field  name='sort_type'
                     component='input'
                     type='radio'
-                    value='age'/> age
+                    value='age'/> age asc
             <Field  name='sort_type'
                     component='input'
                     type='radio'
-                    value='location'/> location
+                    value='ageDesc'/> age desc
             <Field  name='sort_type'
                     component='input'
                     type='radio'
-                    value='fameRating'/> rating
+                    value='distance'/> location
             <Field  name='sort_type'
                     component='input'
                     type='radio'
-                    value='commonTags'/> common tags
+                    value='rating'/> rating
+            <Field  name='sort_type'
+                    component='input'
+                    type='radio'
+                    value='tags'/> tags
             <button type='submit' disabled={submitting || pristine}>
               Save
             </button>
