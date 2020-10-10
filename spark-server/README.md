@@ -34,5 +34,5 @@ todo:<br>
 банан
 фильтр на пол по умолчанию
 не подтвержденная учетка++
-A user that doesn't have a profile picture can't like another user.
+A user that doesn't have a profile picture can't like another user.++
 

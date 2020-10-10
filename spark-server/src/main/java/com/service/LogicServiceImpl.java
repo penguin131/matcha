@@ -134,6 +134,10 @@ public class LogicServiceImpl implements LogicService {
 	@Override
 	public void setLike(String from, String to) throws ValidateException {
 		try {
+			if (!checkAvatar(from)) {
+				logger.info("checkAvatar() false");
+				return;
+			}
 			boolean result = databaseService.setLike(from, to);
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
@@ -156,9 +160,22 @@ public class LogicServiceImpl implements LogicService {
 		}
 	}
 
+	private boolean checkAvatar(String login) throws SQLException {
+		List<UserPhotoDto> photos = databaseService.getUserPhotos(login);
+		for (UserPhotoDto photo : photos) {
+			if (photo.isMain())
+				return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void setComplaint(String from, String to) {
 		try {
+			if (!checkAvatar(from)) {
+				logger.info("checkAvatar() false");
+				return;
+			}
 			databaseService.setComplaint(from, to);
 			MessageDto notification = new MessageDto();
 			notification.setType(MessageType.NOTIFICATION.getName());
