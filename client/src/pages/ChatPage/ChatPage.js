@@ -7,7 +7,7 @@ import css from './ChatPage.module.less'
 import { useGetAxiosFetch } from '../../services/useAxiosFetch'
 import { allFriendsUrl, chatHistoryUrl } from '../../services/services' 
 
-const ChatPage = ({ webSocket }) => {
+const ChatPage = ({ webSocket, setNotification }) => {
   const token = localStorage.token
   const config = {headers: {'Authorization': token}}
   const [friendsList, fetchFriendsList] = useGetAxiosFetch(config)
@@ -25,7 +25,10 @@ const ChatPage = ({ webSocket }) => {
         const data = JSON.parse(message.data)
   
         if (data.type === 'chat_message') {
-          setMessages([JSON.parse(message.data), ...messages])
+          setMessages([data, ...messages])
+        }
+        if (data.type !== 'chat_message') {
+          setNotification(data)
         }
       }
     }

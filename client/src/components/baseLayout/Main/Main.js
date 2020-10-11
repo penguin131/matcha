@@ -16,6 +16,7 @@ import css from './Main.module.css'
 import { ws } from '../../../services/backendUrl'
 import { useGetAxiosFetch, usePostAxiosFetch } from '../../../services/useAxiosFetch'
 import { userProfileUrl, userPhotosUrl, updateUserProfileUrl, geolocationServiceUrl } from '../../../services/services'
+import { useLocation } from 'react-router-dom'
 
 const Main = ({isAuth, setIsAuth}) => {
   const token = localStorage.token
@@ -30,6 +31,7 @@ const Main = ({isAuth, setIsAuth}) => {
   const [avatar, setAvatar] = useState(null)
   const [webSocket, setWebSocket] = useState(null)
   const [geolocation, setGeolocation] = useState(null)
+  const params = useLocation()
 
   useEffect(() => {
     user && fetchUserProfile(`${userProfileUrl}/${user}`)
@@ -92,8 +94,9 @@ const Main = ({isAuth, setIsAuth}) => {
       }
       
       webSocket.onmessage = (message) => {
+       
         const data = JSON.parse(message.data)
-
+  
         setNotification(data)
       }
     
@@ -102,8 +105,18 @@ const Main = ({isAuth, setIsAuth}) => {
         console.log('closed')
       }
     }
-    
   }, [webSocket])
+
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.onmessage = (message) => {
+       
+        const data = JSON.parse(message.data)
+  
+        setNotification(data)
+      }
+    }
+  }, [webSocket, params.pathname])
 
   return (
     <div className={css.appContainer}>
@@ -118,7 +131,7 @@ const Main = ({isAuth, setIsAuth}) => {
             <ProtectedRoute exact
                             path='/chats'
                             component={() => (
-                              <ChatPage webSocket={webSocket}/>
+                              <ChatPage webSocket={webSocket} setNotification={setNotification}/>
                             )}
                             isAuth={isAuth}/>
             <ProtectedRoute exact

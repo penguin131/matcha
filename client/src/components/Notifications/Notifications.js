@@ -6,15 +6,16 @@ const Notifications = ({ data }) => {
   let notification = null
 
   if (data?.type === 'chat_message') {
-    notification = <span>
+    notification = <>
       New message from <Link to={`/profile/:${data.from}`}>{data.from}</Link>
-    </span>
+    </>
+
   }
 
   if (data?.type === 'notification') {
-    notification = <span>
-      <Link to={`/profile/:${data.from}`}>{data.from}</Link> {data.msgText}
-    </span>
+    notification = <>
+      <Link to={`/profile/:${data.from}`}>{data.from}</Link><div className={css.text}>{data.msgText}</div>
+    </>
   }
 
   return (
