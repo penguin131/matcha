@@ -19,11 +19,11 @@ const MapPage = ({geolocation}) => {
   const zoom = 1
 
   useEffect(() => {
-    fetchAllusers(coordinatesUrl)
-  }, [fetchAllusers])
+    fetchAllusers(coordinatesUrl).then(r => console)
+  }, [])
 
   return (
-    // Important! Always set the container height explicitly
+
     <div className={css.mapContainer}>
     <div style={{ height: '60vh', width: '60%', marginTop: '20px'}}>
       <GoogleMapReact
@@ -32,8 +32,8 @@ const MapPage = ({geolocation}) => {
         defaultZoom={zoom}>
         {allUsers?.data?.data?.map((user, i) => (
           <UserMarker key={i}
-                      lat={user.latitude}
-                      lng={user.longitude}
+                      lat={user?.latitude}
+                      lng={user?.longitude}
           />
         ))}
         
