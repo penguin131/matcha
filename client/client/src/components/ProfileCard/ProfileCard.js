@@ -52,7 +52,7 @@ const ProfileCard = ({user, userProfile, userPhotos, profileIsLoading, imagesIsL
           </Link> : <div className={css.userName}></div>}
           <div>{userProfile?.is_online ? 'Online' : `Last login ${formatDate(userProfile?.last_auth_date)}`}</div>
           <div>rating: {userProfile?.rating}</div>
-          <div>sex: {userProfile?.sex}</div>
+          <div>sex: {userProfile?.sex}, age: {userProfile?.age}</div>
           <div className={css.galleryContainer}>
             {imagesIsLoading ? <div className={css.loader}><Loader/></div> : images?.length > 0 ? 
               <ImageGallery items={images}
