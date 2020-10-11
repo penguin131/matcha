@@ -1,0 +1,45 @@
+.chatContainer {
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  background: #f8f8fb;
+  height: 100%;
+  .chatBar {
+    background: #f8f8fb;
+  }
+
+  .chatWindow {
+    border: 1px solid #e4e4e4;
+    flex: 1 0 0%;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    .chatTitle {
+      flex: 0 0 64px;
+      display: flex;
+      z-index: 1;
+      justify-content: space-between;
+      align-items: center;
+      background: #eee;
+      padding: 0 20px;
+      font-weight: bold;
+      box-shadow: 0 1px 3px -1px rgba(0,0,0,0.75);
+
+      font-size: 1.5rem;
+      color: #0048AA;
+      
+      .userName { 
+        flex: 1 0 0%;
+      }
+      .trashLogo {
+        stroke: #0048AA;
+        height: 36px;
+        flex: 0 0 36px;
+        cursor: pointer;
+      }
+    }
+    
+  }
+}

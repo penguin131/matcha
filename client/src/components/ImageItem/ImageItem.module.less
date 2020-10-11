@@ -1,0 +1,27 @@
+.imageItem {
+  display: flex;
+
+  padding: 5px;
+ 
+  img {
+    min-width: 110px;
+    width: 110px;
+    height: 110px;
+  }
+
+  .contextMenu{
+    opacity: 0;
+    min-width: 110px;
+    height: 110px;
+    background-color: rgba(0, 0, 0, 0.219);
+    position: absolute; 
+    .contextButtons {
+      display: flex;
+      flex-direction: column;
+      padding-top: 5px;
+    }
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
