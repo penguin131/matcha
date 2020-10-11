@@ -8,9 +8,9 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import './App.css'
 
 const App = () => {
-/* const currentUser = localStorage.getItem('currentUser') */
-/* const [isAuth, setIsAuth] = useState(currentUser ? true : false) */
-const [isAuth, setIsAuth] = useState(true)
+const currentUser = localStorage.getItem('currentUser')
+const [isAuth, setIsAuth] = useState(currentUser ? true : false)
+
   return (
     <ErrorBoundary>
       <BrowserRouter>
