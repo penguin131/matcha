@@ -238,13 +238,13 @@ module.exports = function(webpackEnv) {
           },
           sourceMap: shouldUseSourceMap,
         }),
-       /*  new UglifyJSPlugin({
+        new UglifyJSPlugin({
           uglifyOptions: {
             compress: {
               drop_console: true,
             }
           }
-        }), */
+        }),
         // This is only used in production mode
         new OptimizeCSSAssetsPlugin({
           cssProcessorOptions: {
