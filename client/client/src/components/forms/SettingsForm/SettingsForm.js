@@ -22,6 +22,8 @@ const SettingsForm = ({isFormLoading, onSubmit, data, url}) => {
               'sex': e.sex,
               'biography': e.biography,
               'sex_preferences': e.sexPreferences,
+              'longitude': e.longitude,
+              'latitude': e.latitude,
             }
 
             if (e.customGeolocation) {

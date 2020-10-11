@@ -3,7 +3,7 @@ import { Form, Field } from 'react-final-form'
 import css from './FilterForm.module.less'
 
 const NumberInput = ({ input, meta, ...rest }) => (
-  <input {...input} {...rest} type="number" min='0'/>
+  <input {...input} {...rest} type="number"/>
 );
 
 const FilterForm = ({ filters, setFilters }) => {
@@ -26,10 +26,12 @@ const FilterForm = ({ filters, setFilters }) => {
           <div className={css.inputsBlock}>
             <Field  name="age_max"
                     component={NumberInput}
-                    placeholder="Age max"/>
+                    placeholder="Age max"
+                    min={0}/>
             <Field  name="age_min"
                     component={NumberInput}
-                    placeholder="Age min"/>
+                    placeholder="Age min"
+                    min={0}/>
             <Field  name="rating"
                     component={NumberInput}
                     placeholder="Min rating"/>
@@ -38,7 +40,8 @@ const FilterForm = ({ filters, setFilters }) => {
                     placeholder="Tags by commas"/>
             <Field  name="distance"
                     component={NumberInput}
-                    placeholder="Min distance"/>
+                    placeholder="Min distance"
+                    min={0}/>
           <button type='submit' disabled={submitting || pristine}>
             Save
           </button>
