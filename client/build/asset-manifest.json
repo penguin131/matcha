@@ -1,0 +1,41 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9e58a3b3.chunk.css",
+    "main.js": "/static/js/main.bf555671.chunk.js",
+    "main.js.map": "/static/js/main.bf555671.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.cfae3202.js",
+    "runtime-main.js.map": "/static/js/runtime-main.cfae3202.js.map",
+    "static/css/2.4db5e42c.chunk.css": "/static/css/2.4db5e42c.chunk.css",
+    "static/js/2.0d623bef.chunk.js": "/static/js/2.0d623bef.chunk.js",
+    "static/js/2.0d623bef.chunk.js.map": "/static/js/2.0d623bef.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.dc1bd77491a9ba1bd77661b9ad07db26.js": "/precache-manifest.dc1bd77491a9ba1bd77661b9ad07db26.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.4db5e42c.chunk.css.map": "/static/css/2.4db5e42c.chunk.css.map",
+    "static/css/main.9e58a3b3.chunk.css.map": "/static/css/main.9e58a3b3.chunk.css.map",
+    "static/js/2.0d623bef.chunk.js.LICENSE.txt": "/static/js/2.0d623bef.chunk.js.LICENSE.txt",
+    "static/media/chats.022e739a.svg": "/static/media/chats.022e739a.svg",
+    "static/media/chatsActive.bf509be8.svg": "/static/media/chatsActive.bf509be8.svg",
+    "static/media/dislike.f913d5e1.svg": "/static/media/dislike.f913d5e1.svg",
+    "static/media/geo.8c3fc627.svg": "/static/media/geo.8c3fc627.svg",
+    "static/media/geoActive.b3b8584b.svg": "/static/media/geoActive.b3b8584b.svg",
+    "static/media/like.6408851c.svg": "/static/media/like.6408851c.svg",
+    "static/media/logo.40983273.svg": "/static/media/logo.40983273.svg",
+    "static/media/logout.292c0b1f.svg": "/static/media/logout.292c0b1f.svg",
+    "static/media/match.ec516a23.svg": "/static/media/match.ec516a23.svg",
+    "static/media/matchActive.a9722921.svg": "/static/media/matchActive.a9722921.svg",
+    "static/media/search.4b6f09e7.svg": "/static/media/search.4b6f09e7.svg",
+    "static/media/searchActive.c87f52ac.svg": "/static/media/searchActive.c87f52ac.svg",
+    "static/media/settings.3ca2b21d.svg": "/static/media/settings.3ca2b21d.svg",
+    "static/media/settingsActive.d30e7eb4.svg": "/static/media/settingsActive.d30e7eb4.svg",
+    "static/media/watch.ae7e7f3f.svg": "/static/media/watch.ae7e7f3f.svg",
+    "static/media/watchActive.93a198c6.svg": "/static/media/watchActive.93a198c6.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cfae3202.js",
+    "static/css/2.4db5e42c.chunk.css",
+    "static/js/2.0d623bef.chunk.js",
+    "static/css/main.9e58a3b3.chunk.css",
+    "static/js/main.bf555671.chunk.js"
+  ]
+}
