@@ -23,6 +23,7 @@ const JoinButton = () => {
 }
 
 const AuthPage = ({ setIsAuth }) => {
+	localStorage.removeItem('token')
 	return (
 		<>
 			<Switch>

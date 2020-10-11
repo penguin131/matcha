@@ -11,7 +11,7 @@ const RedirectPage = ({ setIsAuth }) => {
   const history = useHistory()
 
   useEffect(() => {
-    key && sendPostRequest(loginUrl, {'oauth2_code': key})
+    !localStorage.getItem('token') && key && sendPostRequest(loginUrl, {'oauth2_code': key})
       .then(r => {
         if (r?.data) {
           localStorage.setItem('token', r.data.token)
