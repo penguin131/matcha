@@ -9,13 +9,15 @@ const RedirectPage = ({ setIsAuth }) => {
   const key = params.search.split('=')[1]
   const [, sendPostRequest] = usePostAxiosFetch()
   const history = useHistory()
+  const localKey = localStorage.getItem('key')
 
   useEffect(() => {
-    !localStorage.getItem('token') && key && sendPostRequest(loginUrl, {'oauth2_code': key})
+    !localKey && localKey !== key && sendPostRequest(loginUrl, {'oauth2_code': key})
       .then(r => {
         if (r?.data) {
           localStorage.setItem('token', r.data.token)
           localStorage.setItem('currentUser', r.data.login)
+          localStorage.setItem('key', key)
           setIsAuth(true)
           setTimeout(() => history.push('/') , 1000); 
         } 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import JoinForm from '../../components/forms/JoinForm/JoinForm'
 import LoginForm from '../../components/forms/LoginForm/LoginForm'
 import { Switch, Link, Route } from 'react-router-dom'
@@ -23,7 +23,9 @@ const JoinButton = () => {
 }
 
 const AuthPage = ({ setIsAuth }) => {
-	localStorage.removeItem('token')
+	useEffect(() => {
+		localStorage.removeItem('key')
+	}, [])
 	return (
 		<>
 			<Switch>
