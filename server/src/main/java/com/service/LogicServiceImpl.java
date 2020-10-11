@@ -134,6 +134,10 @@ public class LogicServiceImpl implements LogicService {
 	@Override
 	public void setLike(String from, String to) throws ValidateException {
 		try {
+			if (StringUtils.equals(from, to)) {
+				logger.info("from == to");
+				return;
+			}
 			if (noAvatar(from)) {
 				logger.info("checkAvatar() false");
 				return;
@@ -177,6 +181,10 @@ public class LogicServiceImpl implements LogicService {
 	@Override
 	public void setComplaint(String from, String to) {
 		try {
+			if (StringUtils.equals(from, to)) {
+				logger.info("from == to");
+				return;
+			}
 			if (noAvatar(from)) {
 				logger.info("checkAvatar() false");
 				return;
