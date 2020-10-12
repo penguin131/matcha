@@ -9,23 +9,24 @@ API https://app.swaggerhub.com/apis/smight/matcha-server/1.0.0#<br>
 <br>
 todo:<br>
 
-залить все в мейн ветку, когда будет готов фронт
+
+GUIDE:
+1)Clone from intra
+BACKEND:
+    2)copy server application to remote server: scp -r ~/Desktop/matcha-intra/server smight@84.201.139.26:matcha-intra
+    3)connect to server: ssh smight@84.201.139.26
+    4)go to /matcha-intra and copy database dump with photos cp ../init_database_with_data.sql init_database.sql
+    5)run database into docker: sudo docker-compose up -d
+    6)wait base init and start mvn exec:java
+FRONTEND:
+    7)yarn install
+    8)yarn build 
+    9)yarn global add serve
+    10)serve -s build
 
 
-че тестить:
-всегда проверять ответы от сервера(>=500 не должно быть)
-редирект без авторизации
-авторизация двумя способами
-
-смена пароля при разных способах авторизации
-смена почты 
-биография, картинки, теги, предпочтения
-
-один и тот же чат от одного юзера
-валидация заполняемых из форм полей
-потестить поиск друзей с фильтром и прочее
 
 
 
-//сегодня
-накидать запросик для проверки расстояния
+
+
